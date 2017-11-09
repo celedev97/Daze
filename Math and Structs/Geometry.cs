@@ -201,6 +201,14 @@ namespace Daze.Geometry {
         public override string ToString() {
             return "{" + x.ToString().Replace(",",".") + "," + y.ToString().Replace(",", ".") + "}";
         }
+
+        public static Point operator +(Point point, Vector vector) {
+            return new Point(point.x + vector.x, point.y + vector.y);
+        }
+
+        public static Point operator -(Point point, Vector vector) {
+            return new Point(point.x - vector.x, point.y - vector.y);
+        }
     }
 
     public struct Size {
@@ -275,12 +283,12 @@ namespace Daze.Geometry {
 
     public class Rectangle:ConvexPolygon {
         #region Properties and variables
-        private float hiddenWidth; public float width { get => hiddenWidth; }
-        private float hiddenHeight; public float height { get => hiddenHeight; }
+        private float _Width; public float width { get => _Width; }
+        private float _Height; public float height { get => _Height; }
 
-        private Point hiddenCenter;
+        private Point _Center;
         public override Point center {
-            get => hiddenCenter;
+            get => _Center;
             set {
                 A = RA.duplicate();
                 B = RB.duplicate();
@@ -292,17 +300,17 @@ namespace Daze.Geometry {
                 C += value;
                 D += value;
 
-                hiddenCenter = value;
+                _Center = value;
 
                 calculateLines();
             }
         }
 
-        private float hiddenRotation;
+        private float _Rotation;
         public override float rotation {
-            get => hiddenRotation;
+            get => _Rotation;
             set {
-                hiddenRotation = value;
+                _Rotation = value;
                 rotate();
                 calculateLines();
             }
@@ -321,8 +329,8 @@ namespace Daze.Geometry {
         }
 
         public Rectangle(float width, float height) {
-            hiddenWidth = width;
-            hiddenHeight = height;
+            _Width = width;
+            _Height = height;
 
             float halfWidth = width/2;
             float halfHeight = height/2;
@@ -356,10 +364,10 @@ namespace Daze.Geometry {
         private void rotate() {
             resetRotatedPoints();
 
-            RA.rotatePointAroundO(hiddenRotation);
-            RB.rotatePointAroundO(hiddenRotation);
-            RC.rotatePointAroundO(hiddenRotation);
-            RD.rotatePointAroundO(hiddenRotation);
+            RA.rotatePointAroundO(_Rotation);
+            RB.rotatePointAroundO(_Rotation);
+            RC.rotatePointAroundO(_Rotation);
+            RD.rotatePointAroundO(_Rotation);
         }
 
         private void calculateLines() {

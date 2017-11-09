@@ -11,11 +11,11 @@ namespace Daze {
         #endregion
 
         #region variables for sprites
-        private SpriteSet hiddenSpriteSet;
+        private SpriteSet _SpriteSet;
         public SpriteSet spriteSet {
-            get => hiddenSpriteSet;
+            get => _SpriteSet;
             set {
-                hiddenSpriteSet = value;
+                _SpriteSet = value;
                 collider?.recreateCollider();
                 pushPixelPosition();
             }
@@ -30,11 +30,11 @@ namespace Daze {
 
         public Point position;
 
-        private float hiddenRotation = 0;
+        private float _Rotation = 0;
         public float rotation {
-            get => hiddenRotation;
+            get => _Rotation;
             set {
-                hiddenRotation = value;
+                _Rotation = value;
                 collider?.rotateCollider();
             }
         }
@@ -46,12 +46,13 @@ namespace Daze {
         /// </summary>
         public int drawLayer;
 
-        public Collider collider;
+        protected Collider _collider;
+        public virtual Collider collider { get => _collider; set { _collider = value; } }
 
         /// <summary>
         /// Returns the object that collided with this Object in the last movement, can be NULL
         /// </summary>
-        public GameObject lastCollision { get { return hiddenLastCollision; } }
+        public GameObject lastCollision { get { return _lastCollision; } }
 
         /// <summary>
         /// NOT RECOMMENDED: the list of the timers used by this GameObject.
@@ -65,7 +66,7 @@ namespace Daze {
         /// <summary>
         /// This contain the GameObject that collided with this one in the last movement (NULL if there was no collision)
         /// </summary>
-        protected GameObject hiddenLastCollision;
+        protected GameObject _lastCollision;
         #endregion
 
         #region Constructors
@@ -89,7 +90,7 @@ namespace Daze {
             position.x = x;
             position.y = y;
 
-            hiddenLastCollision = null;
+            _lastCollision = null;
 
             //avvio il metodo di inizializzazione del gameObject
             Start();
@@ -186,22 +187,51 @@ namespace Daze {
         /// <param name="yOffset">The offset of the movement of the GameObject on the Y axis</param>
         /// <returns>This return true if the gameObject moved without collisions, false otherwise</returns>
         public virtual bool move(float xOffset, float yOffset) {
+            _lastCollision = null;
+            bool moved = moveX(xOffset);
+            moved = moveY(yOffset) && moved;
+            return moved;
+        }
+
+        private bool moveX(float xOffset) {
             //muovo il GameObject
             position.x += xOffset;
+            if(collider == null) {
+                return true;
+            } else {
+                collider.moveCollider();
+                if((_lastCollision = checkCollisions()) != null) {
+                    extrapolate(xOffset, 0);
+
+                    //eseguo la collisione di questo oggetto
+                    OnCollisionEnter();
+                    //se l'altro oggetto non è stato cancellato dalla collisone con quest'oggetto allora avvio anche la sua collisione
+                    if(Engine.gameObjectExists(_lastCollision)) {
+                        _lastCollision._lastCollision = this;
+                        _lastCollision.OnCollisionEnter();
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+        private bool moveY(float yOffset) {
             position.y += yOffset;
             if(collider == null) {
                 return true;
             } else {
                 collider.moveCollider();
-                if((hiddenLastCollision = checkCollisions()) != null) {
-                    extrapolate(xOffset, yOffset);
-                    
+                GameObject collision2;
+                if((collision2 = checkCollisions()) != null) {
+                    _lastCollision = collision2;
+                    extrapolate(0, yOffset);
+
                     //eseguo la collisione di questo oggetto
                     OnCollisionEnter();
                     //se l'altro oggetto non è stato cancellato dalla collisone con quest'oggetto allora avvio anche la sua collisione
-                    if(Engine.gameObjectExists(hiddenLastCollision)) {
-                        hiddenLastCollision.hiddenLastCollision = this;
-                        hiddenLastCollision.OnCollisionEnter();
+                    if(Engine.gameObjectExists(_lastCollision)) {
+                        _lastCollision._lastCollision = this;
+                        _lastCollision.OnCollisionEnter();
                     }
                     return false;
                 }
@@ -213,10 +243,7 @@ namespace Daze {
         #region Methods related to collisions
         //METODO CHE FA USCIRE UN OGGETTO DA UN ALTRO IN CASO DI COLLISIONE
         protected void extrapolate(float xOffset, float yOffset) {
-            position.x -= xOffset;
-            position.y -= yOffset;
-
-            collider.moveCollider();
+            position -= new Vector(xOffset, yOffset);
         }
 
         /// <summary>

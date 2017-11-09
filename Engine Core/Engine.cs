@@ -11,14 +11,7 @@ using System.Resources;
 
 namespace Daze {
     public unsafe class Engine {
-
-        public static class Camera{
-            public static readonly GameObject gameObject = new GameObject(0,0);
-            public static void setBackGround(Bitmap background) {
-                Camera.background = new Sprite(Engine.Utility.scaleImage(background, Engine.drawBufferWidth, Engine.drawBufferHeight));
-            }
-            internal static Sprite background;
-        }
+        public static Camera camera = new Camera();
 
         public static Action lostFocus;
         public static Action gotFocus;
@@ -33,15 +26,15 @@ namespace Daze {
         /// Thinking about it....
         /// Who the hell would implement physics in a Game Engine that use characters to draw?
         /// </summary>
-        public static float deltaTime { get { return hiddenDeltaTime; } }
+        public static float deltaTime { get { return _deltaTime; } }
 
 
 
-        private static float hiddenDeltaTime;
-        private static float lastCycleMS = 0;
+        private static float _deltaTime;
+        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
         #endregion
 
-        #region Hidden engine constants/variables
+        #region _ engine constants/variables
         internal static GameForm window;
 
         internal static List<GameScript> gameScripts;
@@ -51,9 +44,6 @@ namespace Daze {
         private static List<GameObject> toDeleteGameObjects;
 
         private static int timeSpan;
-
-        internal static Thread gameCycleThread;
-        internal static bool runGameCycle;
 
         internal static Dictionary<string,Sprite> sprites;
         #endregion
@@ -89,7 +79,7 @@ namespace Daze {
             using(Graphics g = Graphics.FromImage(window.buffer)) {
                 g.DrawRectangle(new Pen(Color.Blue), 0, 0, drawBufferWidth, drawBufferHeight);
             }
-            
+
             drawBuffer = new byte[drawBufferWidth * drawBufferHeight * 3];
             drawBufferStride = drawBufferWidth * 3;
             #endregion
@@ -119,36 +109,24 @@ namespace Daze {
                 }
             }
             #endregion
-
-            //avvio del ciclo di gioco
-            runGameCycle = true;
-            gameCycleThread = new Thread(new ThreadStart(GameCycle));
-            gameCycleThread.SetApartmentState(ApartmentState.STA);
-            gameCycleThread.Start();
             
-            if(PRINT_FPS) {
-                Thread t = new Thread(new ThreadStart(printFPS));
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
-            }
-
             //avvio la finestra del gioco (avviarla prima avrebbe bloccato l'esecuzione del codice)
-            Application.Run(window);
+            window.Show();
+            window.Activate();
+
+            //avvio il ciclo di gioco
+            GameCycle();
             #endregion
         }
 
         private static void printFPS() {
-            while(true) {
-                if(window.focus) {
-                    Console.WriteLine("FPS:"+(int)(1000f / lastCycleMS) + " MS:" + lastCycleMS);
-                }
-                Thread.Sleep(1000);
-            }
+            if(window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
         }
 
         private static void GameCycle() {
             while(!window.loaded) {
                 Thread.Sleep(100);
+                Application.DoEvents();
             }
             //creo lo stopwatch per il ciclo di gioco
             Stopwatch stopwatch = new Stopwatch();
@@ -156,7 +134,7 @@ namespace Daze {
             //disegno lo sfondo
             drawSprite(Camera.background, 0, 0);
 
-            while(runGameCycle) {
+            while(true) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
                 stopwatch.Restart();
 
@@ -213,26 +191,36 @@ namespace Daze {
                 #endregion
 
                 #region Aggiorno lo schermo
-                //ridisegno i componenti modificati dal ciclo di gioco dei vari script
-                //CICLO DI DRAW PRECEDENTE: //DEBUGDATA: 120MS in media, 150 massimo + //DEBUGDATA: <1MS CON UN SOLO GAMEOBJECT DI PICCOLE DIMENSIONI
+                
                 Draw();
 
+                float now = (float)stopwatch.Elapsed.TotalMilliseconds;
                 //aggiorno l'immagine sullo schermo
-                window.updateImage();//DEBUGDATA: 30ms media
+                window.updateImage();
+                Application.DoEvents();
                 #endregion
+
+                #region FPS CONTROL
 
                 //aspetto il numero di MS necessari per arrivare al timestep oppure aspetto 0MS se l'esecuzione dell'update ne ha richiesti più di 100
                 if(timeSpan > 0) {
-                    int temp = timeSpan - (int)stopwatch.ElapsedMilliseconds;
+                    int temp = timeSpan - (int)stopwatch.Elapsed.TotalMilliseconds;
                     if(temp > 0) Thread.Sleep(temp);
                 }
-                //imposto il deltaTime per le simulazioni fisiche
+
+                //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
                 lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
-                hiddenDeltaTime = lastCycleMS / 1000;
+                lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
+
+                //imposto il deltaTime per le simulazioni fisiche=
+                _deltaTime = lastCycleMS / 1000;
+
+                printFPS();
+                #endregion
             }
         }
 
-        #region Hidden engine methods for drawing
+        #region _ engine methods for drawing
         internal static void Draw() {
             sortGameObjectByZ();
 
@@ -308,7 +296,7 @@ namespace Daze {
         public static Sprite loadSprite(string resource_Name, int scale = 1) {
             string spriteName = resource_Name+"x"+scale;
             //cerco se lo sprite esiste già
-            foreach(KeyValuePair<string, Sprite> keyVal in sprites){
+            foreach(KeyValuePair<string, Sprite> keyVal in sprites) {
                 if(keyVal.Key == spriteName) {
                     return keyVal.Value;
                 }
@@ -325,7 +313,7 @@ namespace Daze {
                     break;
                 } catch { }
             }
-            if(bitmap == null) throw new Exception("Can't find the sprite: "+ resource_Name + " the name must be the same as the Resource's name");
+            if(bitmap == null) throw new Exception("Can't find the sprite: " + resource_Name + " the name must be the same as the Resource's name");
             Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
             sprites.Add(spriteName, newSprite);
             return newSprite;
@@ -398,10 +386,6 @@ namespace Daze {
         /// <param name="gameObject">The gameObject to remove</param>
         public static void DeleteGameObject(GameObject gameObject) {
             toDeleteGameObjects.Add(gameObject);
-        }
-
-        internal static void stopGameCycle() {
-            runGameCycle = false;
         }
 
         #endregion

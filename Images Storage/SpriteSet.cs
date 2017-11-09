@@ -9,12 +9,12 @@ namespace Daze {
         private Sprite[] sprites;
 
         #region Variables for drawing
-        private int hiddenMinX;
-        private int hiddenMinY;
+        private int _MinX;
+        private int _MinY;
 
         public Size size;
-        public int minX { get => hiddenMinX; }
-        public int minY { get => hiddenMinY; }
+        public int minX { get => _MinX; }
+        public int minY { get => _MinY; }
 
         public Sprite sprite { get => sprites[index]; }
         #endregion
@@ -26,30 +26,30 @@ namespace Daze {
 
         public int index;
 
-        private bool hiddenRepeat;
+        private bool _Repeat;
         public bool repeat {
-            get => hiddenRepeat;
+            get => _Repeat;
             set {
-                if(value != hiddenRepeat) {
+                if(value != _Repeat) {
                     if(value) {
-                        timer = gameObject.createTimer(timerID, hiddenChangeMS, next);
+                        timer = gameObject.createTimer(timerID, _ChangeMS, next);
                     } else {
                         timer = null;
                         gameObject.removeTimer(timerID);
                     }
                 }
-                hiddenRepeat = value;
+                _Repeat = value;
             }
         }
         #endregion
 
 
-        private int hiddenChangeMS;
+        private int _ChangeMS;
         public int changeMS {
-            get => hiddenChangeMS;
+            get => _ChangeMS;
             set {
-                hiddenChangeMS = value;
-                if(hiddenRepeat) { timer.msPerTick = hiddenChangeMS; }
+                _ChangeMS = value;
+                if(_Repeat) { timer.msPerTick = _ChangeMS; }
             }
         }
 
@@ -67,7 +67,7 @@ namespace Daze {
             this.gameObject = gameObject;
             this.timerID = gameObject.lastTimerIndex;
             gameObject.lastTimerIndex--;
-            hiddenChangeMS = msToChangeSprite;
+            _ChangeMS = msToChangeSprite;
             this.repeat = repeat;//così facendo avvio anche il timer se serve
 
             //inizializzazione parametri di cambio immagine
@@ -95,8 +95,8 @@ namespace Daze {
             }
 
             //in base alle coordinate trovate calcolo i dati necessari al metodo Draw per fare un disegno parziale
-            hiddenMinX = spriteBounds[0];
-            hiddenMinY = spriteBounds[2];
+            _MinX = spriteBounds[0];
+            _MinY = spriteBounds[2];
 
             size.width = (spriteBounds[1] - spriteBounds[0]) + 1;
             size.height = (spriteBounds[3] - spriteBounds[2]) + 1;

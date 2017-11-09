@@ -65,10 +65,16 @@
         #endregion
         #endregion
 
-        public void normalize() {
+        public Vector normalize() {
             float ratio = Geometry.Utility.getHypotenuse(x,y);
             x /= ratio;
             y /= ratio;
+            return this;
+        }
+
+        public override bool Equals(object obj) {
+            if(typeof(Vector) != obj.GetType()) return false;
+            return this == (Vector)obj;
         }
     }
 

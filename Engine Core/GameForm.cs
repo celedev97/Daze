@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -8,26 +7,44 @@ using System.Windows.Forms;
 namespace Daze {
     internal partial class GameForm:Form {
         internal bool loaded = false;
-
+        private PictureBox gameFrame;
         internal bool focus = false;
-        private Graphics graph;
+
+        private System.ComponentModel.IContainer components = null;
 
         internal GameForm() {
-            InitializeComponent();
+            //form
+            DoubleBuffered = true;
+            Text = "GameForm";
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            //gameFrame
+            this.gameFrame = new System.Windows.Forms.PictureBox();
+            //((System.ComponentModel.ISupportInitialize)(this.gameFrame)).BeginInit();
+            gameFrame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Controls.Add(this.gameFrame);
+            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+
+            //events
+            FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GameForm_FormClosed);
+            Shown += new System.EventHandler(this.GameForm_Shown);
+            GotFocus += new System.EventHandler(this.Got_Focus);
+            LostFocus += new System.EventHandler(this.Lost_Focus);
         }
 
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
-            Engine.stopGameCycle();
-            Application.ExitThread();
             Environment.Exit(0);
+        }
+        protected override void Dispose(bool disposing) {
+            if(disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         private void GameForm_Shown(object sender, EventArgs e) {
             loaded = true;
-            graph = CreateGraphics();
-            graph.CompositingMode = CompositingMode.SourceCopy;
-            graph.InterpolationMode = InterpolationMode.NearestNeighbor;
-
         }
 
         private void Lost_Focus(object sender, EventArgs e) {
@@ -56,7 +73,7 @@ namespace Daze {
 
                 buffer.UnlockBits(bmpData);
 
-                graph.DrawImage(buffer, 0, 0);
+                gameFrame.Image = buffer;
             }
         }
     }

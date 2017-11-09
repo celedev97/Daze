@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Daze {
     public class Timer {
         #region Variables and properties
-        private int hiddenID;
-        public int ID { get => hiddenID; }
+        private int _ID;
+        public int ID { get => _ID; }
 
-        private int hiddenMSPerTick;
+        private int _MSPerTick;
         public int msPerTick {
-            get => hiddenMSPerTick;
+            get => _MSPerTick;
             set {
                 if(value > 0) {
-                    hiddenMSPerTick = value;
+                    _MSPerTick = value;
                 } else {
                     throw new Exception("Specified MS for Timer are less than 1");
                 }
@@ -33,7 +33,7 @@ namespace Daze {
         public Timer(int timerID, int msPerTick, Action tickAction, bool restartFlag = true, int currentMS = 0) {
             this.restartFlag = restartFlag;
             this.tickAction = tickAction;
-            hiddenID = timerID;
+            _ID = timerID;
             set(msPerTick, currentMS);
         }
         #endregion
