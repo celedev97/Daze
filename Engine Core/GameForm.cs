@@ -9,15 +9,22 @@ namespace Daze {
         #region Variables
         internal bool loaded = false;
         private PictureBox gameFrame;
+<<<<<<< HEAD
         internal Bitmap buffer;
         internal bool focus = false;
         #endregion
+=======
+        internal bool focus = false;
+
+        private System.ComponentModel.IContainer components = null;
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         #region Methods
         internal GameForm() {
             //form
             DoubleBuffered = true;
             Text = "GameForm";
+<<<<<<< HEAD
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
 
@@ -31,11 +38,34 @@ namespace Daze {
             Shown += new EventHandler(this.GameForm_Shown);
             GotFocus += new EventHandler(this.Got_Focus);
             LostFocus += new EventHandler(this.Lost_Focus);
+=======
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            //gameFrame
+            this.gameFrame = new System.Windows.Forms.PictureBox();
+            //((System.ComponentModel.ISupportInitialize)(this.gameFrame)).BeginInit();
+            gameFrame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Controls.Add(this.gameFrame);
+            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+
+            //events
+            FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GameForm_FormClosed);
+            Shown += new System.EventHandler(this.GameForm_Shown);
+            GotFocus += new System.EventHandler(this.Got_Focus);
+            LostFocus += new System.EventHandler(this.Lost_Focus);
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         }
 
         #region Event handlers
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
             Environment.Exit(0);
+        }
+        protected override void Dispose(bool disposing) {
+            if(disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         private void GameForm_Shown(object sender, EventArgs e) {

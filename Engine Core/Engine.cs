@@ -10,11 +10,16 @@ using System.Linq.Expressions;
 using System.Resources;
 
 namespace Daze {
+<<<<<<< HEAD
     public partial class Engine {
         #region Variables
         #region Engine Settings
         private static Camera _camera = new Camera();
         public static Camera camera {get => camera; }
+=======
+    public unsafe class Engine {
+        public static Camera camera = new Camera();
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         public static Action lostFocus;
         public static Action gotFocus;
@@ -42,6 +47,7 @@ namespace Daze {
         /// The milliseconds that the last game cycle took
         /// This can be used to do physics calculation regardless of FPS.
         /// </summary>
+<<<<<<< HEAD
         private static float _deltaTime;
         public static float deltaTime { get { return _deltaTime; } }
         
@@ -52,12 +58,31 @@ namespace Daze {
         #region Private Game Lists
         //Game Scripts Lists
         private static List<GameScript> gameScripts;
+=======
+        public static float deltaTime { get { return _deltaTime; } }
+
+
+
+        private static float _deltaTime;
+        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
+        #endregion
+
+        #region _ engine constants/variables
+        internal static GameForm window;
+
+        internal static List<GameScript> gameScripts;
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         private static List<GameObject> gameObjects;
         private static List<GameObject> newGameObjects;
         private static List<GameObject> toDeleteGameObjects;
 
+<<<<<<< HEAD
         //Sprite List
+=======
+        private static int timeSpan;
+
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         internal static Dictionary<string,Sprite> sprites;
         #endregion
         #region Drawing variables
@@ -96,8 +121,13 @@ namespace Daze {
                 g.DrawRectangle(new Pen(Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
             }
 
+<<<<<<< HEAD
             drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
             drawBufferStride = _drawBufferWidth * 3;
+=======
+            drawBuffer = new byte[drawBufferWidth * drawBufferHeight * 3];
+            drawBufferStride = drawBufferWidth * 3;
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
             #endregion
 
             #region Inizializzazione liste
@@ -125,18 +155,30 @@ namespace Daze {
                 }
             }
             #endregion
+<<<<<<< HEAD
 
             //avvio la finestra del gioco (avviarla prima avrebbe bloccato l'esecuzione del codice)
             _window.Show();
             _window.Activate();
+=======
+            
+            //avvio la finestra del gioco (avviarla prima avrebbe bloccato l'esecuzione del codice)
+            window.Show();
+            window.Activate();
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
             //avvio il ciclo di gioco
             GameCycle();
             #endregion
         }
 
+<<<<<<< HEAD
         public static void Stop() {
             _window.Close();
+=======
+        private static void printFPS() {
+            if(window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         }
         #endregion
 
@@ -214,6 +256,7 @@ namespace Daze {
                 #endregion
                 #endregion
 
+<<<<<<< HEAD
                 #region Updating new pixel positions
                 _camera.pushPixelPosition();
                 foreach(GameObject gameObject in gameObjects) {
@@ -250,6 +293,20 @@ namespace Daze {
                 #endregion
 
                 #region FPS check
+=======
+                #region Aggiorno lo schermo
+                
+                Draw();
+
+                float now = (float)stopwatch.Elapsed.TotalMilliseconds;
+                //aggiorno l'immagine sullo schermo
+                window.updateImage();
+                Application.DoEvents();
+                #endregion
+
+                #region FPS CONTROL
+
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
                 //aspetto il numero di MS necessari per arrivare al timestep oppure aspetto 0MS se l'esecuzione dell'update ne ha richiesti più di 100
                 if(timeSpan > 0) {
                     int temp = timeSpan - (int)stopwatch.Elapsed.TotalMilliseconds;
@@ -259,9 +316,24 @@ namespace Daze {
                 //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
                 lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
                 lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
+<<<<<<< HEAD
 
                 //imposto il deltaTime per le simulazioni fisiche=
                 _deltaTime = lastCycleMS / 1000;
+=======
+
+                //imposto il deltaTime per le simulazioni fisiche=
+                _deltaTime = lastCycleMS / 1000;
+
+                printFPS();
+                #endregion
+            }
+        }
+
+        #region _ engine methods for drawing
+        internal static void Draw() {
+            sortGameObjectByZ();
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
                 printFPS();
                 #endregion
@@ -383,6 +455,35 @@ namespace Daze {
 
         #endregion
 
+<<<<<<< HEAD
+=======
+        public static Sprite loadSprite(string resource_Name, int scale = 1) {
+            string spriteName = resource_Name+"x"+scale;
+            //cerco se lo sprite esiste già
+            foreach(KeyValuePair<string, Sprite> keyVal in sprites) {
+                if(keyVal.Key == spriteName) {
+                    return keyVal.Value;
+                }
+            }
+            //se sono qui allora lo sprite non è mai stato caricato
+            //ottengo il namespace del metodo che ha chiamato questo metodo
+            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
+            Bitmap bitmap = null;
+            //ottengo i file di risorse 
+            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
+                try {
+                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources",".Resources"),callerAssembly);
+                    bitmap = (Bitmap)rm.GetObject(resource_Name);
+                    break;
+                } catch { }
+            }
+            if(bitmap == null) throw new Exception("Can't find the sprite: " + resource_Name + " the name must be the same as the Resource's name");
+            Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
+            sprites.Add(spriteName, newSprite);
+            return newSprite;
+        }
+
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         #region Methods for GameObject operations
         #region Methods for getting informations
         /// <summary>

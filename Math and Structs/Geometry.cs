@@ -213,11 +213,14 @@ namespace Daze.Geometry {
         public static Point operator -(Point point, Vector vector) {
             return new Point(point.x - vector.x, point.y - vector.y);
         }
+<<<<<<< HEAD
 
         public static Vector operator -(Point point, Point point2) {
             return new Vector(point.x - point2.x, point.y - point2.y);
         }
 
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
     }
 
     public struct Size {

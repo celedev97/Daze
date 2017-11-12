@@ -11,6 +11,7 @@ namespace Daze {
         #endregion
 
         #region variables for sprites
+<<<<<<< HEAD
         internal Sprite lastSprite;
         private SpriteSet _SpriteSet;
         /// <summary>
@@ -23,6 +24,12 @@ namespace Daze {
                 if(value == null) {
                     Engine.clean(this, false);
                 }
+=======
+        private SpriteSet _SpriteSet;
+        public SpriteSet spriteSet {
+            get => _SpriteSet;
+            set {
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
                 _SpriteSet = value;
                 collider?.recreateCollider();
                 pushPixelPosition();
@@ -42,14 +49,20 @@ namespace Daze {
         public Point position;
 
         private float _Rotation = 0;
+<<<<<<< HEAD
         /// <summary>
         /// The rotation of the gameObjects
         /// </summary>
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         public float rotation {
             get => _Rotation;
             set {
                 _Rotation = value;
+<<<<<<< HEAD
                 spriteSet?.rotate();
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
                 collider?.rotateCollider();
             }
         }
@@ -62,11 +75,15 @@ namespace Daze {
         public int drawLayer;
 
         protected Collider _collider;
+<<<<<<< HEAD
         /// <summary>
         /// The collider of this GameObject, colliders can have various shapes and adapt to the SpriteSet
         /// </summary>
         public virtual Collider collider { get => _collider;
             set { _collider = value; } }
+=======
+        public virtual Collider collider { get => _collider; set { _collider = value; } }
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         /// <summary>
         /// Returns the object that collided with this Object in the last movement, can be NULL
@@ -86,10 +103,13 @@ namespace Daze {
         /// This contain the GameObject that collided with this one in the last movement (NULL if there was no collision)
         /// </summary>
         protected GameObject _lastCollision;
+<<<<<<< HEAD
         /// <summary>
         /// The layers of colliders that this GameObjects should ignore while checking collisions
         /// </summary>
         public List<IgnoreLayer> ignoreLayers;
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         #endregion
 
         #region Constructors
@@ -112,7 +132,10 @@ namespace Daze {
             position.y = y;
 
             _lastCollision = null;
+<<<<<<< HEAD
             ignoreLayers = new List<IgnoreLayer>();
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
             //avvio il metodo di inizializzazione del gameObject
             Start();
@@ -241,6 +264,7 @@ namespace Daze {
         private bool moveX(float xOffset) {
             //muovo il GameObject
             position.x += xOffset;
+<<<<<<< HEAD
             //controllo subito se il gameObject è limitato a muoversi nei bordi della camera
             if(Engine.camera.isFixed) {
                 if((position.x + spriteSet?.size.width / 2) > Engine.camera.limits.maxX ||(position.x - spriteSet?.size.width / 2) < Engine.camera.limits.minX) {
@@ -251,6 +275,8 @@ namespace Daze {
                 }
             }
 
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
             if(collider == null) {
                 return true;
             } else {
@@ -271,7 +297,10 @@ namespace Daze {
             }
         }
         private bool moveY(float yOffset) {
+<<<<<<< HEAD
             //muovo il GameObject
+=======
+>>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
             position.y += yOffset;
             //controllo subito se il gameObject è limitato a muoversi nei bordi della camera
             if(Engine.camera.isFixed) {
