@@ -1,0 +1,14 @@
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.dll.config
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.dll
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.pdb
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.csproj.CoreCompileInputs.cache
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.dll
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.pdb
+C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.csprojResolveAssemblyReference.cache
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.dll.config
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.dll
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\bin\Debug\Daze.pdb
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.csprojResolveAssemblyReference.cache
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.csproj.CoreCompileInputs.cache
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.dll
+C:\Users\Fede\Dropbox\AIV\Project_Daze\Daze-2D-GDI-CSharp-Game-Engine\obj\Debug\Daze.pdb

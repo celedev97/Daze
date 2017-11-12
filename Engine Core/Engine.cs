@@ -10,88 +10,94 @@ using System.Linq.Expressions;
 using System.Resources;
 
 namespace Daze {
-    public unsafe class Engine {
-
-        public static class Camera{
-            public static readonly GameObject gameObject = new GameObject(0,0);
-            public static void setBackGround(Bitmap background) {
-                Camera.background = new Sprite(Engine.Utility.scaleImage(background, Engine.drawBufferWidth, Engine.drawBufferHeight));
-            }
-            internal static Sprite background;
-        }
+    public partial class Engine {
+        #region Variables
+        #region Engine Settings
+        private static Camera _camera = new Camera();
+        public static Camera camera {get => camera; }
 
         public static Action lostFocus;
         public static Action gotFocus;
 
-        //TODO: SETTA IL FLAG A FALSE SE GLI FPS SONO STABILI (A GIOCO COMPLETATO)
-        public static bool PRINT_FPS = true;
+        private static GameForm _window;
+        public static GameForm window{get=>_window;}
 
-        #region Engine external settings/data
+        private static bool _cursorHide = false;
+        public static bool cursorHide {
+            get => _cursorHide;
+            set {
+                _cursorHide = value;
+                if(value) {
+                    Cursor.Hide();
+                } else {
+                    Cursor.Show();
+                }
+            }
+        }
+        
+        public static bool PRINT_FPS = false;
+        #endregion
+        #region Time related variables
         /// <summary>
         /// The milliseconds that the last game cycle took
-        /// This can be used to do dynamical physics calculation.
-        /// Thinking about it....
-        /// Who the hell would implement physics in a Game Engine that use characters to draw?
+        /// This can be used to do physics calculation regardless of FPS.
         /// </summary>
-        public static float deltaTime { get { return hiddenDeltaTime; } }
+        private static float _deltaTime;
+        public static float deltaTime { get { return _deltaTime; } }
+        
+        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
 
-
-
-        private static float hiddenDeltaTime;
-        private static float lastCycleMS = 0;
+        private static int timeSpan;
         #endregion
-
-        #region Hidden engine constants/variables
-        internal static GameForm window;
-
-        internal static List<GameScript> gameScripts;
+        #region Private Game Lists
+        //Game Scripts Lists
+        private static List<GameScript> gameScripts;
 
         private static List<GameObject> gameObjects;
         private static List<GameObject> newGameObjects;
         private static List<GameObject> toDeleteGameObjects;
 
-        private static int timeSpan;
-
-        internal static Thread gameCycleThread;
-        internal static bool runGameCycle;
-
+        //Sprite List
         internal static Dictionary<string,Sprite> sprites;
         #endregion
-
-        #region Drawing buffer and game frame
+        #region Drawing variables
         internal static byte[] drawBuffer;
 
-        internal static int drawBufferHeight;
-        internal static int drawBufferWidth;
+        internal static int _drawBufferHeight;
+        public static int drawBufferHeight { get => _drawBufferHeight; }
+        internal static int _drawBufferWidth;
+        public static int drawBufferWidth { get => _drawBufferWidth; }
 
         internal static int drawBufferStride;
 
         #endregion
+        #endregion
 
+        #region Functions
+        #region Start/Stop functions
         public static void Start(int FPSLimit = 60) {
             #region Initial Setup
             //calcolo il timespan di un Update necessario per non superare il limite di troppo il limite di FPS
-            FPSLimit++;
-            timeSpan = (timeSpan = 1000 / FPSLimit) > 0 ? timeSpan : 1;
+            timeSpan = (timeSpan = 1000 / FPSLimit + 1) > 0 ? timeSpan : 1;
 
             //inizializzo l'utility per la generazione di numeri casuali
             Utility.random = new Random();
 
             #region Finestra e buffer
             //creo la finestra del gioco
-            window = new GameForm();
+            _window = new GameForm();
 
             //inizializzo il doppio buffer
-            drawBufferWidth = Screen.PrimaryScreen.Bounds.Width;
-            drawBufferHeight = Screen.PrimaryScreen.Bounds.Height;
+            _drawBufferWidth = Screen.PrimaryScreen.Bounds.Width;
+            _drawBufferHeight = Screen.PrimaryScreen.Bounds.Height;
 
-            window.buffer = new Bitmap(drawBufferWidth, drawBufferHeight);
-            using(Graphics g = Graphics.FromImage(window.buffer)) {
-                g.DrawRectangle(new Pen(Color.Blue), 0, 0, drawBufferWidth, drawBufferHeight);
+            _window.buffer = new Bitmap(_drawBufferWidth, _drawBufferHeight);
+            using(Graphics g = Graphics.FromImage(_window.buffer)) {
+                g.DrawRectangle(new Pen(Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
             }
-            
-            drawBuffer = new byte[drawBufferWidth * drawBufferHeight * 3];
-            drawBufferStride = drawBufferWidth * 3;
+
+            drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
+            drawBufferStride = _drawBufferWidth * 3;
             #endregion
 
             #region Inizializzazione liste
@@ -120,47 +126,44 @@ namespace Daze {
             }
             #endregion
 
-            //avvio del ciclo di gioco
-            runGameCycle = true;
-            gameCycleThread = new Thread(new ThreadStart(GameCycle));
-            gameCycleThread.SetApartmentState(ApartmentState.STA);
-            gameCycleThread.Start();
-            
-            if(PRINT_FPS) {
-                Thread t = new Thread(new ThreadStart(printFPS));
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
-            }
-
             //avvio la finestra del gioco (avviarla prima avrebbe bloccato l'esecuzione del codice)
-            Application.Run(window);
+            _window.Show();
+            _window.Activate();
+
+            //avvio il ciclo di gioco
+            GameCycle();
             #endregion
         }
 
-        private static void printFPS() {
-            while(true) {
-                if(window.focus) {
-                    Console.WriteLine("FPS:"+(int)(1000f / lastCycleMS) + " MS:" + lastCycleMS);
-                }
-                Thread.Sleep(1000);
-            }
+        public static void Stop() {
+            _window.Close();
         }
+        #endregion
 
         private static void GameCycle() {
-            while(!window.loaded) {
+            while(!_window.loaded) {
                 Thread.Sleep(100);
+                Application.DoEvents();
             }
             //creo lo stopwatch per il ciclo di gioco
             Stopwatch stopwatch = new Stopwatch();
 
             //disegno lo sfondo
-            drawSprite(Camera.background, 0, 0);
+            drawSprite(_camera.background, 0, 0);
 
-            while(runGameCycle) {
+            while(true) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
                 stopwatch.Restart();
 
-                #region Aggiorno i componenti di gioco
+                #region Saving last draw status before all the scripts
+                foreach(GameObject gameObject in gameObjects) {
+                    //mi segno la posizione corrente dell'oggetto come posizione preUpdate così da poterla poi pulire se necessario
+                    gameObject.pushLastPixelPosition();
+                    gameObject.lastSprite = gameObject.spriteSet?.sprite;
+                }
+                #endregion
+
+                #region Executing scripts
                 #region GameScripts
                 foreach(GameScript gameScript in gameScripts) {
                     gameScript.Update();
@@ -170,11 +173,11 @@ namespace Daze {
                 #region GameObjects scripts
                 //esecuzione degli script collegati a un gameObject
                 foreach(GameObject gameObject in gameObjects) {
-                    //mi segno la posizione corrente dell'oggetto come posizione preUpdate così da poterla poi pulire se necessario
-                    gameObject.pushLastPixelPosition();
-
+                    #region Timers
                     //aggiorno i millisecondi dei timer dell'oggetto prima di eseguire l'Update
                     foreach(Timer timer in gameObject.timers) {
+                        //non aggiorno il timer se è un timer di uno spriteSet e non è attivo
+                        if(timer.ID < 0 && timer.ID != gameObject.spriteSet?.timerID) continue;
                         if(timer.currentMS < timer.msPerTick) timer.currentMS += lastCycleMS;
                         if(timer.ticked()) {
                             timer.tickAction?.Invoke();
@@ -187,15 +190,13 @@ namespace Daze {
                     }
                     //cancellazione timer appena cancellati dalla lista dei gameObject
                     for(int i = gameObject.toDeleteTimers.Count - 1; i >= 0; i--) {
-                        clean(gameObject, false);
                         gameObject.timers.Remove(gameObject.toDeleteTimers[i]);
                         gameObject.toDeleteTimers.RemoveAt(i);
                     }
+                    #endregion
                     gameObject.Update();
-
-                    //aggiorno la posizione corrente sullo schermo
-                    gameObject.pushPixelPosition();
                 }
+
                 #endregion
 
                 #region GameObject lists editing
@@ -206,42 +207,68 @@ namespace Daze {
                 }
                 //cancellazione gameobject appena cancellati dalla lista dei gameObject
                 for(int i = toDeleteGameObjects.Count - 1; i >= 0; i--) {
+                    clean(toDeleteGameObjects[i], false);
                     gameObjects.Remove(toDeleteGameObjects[i]);
                     toDeleteGameObjects.RemoveAt(i);
                 }
                 #endregion
                 #endregion
 
-                #region Aggiorno lo schermo
-                //ridisegno i componenti modificati dal ciclo di gioco dei vari script
-                //CICLO DI DRAW PRECEDENTE: //DEBUGDATA: 120MS in media, 150 massimo + //DEBUGDATA: <1MS CON UN SOLO GAMEOBJECT DI PICCOLE DIMENSIONI
-                Draw();
-
-                //aggiorno l'immagine sullo schermo
-                window.updateImage();//DEBUGDATA: 30ms media
+                #region Updating new pixel positions
+                _camera.pushPixelPosition();
+                foreach(GameObject gameObject in gameObjects) {
+                    gameObject.pushPixelPosition();
+                }
                 #endregion
 
+                #region Updating the screen
+                //sorting game objects by draw priority
+                sortGameObjectByZ();
+
+                #region Draw on buffer operations
+                //cycle for every gameObject and clean it
+                foreach(GameObject gameObject in gameObjects) {
+                    //i skip the current gameObject if it doesn't have a spriteSet
+                    if(gameObject.spriteSet == null) continue;
+                    clean(gameObject);
+                }
+
+                //cycle for every gameObject and draw it again
+                foreach(GameObject gameObject in gameObjects) {
+                    //i skip the current gameObject if it doesn't have a spriteSet
+                    if(gameObject.spriteSet == null) continue;
+                    //i don't draw the sprite if there is no sprite
+                    if(gameObject.spriteSet.sprite == null) continue;
+                    drawSprite(gameObject);
+                }
+                #endregion
+
+                float now = (float)stopwatch.Elapsed.TotalMilliseconds;
+                //aggiorno l'immagine sullo schermo
+                _window.updateImage();
+                Application.DoEvents();
+                #endregion
+
+                #region FPS check
                 //aspetto il numero di MS necessari per arrivare al timestep oppure aspetto 0MS se l'esecuzione dell'update ne ha richiesti più di 100
                 if(timeSpan > 0) {
-                    int temp = timeSpan - (int)stopwatch.ElapsedMilliseconds;
+                    int temp = timeSpan - (int)stopwatch.Elapsed.TotalMilliseconds;
                     if(temp > 0) Thread.Sleep(temp);
                 }
-                //imposto il deltaTime per le simulazioni fisiche
+
+                //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
                 lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
-                hiddenDeltaTime = lastCycleMS / 1000;
+                lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
+
+                //imposto il deltaTime per le simulazioni fisiche=
+                _deltaTime = lastCycleMS / 1000;
+
+                printFPS();
+                #endregion
             }
         }
 
         #region Hidden engine methods for drawing
-        internal static void Draw() {
-            sortGameObjectByZ();
-
-            foreach(GameObject gameObject in gameObjects) {
-                if(gameObject.spriteSet == null) continue;
-                clean(gameObject);
-                drawSprite(gameObject);
-            }
-        }
         private static void sortGameObjectByZ() {
             bool nothingReplaced;
             do {
@@ -256,24 +283,75 @@ namespace Daze {
                 }
             } while(!nothingReplaced);
         }
-        //questo metodo disegna solo la parte con alfa != 0
+
         private static void drawSprite(GameObject gameObject) {
-            //AGGIUNGI CALCOLO PER CONTROLLARE SE È FUORI DALLA CAMERA
-            drawSpritePortion(gameObject.spriteSet.sprite,
-                gameObject.pixelPosition.x, gameObject.pixelPosition.y,
-                gameObject.spriteSet.minX, gameObject.spriteSet.minY,
-                gameObject.spriteSet.size.width, gameObject.spriteSet.size.height);
-        }
-
-
-        internal static void clean(GameObject gameObject, bool checkPosition = true) {
-            if(checkPosition) {
-                if(gameObject.pixelPosition.x == gameObject.lastPixelPosition.x && gameObject.pixelPosition.y == gameObject.lastPixelPosition.y) return;
+            if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition)) {
+                drawSpritePortion(gameObject.spriteSet.sprite,
+                                  drawXPosition, drawYPosition,
+                                  spriteXPosition, spriteYPosition,
+                                  drawWidth, drawHeight);
             }
-            drawSpritePortion(Camera.background, gameObject.lastPixelPosition.x, gameObject.lastPixelPosition.y, gameObject.lastPixelPosition.x, gameObject.lastPixelPosition.y, gameObject.spriteSet.sprite.width, gameObject.spriteSet.sprite.height);
         }
 
-        internal static void drawSpritePortion(Sprite sprite, int drawXPosition, int drawYPosition, int spriteXPosition, int spriteYPosition, int width, int height) {
+        //da in output i dati per disegnare parzialmente lo sprite, restituisce false se lo sprite non è disegnabile
+        private static bool getDrawData(GameObject gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, bool lastPosition = false) {
+            //è possibile che il gameObject sia fuori (o parzialmente fuori) dallo schermo, devo capire quanto disegnare del gameObject, e in che posizione
+
+            drawWidth = gameObject.spriteSet.size.width;
+            spriteXPosition = gameObject.spriteSet.minX;
+
+            drawHeight = gameObject.spriteSet.size.height;
+            spriteYPosition = gameObject.spriteSet.minY;
+
+            if(lastPosition) {
+                drawXPosition = gameObject.lastPixelPosition.x;
+                drawYPosition = gameObject.lastPixelPosition.y;
+            } else {
+                drawXPosition = gameObject.pixelPosition.x;
+                drawYPosition = gameObject.pixelPosition.y;
+            }
+
+            int originalXPosition = drawXPosition;
+            int originalYPosition = drawYPosition;
+
+            //controllo se il gameObject è fuori dallo schermo da uno dei due lati orizzontali
+            if(drawXPosition < 0) {
+                drawWidth += originalXPosition;
+                if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
+                drawXPosition = 0;
+                spriteXPosition += (gameObject.spriteSet.size.width - drawWidth);
+            } else if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
+                drawWidth += Engine._drawBufferWidth - (originalXPosition + drawWidth);
+                if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
+            }
+
+            //controllo se il gameObject è fuori dallo schermo da uno dei due lati verticali
+            if(drawYPosition < 0) {
+                drawHeight += originalYPosition;
+                if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
+                drawYPosition = 0;
+                spriteYPosition += (gameObject.spriteSet.size.height - drawHeight);
+            } else if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
+                drawHeight += Engine._drawBufferHeight - (originalYPosition + drawHeight);
+                if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
+            }
+            return true;
+        }
+
+        internal static void clean(GameObject gameObject, bool checkStatusChange = true) {
+            if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, true)) {
+                drawSpritePortion(_camera.background,
+                                  drawXPosition, drawYPosition,
+                                  drawXPosition, drawYPosition,
+                                  drawWidth, drawHeight);
+            }
+        }
+
+        private static bool statusChanged(GameObject gameObject) {
+            return (gameObject.pixelPosition.x == gameObject.lastPixelPosition.x && gameObject.pixelPosition.y == gameObject.lastPixelPosition.y && gameObject.spriteSet?.sprite == gameObject.lastSprite);
+        }
+
+        private static void drawSpritePortion(Sprite sprite, int drawXPosition, int drawYPosition, int spriteXPosition, int spriteYPosition, int width, int height) {
             byte[] spriteArray = sprite.pixelArray;
             int spriteStride = sprite.stride;
 
@@ -304,32 +382,6 @@ namespace Daze {
 
 
         #endregion
-
-        public static Sprite loadSprite(string resource_Name, int scale = 1) {
-            string spriteName = resource_Name+"x"+scale;
-            //cerco se lo sprite esiste già
-            foreach(KeyValuePair<string, Sprite> keyVal in sprites){
-                if(keyVal.Key == spriteName) {
-                    return keyVal.Value;
-                }
-            }
-            //se sono qui allora lo sprite non è mai stato caricato
-            //ottengo il namespace del metodo che ha chiamato questo metodo
-            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
-            Bitmap bitmap = null;
-            //ottengo i file di risorse 
-            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
-                try {
-                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources",".Resources"),callerAssembly);
-                    bitmap = (Bitmap)rm.GetObject(resource_Name);
-                    break;
-                } catch { }
-            }
-            if(bitmap == null) throw new Exception("Can't find the sprite: "+ resource_Name + " the name must be the same as the Resource's name");
-            Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
-            sprites.Add(spriteName, newSprite);
-            return newSprite;
-        }
 
         #region Methods for GameObject operations
         #region Methods for getting informations
@@ -389,7 +441,7 @@ namespace Daze {
         /// </summary>
         /// <param name="gameObject">The GameObject to add</param>
         public static void AddGameObject(GameObject gameObject) {
-            newGameObjects.Add(gameObject);
+            newGameObjects?.Add(gameObject);
         }
 
         /// <summary>
@@ -400,74 +452,43 @@ namespace Daze {
             toDeleteGameObjects.Add(gameObject);
         }
 
-        internal static void stopGameCycle() {
-            runGameCycle = false;
+        #endregion
+        #endregion
+
+        #region Methods for preloading
+        public static Sprite loadSprite(string resource_Name, int scale = 1) {
+            string spriteName = resource_Name+"x"+scale;
+            //cerco se lo sprite esiste già
+            foreach(KeyValuePair<string, Sprite> keyVal in sprites) {
+                if(keyVal.Key == spriteName) {
+                    return keyVal.Value;
+                }
+            }
+            //se sono qui allora lo sprite non è mai stato caricato
+            //ottengo il namespace del metodo che ha chiamato questo metodo
+            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
+            Bitmap bitmap = null;
+            //ottengo i file di risorse 
+            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
+                try {
+                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources",".Resources"),callerAssembly);
+                    bitmap = (Bitmap)rm.GetObject(resource_Name);
+                    break;
+                } catch { }
+            }
+            if(bitmap == null) throw new Exception("Can't find the sprite: " + resource_Name + " the name must be the same as the Resource's name");
+            Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
+            sprites.Add(spriteName, newSprite);
+            return newSprite;
         }
 
         #endregion
-        #endregion
-        /// <summary>
-        /// This is a static class that contains some method that can be used to do various things
-        /// </summary>
-        public static class Utility {
-            internal static Random random;
 
-            /// <summary>
-            /// This method generate a random int number
-            /// </summary>
-            /// <param name="max">The maximum number generated</param>
-            /// <returns>A number from 0 to max (both included in the range)</returns>
-            public static int RandomInt(int max) {
-                return (int)(random.NextDouble() * (max + 1));
-            }
-
-            /// <summary>
-            /// Wait... you really need me to explain this... ?
-            /// A simple function that count the occurrence of a string in another string
-            /// </summary>
-            /// <param name="haystack">The large string</param>
-            /// <param name="needle">The small string that must be searched in the larger one</param>
-            /// <returns></returns>
-            public static int countStringOccurrences(string haystack, string needle) {
-                int count = 0;
-                int nextIndex = 0;
-                while((nextIndex = haystack.IndexOf(needle, nextIndex)) > -1) {
-                    count++;
-                }
-                return count;
-            }
-
-            internal static string[] StringToDesignArray(string designString) {
-                return designString.Replace("\r\n", "\n").Split('\n'); ;
-            }
-
-            internal static byte alphaBlend(byte colorComponentOld, byte colorComponentNew, byte alpha) {
-                switch(alpha) {
-                    case 0:
-                        return colorComponentOld;
-                    case 255:
-                        return colorComponentNew;
-                }
-                return (byte)((colorComponentNew * alpha / 255.0) + (colorComponentOld * (1 - (alpha / 255.0))));
-            }
-
-            internal static string getResourceName<T>(Expression<Func<T>> property) {
-                return (property.Body as MemberExpression).Member.Name;
-            }
-
-            internal static Bitmap scaleImage(Bitmap original, int scale) {
-                if(scale < 2) return original;
-                return scaleImage(original, original.Width * scale, original.Height * scale);
-            }
-
-            internal static Bitmap scaleImage(Bitmap original, int width, int height) {
-                Bitmap newImage = new Bitmap(width, height) ;
-                using(Graphics g = Graphics.FromImage(newImage)) {
-                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                    g.DrawImage(original, 0, 0, newImage.Width, newImage.Height);
-                }
-                return newImage;
-            }
+        #region Diagnostic Methods
+        private static void printFPS() {
+            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
         }
+        #endregion
+        #endregion
     }
 }

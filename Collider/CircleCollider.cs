@@ -7,6 +7,8 @@ namespace Daze {
 
         public CircleCollider(GameObject gameObject) : base(gameObject) {}
 
+        public override float ray => circle.radius;
+
         public override bool collide(Collider otherCollider) {
             throw new NotImplementedException();
         }

@@ -13,6 +13,8 @@ namespace Daze {
             recreateCollider();
         }
 
+        public abstract float ray { get; }
+
         public abstract bool collide(Collider otherCollider);
 
         public abstract void recreateCollider();

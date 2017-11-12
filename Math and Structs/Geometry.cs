@@ -14,16 +14,20 @@ namespace Daze.Geometry {
             //ax + by + c = 0
             // by = -ax -c
             // y = x (-a/b) (-c/b)
-            float A1 = line1.point2.y - line1.point1.y;
-            float A2 = line2.point2.y - line2.point1.y;
 
-            float B1 = line1.point1.x - line1.point2.x;
-            float B2 = line2.point1.x - line2.point2.x;
+            // a = y1 - y2
+            float A1 = line1.point1.y - line1.point2.y;
+            float A2 = line2.point1.y - line2.point2.y;
 
-            float C1 = A1 * line1.point1.x + B1 * line1.point1.y;
-            float C2 = A2 * line2.point1.x + B2 * line2.point1.y;
+            //b = x2 - x1
+            float B1 = line1.point2.x - line1.point1.x;
+            float B2 = line2.point2.x - line2.point1.x;
 
-            float delta = A1*B2 - A2*B1;
+            //c = x1y2 -y1x2
+            float C1 = line1.point1.x * line1.point2.y - line1.point1.y * line1.point2.x;
+            float C2 = line2.point1.x * line2.point2.y - line2.point1.y * line2.point2.x;
+
+            float delta = A1*B2 - A2*B1; //determinante del sistema di equazioni
             if(delta == 0) {
                 //le linee sono parallele o sono la stessa linea
                 float Q1 = -C1/B1;
@@ -95,8 +99,8 @@ namespace Daze.Geometry {
                 }
             } else {
                 //le rette non sono parallele, trovo l'intersezione normalmente
-                float x = (B2*C1 - B1*C2)/delta;
-                float y = (A1*C2 - A2*C1)/delta;
+                float x = (B1*C2 - C1*B2)/delta;
+                float y = (A2*C1 - A1*C2)/delta;
 
                 if(B1 == 0) {
                     //linea parallela a Y, devo fare i controlli sulla Y
@@ -201,6 +205,19 @@ namespace Daze.Geometry {
         public override string ToString() {
             return "{" + x.ToString().Replace(",",".") + "," + y.ToString().Replace(",", ".") + "}";
         }
+
+        public static Point operator +(Point point, Vector vector) {
+            return new Point(point.x + vector.x, point.y + vector.y);
+        }
+
+        public static Point operator -(Point point, Vector vector) {
+            return new Point(point.x - vector.x, point.y - vector.y);
+        }
+
+        public static Vector operator -(Point point, Point point2) {
+            return new Vector(point.x - point2.x, point.y - point2.y);
+        }
+
     }
 
     public struct Size {
@@ -275,12 +292,12 @@ namespace Daze.Geometry {
 
     public class Rectangle:ConvexPolygon {
         #region Properties and variables
-        private float hiddenWidth; public float width { get => hiddenWidth; }
-        private float hiddenHeight; public float height { get => hiddenHeight; }
+        private float _Width; public float width { get => _Width; }
+        private float _Height; public float height { get => _Height; }
 
-        private Point hiddenCenter;
+        private Point _Center;
         public override Point center {
-            get => hiddenCenter;
+            get => _Center;
             set {
                 A = RA.duplicate();
                 B = RB.duplicate();
@@ -292,17 +309,17 @@ namespace Daze.Geometry {
                 C += value;
                 D += value;
 
-                hiddenCenter = value;
+                _Center = value;
 
                 calculateLines();
             }
         }
 
-        private float hiddenRotation;
+        private float _Rotation;
         public override float rotation {
-            get => hiddenRotation;
+            get => _Rotation;
             set {
-                hiddenRotation = value;
+                _Rotation = value;
                 rotate();
                 calculateLines();
             }
@@ -321,8 +338,8 @@ namespace Daze.Geometry {
         }
 
         public Rectangle(float width, float height) {
-            hiddenWidth = width;
-            hiddenHeight = height;
+            _Width = width;
+            _Height = height;
 
             float halfWidth = width/2;
             float halfHeight = height/2;
@@ -356,10 +373,10 @@ namespace Daze.Geometry {
         private void rotate() {
             resetRotatedPoints();
 
-            RA.rotatePointAroundO(hiddenRotation);
-            RB.rotatePointAroundO(hiddenRotation);
-            RC.rotatePointAroundO(hiddenRotation);
-            RD.rotatePointAroundO(hiddenRotation);
+            RA.rotatePointAroundO(_Rotation);
+            RB.rotatePointAroundO(_Rotation);
+            RC.rotatePointAroundO(_Rotation);
+            RD.rotatePointAroundO(_Rotation);
         }
 
         private void calculateLines() {

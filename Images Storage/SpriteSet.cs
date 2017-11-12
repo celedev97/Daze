@@ -5,69 +5,140 @@ using System.Resources;
 
 namespace Daze {
     public class SpriteSet {
-        //sprites
+        #region Variables for drawing
         private Sprite[] sprites;
 
-        #region Variables for drawing
-        private int hiddenMinX;
-        private int hiddenMinY;
+        private int _MinX;
+        private int _MinY;
 
+        /// <summary>
+        /// The size of an image of this spriteSet
+        /// </summary>
         public Size size;
-        public int minX { get => hiddenMinX; }
-        public int minY { get => hiddenMinY; }
+        /// <summary>
+        /// The starting X of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
+        /// </summary>
+        public int minX { get => _MinX; }
+        /// <summary>
+        /// The starting Y of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
+        /// </summary>
+        public int minY { get => _MinY; }
 
+        /// <summary>
+        /// The sprite currently used from this SpriteSet
+        /// </summary>
         public Sprite sprite { get => sprites[index]; }
+
+        /// <summary>
+        /// This reset the SpriteSet, making it go back to the first Sprite and restart the Timer for changing images
+        /// </summary>
+        internal void reset() {
+            index = 0;
+            if(repeat) {
+                gameObject.getTimer(timerID)?.restart();
+            }
+        }
         #endregion
 
         #region Variables for animations
         private GameObject gameObject;
+
         private Timer timer;
-        private int timerID;
+        private  Action endAnimationAction;
+        private int _timerID;
 
-        public int index;
+        /// <summary>
+        /// The ID of the timer used by this SpriteSet, SpriteSets always use negative timer IDs.
+        /// </summary>
+        public int timerID { get => _timerID; }
 
-        private bool hiddenRepeat;
+        private int index;
+
+        private bool _repeat;
+        /// <summary>
+        /// Set to true to make this SpriteSet cycle Sprites automatically
+        /// </summary>
         public bool repeat {
-            get => hiddenRepeat;
+            get => _repeat;
             set {
-                if(value != hiddenRepeat) {
+                if(value != _repeat) {
                     if(value) {
-                        timer = gameObject.createTimer(timerID, hiddenChangeMS, next);
+                        if(gameObject.getTimer(_timerID) == null) {
+                            timer = gameObject.createTimer(_timerID, _ChangeMS, next);
+                        }
+                        timer.restartFlag = true;
                     } else {
                         timer = null;
-                        gameObject.removeTimer(timerID);
+                        gameObject.removeTimer(_timerID);
                     }
                 }
-                hiddenRepeat = value;
+                _repeat = value;
+            }
+        }
+
+        private int _ChangeMS;
+        /// <summary>
+        /// The number of milliseconds that the SpriteSet will wait before going to the next Sprite
+        /// </summary>
+        public int changeMS {
+            get => _ChangeMS;
+            set {
+                _ChangeMS = value;
+                if(_repeat) { timer.msPerTick = _ChangeMS; }
             }
         }
         #endregion
 
+        #region Constructors
+        /// <summary>
+        /// This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+        /// </summary>
+        /// <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+        /// <param name="sprites">The Sprites that this SpriteSet will have</param>
+        public SpriteSet(GameObject gameObject, params Sprite[] sprites) : this(gameObject, null, sprites) { }
 
-        private int hiddenChangeMS;
-        public int changeMS {
-            get => hiddenChangeMS;
-            set {
-                hiddenChangeMS = value;
-                if(hiddenRepeat) { timer.msPerTick = hiddenChangeMS; }
-            }
-        }
+        /// <summary>
+        /// This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+        /// </summary>
+        /// <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+        /// <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+        /// <param name="sprites">The Sprites that this SpriteSet will have</param>
+        public SpriteSet(GameObject gameObject, Action endAnimationAction, params Sprite[] sprites) : this(gameObject, true, endAnimationAction, sprites) { }
 
-        public SpriteSet(GameObject gameObject, params Sprite[] sprites) {
-            int changeMS = 1000/sprites.Length;
-            Initialize(gameObject, changeMS, true, sprites);
-        }
+        /// <summary>
+        /// This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+        /// </summary>
+        /// <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+        /// <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+        /// <param name="sprites">The Sprites that this SpriteSet will have</param>
+        public SpriteSet(GameObject gameObject, bool repeat, params Sprite[] sprites) : this(gameObject, repeat, null, sprites) { }
 
-        public SpriteSet(GameObject gameObject, int msToChangeSprite, bool repeat, params Sprite[] sprites) {
-            Initialize(gameObject, msToChangeSprite, repeat, sprites);
-        }
+        /// <summary>
+        /// This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+        /// </summary>
+        /// <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+        /// <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+        /// <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+        /// <param name="sprites">The Sprites that this SpriteSet will have</param>
+        public SpriteSet(GameObject gameObject, bool repeat, Action endAnimationAction, params Sprite[] sprites) : this(gameObject, 1000 / sprites.Length, repeat, endAnimationAction, sprites) { }//V
 
-        private void Initialize(GameObject gameObject, int msToChangeSprite, bool repeat, params Sprite[] sprites) {
+        /// <summary>
+        /// This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+        /// </summary>
+        /// <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+        /// <param name="msToChangeSprite">The number of milliseconds that the SpriteSet will wait before changing Sprite</param>
+        /// <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+        /// <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+        /// <param name="sprites">The Sprites that this SpriteSet will have</param>
+        public SpriteSet(GameObject gameObject, int msToChangeSprite, bool repeat, Action endAnimationAction, params Sprite[] sprites) {
+            if(sprites.Length < 2) repeat = false;
+            this.endAnimationAction = endAnimationAction;
+
             //inizializzazione parametri GameObject e timer
             this.gameObject = gameObject;
-            this.timerID = gameObject.lastTimerIndex;
+            this._timerID = gameObject.lastTimerIndex;
             gameObject.lastTimerIndex--;
-            hiddenChangeMS = msToChangeSprite;
+            _ChangeMS = msToChangeSprite;
             this.repeat = repeat;//così facendo avvio anche il timer se serve
 
             //inizializzazione parametri di cambio immagine
@@ -79,6 +150,7 @@ namespace Daze {
             //trovo le coordinate minime e massime dello sprite, sono necessarie per evitare di disegnare parti superflue (così da alleviare i calcoli)
             int[] spriteBounds = null;
             foreach(Sprite sprite in sprites) {
+                if(sprite == null) continue;
                 if(spriteBounds != null) {
                     int[] newBounds = getBounds(sprite);
                     //xMin 
@@ -94,17 +166,37 @@ namespace Daze {
                 }
             }
 
+            //this should only happen if all the sprites are null
+            if(spriteBounds == null) throw new ArgumentException("You can't create a SpriteSet with no Sprites, if you want a gameObject to not have a Sprite just set its spriteSet property to null.");
+
             //in base alle coordinate trovate calcolo i dati necessari al metodo Draw per fare un disegno parziale
-            hiddenMinX = spriteBounds[0];
-            hiddenMinY = spriteBounds[2];
+            _MinX = spriteBounds[0];
+            _MinY = spriteBounds[2];
 
             size.width = (spriteBounds[1] - spriteBounds[0]) + 1;
             size.height = (spriteBounds[3] - spriteBounds[2]) + 1;
         }
 
+        #endregion
+
+        /// <summary>
+        /// This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
+        /// This can be helpful in case you want to use the Sprite manually without using the default timer.
+        /// </summary>
         public void next() {
             index++;
-            if(index == sprites.Length) index = 0;
+            if(index == sprites.Length) {
+                index = 0;
+                endAnimationAction?.Invoke();
+            }
+            if(_repeat) timer.restart();
+        }
+
+        /// <summary>
+        /// This method update the rotation of this SpriteSet
+        /// </summary>
+        public void rotate() {
+            throw new NotImplementedException();
         }
 
         private int[] getBounds(Sprite sprite) {
@@ -145,7 +237,7 @@ namespace Daze {
             int yMin = lastY;
             int yMax = 0;
             //ricerca della prima e dell'ultima colonna contenenti pixel con alpha>0
-            for(int x = 0; x < sprite.height; x++) {
+            for(int x = 0; x < sprite.width; x++) {
                 int firstColouredPixel = lastY;
                 int lastColouredPixel = 0;
                 //faccio un ciclo in avanti e cerco il primo pixel colorato

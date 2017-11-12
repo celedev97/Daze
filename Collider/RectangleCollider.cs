@@ -3,6 +3,7 @@ using Daze.Geometry;
 
 namespace Daze {
     public class RectangleCollider:ConvexPolygonCollider {
+        public override float ray => polygon.ray;
 
         public RectangleCollider(GameObject gameObject) : base(gameObject) {}
 
