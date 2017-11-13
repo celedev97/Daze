@@ -58,16 +58,17 @@
     <Compile Include="Engine Core\Utility.cs" />
     <Compile Include="Game Classes\Camera.cs" />
     <Compile Include="Game Classes\IgnoreLayer.cs" />
-    <Compile Include="Math and Structs\Geometry.cs" />
+    <Compile Include="Geometry\Utility.cs" />
+    <Compile Include="Geometry\Shapes.cs" />
     <Compile Include="Images Storage\Sprite.cs" />
     <Compile Include="Game Classes\Timer.cs" />
     <Compile Include="Engine Core\Engine.cs" />
     <Compile Include="Game Classes\GameObject.cs" />
     <Compile Include="Game Classes\GameScript.cs" />
-    <Compile Include="Math and Structs\Structs.cs" />
+    <Compile Include="Geometry\Structs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Images Storage\SpriteSet.cs" />
-    <Compile Include="Math and Structs\Vectors.cs" />
+    <Compile Include="Geometry\Vectors.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

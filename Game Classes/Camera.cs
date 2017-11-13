@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Daze.Vectors;
+using System;
 using System.Drawing;
 namespace Daze {
     public class Camera : GameObject {
