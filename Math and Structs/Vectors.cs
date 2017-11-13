@@ -1,4 +1,4 @@
-﻿namespace Daze {
+﻿namespace Daze.Vectors {
     public struct Vector {
         public static readonly Vector ZERO  = new Vector( 0,  0);
         public static readonly Vector UP    = new Vector( 0, -1);
@@ -136,4 +136,5 @@
         #endregion
 
     }
+
 }

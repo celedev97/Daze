@@ -1,4 +1,5 @@
 ﻿using Daze.Geometry;
+using Daze.Vectors;
 using System;
 using System.Collections.Generic;
 

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Resources;
+using Daze.Geometry;
 
 namespace Daze {
     public class SpriteSet {
