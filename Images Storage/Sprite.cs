@@ -13,8 +13,7 @@ namespace Daze {
         /// The array of pixels that represent this sprite
         /// </summary>
         public byte[] pixelArray { get => _PixelArray; }
-
-<<<<<<< HEAD
+        
         private int _Width;
         /// <summary>
         /// The width of the sprite
@@ -26,38 +25,19 @@ namespace Daze {
         /// The height of the sprite
         /// </summary>
         public int height { get => _Height; }
-=======
-        private byte[] _PixelArray;
-
-        public byte[] pixelArray { get => _PixelArray; }
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         private int _Stride;
         /// <summary>
         /// The length of a line of pixel of this sprite measured in bytes
         /// </summary>
         public int stride { get => _Stride; }
-
-<<<<<<< HEAD
+        
         private int _BytesPerPixel;
         /// <summary>
         /// How many bytes a pixel takes
         /// </summary>
         public int bytesPerPixel { get => _BytesPerPixel; }
         #endregion
-=======
-        private int _Width;
-        public int width { get => _Width; }
-
-        private int _Height;
-        public int height { get => _Height; }
-
-        private int _Stride;
-        public int stride { get => _Stride; }
-
-        private int _BytesPerPixel;
-        public int bytesPerPixel { get => _BytesPerPixel; }
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
 
         /// <summary>
         /// This create a sprite from a Bitmap.

@@ -8,7 +8,7 @@ namespace Daze {
     public class Timer {
         #region Variables and properties
         private int _ID;
-<<<<<<< HEAD
+
         /// <summary>
         /// The ID of the timer
         /// </summary>
@@ -18,11 +18,6 @@ namespace Daze {
         /// <summary>
         /// The number of MS of the duration of this timer
         /// </summary>
-=======
-        public int ID { get => _ID; }
-
-        private int _MSPerTick;
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         public int msPerTick {
             get => _MSPerTick;
             set {

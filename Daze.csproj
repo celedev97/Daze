@@ -55,13 +55,9 @@
     <Compile Include="Engine Core\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
-<<<<<<< HEAD:Daze.csproj
     <Compile Include="Engine Core\Utility.cs" />
     <Compile Include="Game Classes\Camera.cs" />
     <Compile Include="Game Classes\IgnoreLayer.cs" />
-=======
-    <Compile Include="Game Classes\Camera.cs" />
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1:Daze.csproj
     <Compile Include="Math and Structs\Geometry.cs" />
     <Compile Include="Math and Structs\Size.cs" />
     <Compile Include="Images Storage\Sprite.cs" />

@@ -7,11 +7,7 @@ namespace Daze {
     public class SpriteSet {
         #region Variables for drawing
         private Sprite[] sprites;
-
-<<<<<<< HEAD
-=======
-        #region Variables for drawing
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
+        
         private int _MinX;
         private int _MinY;
 
@@ -19,7 +15,6 @@ namespace Daze {
         /// The size of an image of this spriteSet
         /// </summary>
         public Size size;
-<<<<<<< HEAD
         /// <summary>
         /// The starting X of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
         /// </summary>
@@ -27,9 +22,6 @@ namespace Daze {
         /// <summary>
         /// The starting Y of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
         /// </summary>
-=======
-        public int minX { get => _MinX; }
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         public int minY { get => _MinY; }
 
         /// <summary>
@@ -61,8 +53,7 @@ namespace Daze {
         public int timerID { get => _timerID; }
 
         private int index;
-
-<<<<<<< HEAD
+        
         private bool _repeat;
         /// <summary>
         /// Set to true to make this SpriteSet cycle Sprites automatically
@@ -76,46 +67,24 @@ namespace Daze {
                             timer = gameObject.createTimer(_timerID, _ChangeMS, next);
                         }
                         timer.restartFlag = true;
-=======
-        private bool _Repeat;
-        public bool repeat {
-            get => _Repeat;
-            set {
-                if(value != _Repeat) {
-                    if(value) {
-                        timer = gameObject.createTimer(timerID, _ChangeMS, next);
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
                     } else {
                         timer = null;
                         gameObject.removeTimer(_timerID);
                     }
                 }
-<<<<<<< HEAD
                 _repeat = value;
-=======
-                _Repeat = value;
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
             }
         }
 
-<<<<<<< HEAD
         private int _ChangeMS;
         /// <summary>
         /// The number of milliseconds that the SpriteSet will wait before going to the next Sprite
         /// </summary>
-=======
-
-        private int _ChangeMS;
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
         public int changeMS {
             get => _ChangeMS;
             set {
                 _ChangeMS = value;
-<<<<<<< HEAD
                 if(_repeat) { timer.msPerTick = _ChangeMS; }
-=======
-                if(_Repeat) { timer.msPerTick = _ChangeMS; }
->>>>>>> 84a047f1bcbd99d313f202b4c6b43b160f16d8b1
             }
         }
         #endregion
