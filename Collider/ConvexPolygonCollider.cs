@@ -2,12 +2,21 @@
 using Daze.Geometry;
 
 namespace Daze {
+    /// <summary>
+    /// A general collider that can have different shapes as long as it's shape is convex
+    /// </summary>
     public abstract class ConvexPolygonCollider : Collider {
         internal protected ConvexPolygon polygon;
 
         protected ConvexPolygonCollider(GameObject gameObject) : base(gameObject) { }
 
+        /// <summary>
+        /// This check if this collider is colliding with another one
+        /// </summary>
+        /// <param name="collider2">The second collider to check</param>
+        /// <returns>True if the two collider collide, false otherwise</returns>
         public override bool collide(Collider collider2) {
+            
             Type collider2Type = collider2.GetType();
             if(collider2Type.IsSubclassOf(typeof(ConvexPolygonCollider))) {
                 ConvexPolygon poly1 = polygon;
@@ -74,10 +83,18 @@ namespace Daze {
             return false;
         }
 
+        /// <summary>
+        /// This forces the collider's coordinates recalculation after that the gameObject rotates
+        /// </summary>
+        /// <param name="gameObject">The gameObject that will be used to check rotation and calculate the new coordinates</param>
         protected override void rotateCollider(GameObject gameObject) {
             polygon.rotation = gameObject.rotation;
         }
 
+        /// <summary>
+        /// This update the collider's coordinates after that the gameObject moves
+        /// </summary>
+        /// <param name="gameObject"></param>
         protected override void moveCollider(GameObject gameObject) {
             polygon.center = gameObject.position;
         }
