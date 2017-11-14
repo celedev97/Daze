@@ -94,7 +94,7 @@ namespace Daze {
         /// <summary>
         /// This update the collider's coordinates after that the gameObject moves
         /// </summary>
-        /// <param name="gameObject"></param>
+        /// <param name="gameObject">The gameobject that will be used to recalculate the coordinates, it should be this collider's gameobject</param>
         protected override void moveCollider(GameObject gameObject) {
             polygon.center = gameObject.position;
         }

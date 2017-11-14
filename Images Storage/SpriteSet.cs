@@ -25,13 +25,13 @@ namespace Daze {
         /// <summary>
         /// The sprite currently used from this SpriteSet
         /// </summary>
-        public Sprite sprite { get => sprites[index]; }
+        public Sprite sprite { get => sprites[_index]; }
 
         /// <summary>
         /// This reset the SpriteSet, making it go back to the first Sprite and restart the Timer for changing images
         /// </summary>
-        internal void reset() {
-            index = 0;
+        public void reset() {
+            _index = 0;
             if(repeat) {
                 gameObject.getTimer(timerID)?.restart();
             }
@@ -50,7 +50,8 @@ namespace Daze {
         /// </summary>
         public int timerID { get => _timerID; }
 
-        private int index;
+        private int _index;
+        public int index { get => _index; }
         
         private bool _repeat;
         /// <summary>
@@ -140,7 +141,7 @@ namespace Daze {
             this.repeat = repeat;//così facendo avvio anche il timer se serve
 
             //inizializzazione parametri di cambio immagine
-            index = 0;
+            _index = 0;
 
             //inizializzazione sprite e dimensioni
             this.sprites = sprites;
@@ -182,9 +183,9 @@ namespace Daze {
         /// This can be helpful in case you want to use the Sprite manually without using the default timer.
         /// </summary>
         public void next() {
-            index++;
-            if(index == sprites.Length) {
-                index = 0;
+            _index++;
+            if(_index == sprites.Length) {
+                _index = 0;
                 endAnimationAction?.Invoke();
             }
             if(_repeat) timer.restart();

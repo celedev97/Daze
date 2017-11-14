@@ -22,3 +22,10 @@ C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze\obj\Debug\Daze.pdb
 C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze\bin\Debug\Daze.dll.config
 C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze\bin\Debug\Daze.dll
 C:\Users\Utente\Dropbox\AIV\Project_Daze\Daze\bin\Debug\Daze.pdb
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.dll.config
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.dll
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.pdb
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.csprojResolveAssemblyReference.cache
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.csproj.CoreCompileInputs.cache
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.dll
+F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.pdb

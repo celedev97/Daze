@@ -14,7 +14,7 @@ namespace Daze {
         #region Variables
         #region Engine Settings
         private static Camera _camera = new Camera();
-        public static Camera camera {get => camera; }
+        public static Camera camera {get => _camera; }
 
         public static Action lostFocus;
         public static Action gotFocus;
@@ -207,7 +207,7 @@ namespace Daze {
                 }
                 //cancellazione gameobject appena cancellati dalla lista dei gameObject
                 for(int i = toDeleteGameObjects.Count - 1; i >= 0; i--) {
-                    clean(toDeleteGameObjects[i], false);
+                    if(toDeleteGameObjects[i]?.spriteSet != null) clean(toDeleteGameObjects[i], false);
                     gameObjects.Remove(toDeleteGameObjects[i]);
                     toDeleteGameObjects.RemoveAt(i);
                 }
