@@ -5,9 +5,9 @@ namespace Daze {
     public class SpriteSet {
         #region Variables for drawing
         private Sprite[] sprites;
-        
-        private int _MinX;
-        private int _MinY;
+
+        private int _minX;
+        private int _minY;
 
         /// <summary>
         /// The size of an image of this spriteSet
@@ -16,11 +16,11 @@ namespace Daze {
         /// <summary>
         /// The starting X of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
         /// </summary>
-        public int minX { get => _MinX; }
+        public int minX { get => _minX; }
         /// <summary>
         /// The starting Y of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
         /// </summary>
-        public int minY { get => _MinY; }
+        public int minY { get => _minY; }
 
         /// <summary>
         /// The sprite currently used from this SpriteSet
@@ -169,8 +169,8 @@ namespace Daze {
             if(spriteBounds == null) throw new ArgumentException("You can't create a SpriteSet with no Sprites, if you want a gameObject to not have a Sprite just set its spriteSet property to null.");
 
             //in base alle coordinate trovate calcolo i dati necessari al metodo Draw per fare un disegno parziale
-            _MinX = spriteBounds[0];
-            _MinY = spriteBounds[2];
+            _minX = spriteBounds[0];
+            _minY = spriteBounds[2];
 
             size.width = (spriteBounds[1] - spriteBounds[0]) + 1;
             size.height = (spriteBounds[3] - spriteBounds[2]) + 1;

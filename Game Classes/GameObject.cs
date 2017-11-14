@@ -21,8 +21,8 @@ namespace Daze {
             get => _SpriteSet;
             set {
                 value.reset();
-                if(value == null) {
-                    Engine.clean(this, false);
+                if(_SpriteSet != null) {
+                    Engine.clean(this, false, _SpriteSet);
                 }
                 _SpriteSet = value;
                 collider?.recreateCollider();

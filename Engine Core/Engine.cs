@@ -35,7 +35,7 @@ namespace Daze {
             }
         }
         
-        public static bool PRINT_FPS = false;
+        public static bool printFpsFlag = false;
         #endregion
         #region Time related variables
         /// <summary>
@@ -263,7 +263,7 @@ namespace Daze {
                 //imposto il deltaTime per le simulazioni fisiche=
                 _deltaTime = lastCycleMS / 1000;
 
-                printFPS();
+                if(printFpsFlag) printFPS();
                 #endregion
             }
         }
@@ -294,14 +294,15 @@ namespace Daze {
         }
 
         //da in output i dati per disegnare parzialmente lo sprite, restituisce false se lo sprite non è disegnabile
-        private static bool getDrawData(GameObject gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, bool lastPosition = false) {
+        private static bool getDrawData(GameObject gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, bool lastPosition = false, SpriteSet spriteSet = null) {
             //è possibile che il gameObject sia fuori (o parzialmente fuori) dallo schermo, devo capire quanto disegnare del gameObject, e in che posizione
+            if(spriteSet == null) spriteSet = gameObject.spriteSet;
 
-            drawWidth = gameObject.spriteSet.size.width;
-            spriteXPosition = gameObject.spriteSet.minX;
+            drawWidth = spriteSet.size.width;
+            spriteXPosition = spriteSet.minX;
 
-            drawHeight = gameObject.spriteSet.size.height;
-            spriteYPosition = gameObject.spriteSet.minY;
+            drawHeight = spriteSet.size.height;
+            spriteYPosition = spriteSet.minY;
 
             if(lastPosition) {
                 drawXPosition = gameObject.lastPixelPosition.x;
@@ -319,7 +320,7 @@ namespace Daze {
                 drawWidth += originalXPosition;
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawXPosition = 0;
-                spriteXPosition += (gameObject.spriteSet.size.width - drawWidth);
+                spriteXPosition += (spriteSet.size.width - drawWidth);
             } else if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
                 drawWidth += Engine._drawBufferWidth - (originalXPosition + drawWidth);
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
@@ -330,7 +331,7 @@ namespace Daze {
                 drawHeight += originalYPosition;
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawYPosition = 0;
-                spriteYPosition += (gameObject.spriteSet.size.height - drawHeight);
+                spriteYPosition += (spriteSet.size.height - drawHeight);
             } else if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
                 drawHeight += Engine._drawBufferHeight - (originalYPosition + drawHeight);
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
@@ -338,7 +339,7 @@ namespace Daze {
             return true;
         }
 
-        internal static void clean(GameObject gameObject, bool checkStatusChange = true) {
+        internal static void clean(GameObject gameObject, bool checkStatusChange = true, SpriteSet spriteSet = null) {
             if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, true)) {
                 drawSpritePortion(_camera.background,
                                   drawXPosition, drawYPosition,

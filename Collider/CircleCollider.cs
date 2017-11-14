@@ -36,7 +36,7 @@ namespace Daze {
         public override void recreateCollider() {
             circle = new Circle();
             moveCollider();
-            circle.radius = gameObject.spriteSet.sprite.width > gameObject.spriteSet.sprite.height ? gameObject.spriteSet.sprite.width : gameObject.spriteSet.sprite.height;
+            circle.radius = gameObject.spriteSet.size.width > gameObject.spriteSet.size.height ? gameObject.spriteSet.size.width : gameObject.spriteSet.size.height;
         }
 
         /// <summary>
