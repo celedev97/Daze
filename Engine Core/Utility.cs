@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 
 namespace Daze {
-    public partial class Engine {
+    public static partial class Engine {
         /// <summary>
         /// This is a static class that contains some method that can be used to do various things
         /// </summary>

@@ -31,7 +31,28 @@ namespace Daze {
             Shown += new EventHandler(this.GameForm_Shown);
             GotFocus += new EventHandler(this.Got_Focus);
             LostFocus += new EventHandler(this.Lost_Focus);
+
+            //events passed to the Engine
+            gameFrame.MouseClick += GameFrame_MouseClick;
+            gameFrame.MouseDoubleClick += GameFrame_MouseDoubleClick;
+
+            gameFrame.MouseMove += GameFrame_MouseMove;
+
+            gameFrame.MouseDown += GameFrame_MouseDown;
+            gameFrame.MouseUp += GameFrame_MouseUp;
         }
+
+        #region Event passed to Engine
+        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, e); }
+        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, e); }
+
+        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, e); }
+
+        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, e); }
+        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, e); }
+        #endregion
+
+
 
         #region Event handlers
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
@@ -71,7 +92,7 @@ namespace Daze {
             }
         }
         #endregion
-        #endregion
 
+        #endregion
     }
 }

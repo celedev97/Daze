@@ -8,9 +8,10 @@ using System.Drawing.Drawing2D;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Resources;
+using System.Windows.Media;
 
 namespace Daze {
-    public partial class Engine {
+    public static partial class Engine {
         #region Variables
         #region Engine Settings
         private static Camera _camera = new Camera();
@@ -73,6 +74,16 @@ namespace Daze {
         #endregion
         #endregion
 
+        #region Event handlers
+        public static MouseEventHandler mouseClick;
+        public static MouseEventHandler mouseDoubleClick;
+
+        public static MouseEventHandler mouseMove;
+
+        public static MouseEventHandler mouseDown;
+        public static MouseEventHandler mouseUp;
+        #endregion
+
         #region Functions
         #region Start/Stop functions
         public static void Start(int FPSLimit = 60) {
@@ -93,7 +104,7 @@ namespace Daze {
 
             _window.buffer = new Bitmap(_drawBufferWidth, _drawBufferHeight);
             using(Graphics g = Graphics.FromImage(_window.buffer)) {
-                g.DrawRectangle(new Pen(Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
+                g.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
             }
 
             drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
@@ -484,6 +495,27 @@ namespace Daze {
         }
 
         #endregion
+
+        //aggiungi sistema di preloading dei file audio
+        private static void playSound(string resource_Name, bool loop) {
+            //ottengo il namespace del metodo che ha chiamato questo metodo
+            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
+            Bitmap bitmap = null;
+            //ottengo i file di risorse 
+            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
+                try {
+                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources", ".Resources"), callerAssembly);
+                    bitmap = (Bitmap)rm.GetObject(resource_Name);
+                    break;
+                } catch { }
+            }
+            //dopo aver trovato il file di risorse lo estraggo
+
+            
+            MediaPlayer player = new MediaPlayer();
+            player.Open(new Uri(@"C:\windows\media\tada.wav"));
+            player.Play();
+        }
 
         #region Diagnostic Methods
         private static void printFPS() {
