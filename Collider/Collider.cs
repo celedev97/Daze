@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Daze.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,5 +58,18 @@ namespace Daze {
         /// It forces the collider's coordinates recalculation after a gameObject rotation
         /// </summary>
         protected abstract void rotateCollider(GameObject gameObject);
+        /// <summary>
+        /// This method check if a point is inside the Collider
+        /// </summary>
+        /// <param name="x">The x of the point to check</param>
+        /// <param name="y">The y of the point to check</param>
+        /// <returns>True if the point is inside the Collider, false otherwise</returns>
+        internal protected abstract bool inCollider(Point point);
+        /// <summary>
+        /// This method check if a point is inside the Collider
+        /// </summary>
+        /// <param name="point">The point to check</param>
+        /// <returns>True if the point is inside the Collider, false otherwise</returns>
+        internal protected virtual bool inCollider(float x, float y) { return inCollider(new Point(x, y)); }
     }
 }

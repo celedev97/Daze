@@ -53,5 +53,13 @@ namespace Daze {
         /// <param name="gameObject"></param>
         protected override void rotateCollider(GameObject gameObject) {}
 
+        /// <summary>
+        /// This method check if a point is inside the Collider
+        /// </summary>
+        /// <param name="point">The point to check</param>
+        /// <returns>True if the point is inside the Collider, false otherwise</returns>
+        protected internal override bool inCollider(Point point) {
+            return circle.contains(point);
+        }
     }
 }

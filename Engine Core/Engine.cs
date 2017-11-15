@@ -75,13 +75,58 @@ namespace Daze {
         #endregion
 
         #region Event handlers
-        public static MouseEventHandler mouseClick;
-        public static MouseEventHandler mouseDoubleClick;
+        internal static MouseEventHandler mouseClick;
+        internal static MouseEventHandler mouseDoubleClick;
+        
+        internal static MouseEventHandler mouseMove;
+        
+        internal static MouseEventHandler mouseDown;
+        internal static MouseEventHandler mouseUp;
 
-        public static MouseEventHandler mouseMove;
+        private static void mouseClicked(object sender, MouseEventArgs e) {
+            foreach(GameObject gameObject in gameObjects) {
+                if(toDeleteGameObjects.Contains(gameObject)) continue;
+                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
+                    gameObject.mouseClick(sender, e);
+                }
+            }
+        }
 
-        public static MouseEventHandler mouseDown;
-        public static MouseEventHandler mouseUp;
+        private static void mouseDoubleClicked(object sender, MouseEventArgs e) {
+            foreach(GameObject gameObject in gameObjects) {
+                if(toDeleteGameObjects.Contains(gameObject)) continue;
+                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
+                    gameObject.mouseDoubleClick(sender, e);
+                }
+            }
+        }
+
+        private static void mouseMoved(object sender, MouseEventArgs e) {
+            foreach(GameObject gameObject in gameObjects) {
+                if(toDeleteGameObjects.Contains(gameObject)) continue;
+                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
+                    gameObject.mouseMove(sender, e);
+                }
+            }
+        }
+
+        private static void mouseButtonDown(object sender, MouseEventArgs e) {
+            foreach(GameObject gameObject in gameObjects) {
+                if(toDeleteGameObjects.Contains(gameObject)) continue;
+                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
+                    gameObject.mouseDown(sender, e);
+                }
+            }
+        }
+
+        private static void mouseButtonUp(object sender, MouseEventArgs e) {
+            foreach(GameObject gameObject in gameObjects) {
+                if(toDeleteGameObjects.Contains(gameObject)) continue;
+                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
+                    gameObject.mouseUp(sender, e);
+                }
+            }
+        }
         #endregion
 
         #region Functions
@@ -109,6 +154,16 @@ namespace Daze {
 
             drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
             drawBufferStride = _drawBufferWidth * 3;
+            #endregion
+
+            #region Eventi
+            mouseClick += mouseClicked;
+            mouseDoubleClick += mouseDoubleClicked;
+
+            mouseMove += mouseMoved;
+
+            mouseDown += mouseButtonDown;
+            mouseUp += mouseButtonUp;
             #endregion
 
             #region Inizializzazione liste
@@ -172,6 +227,7 @@ namespace Daze {
                     gameObject.pushLastPixelPosition();
                     gameObject.lastSprite = gameObject.spriteSet?.sprite;
                 }
+                
                 #endregion
 
                 #region Executing scripts

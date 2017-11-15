@@ -36,3 +36,5 @@ C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.cs
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.csproj.CoreCompileInputs.cache
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.dll
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.pdb
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.GameForm.resources
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.csproj.GenerateResource.Cache

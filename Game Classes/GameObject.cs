@@ -2,6 +2,7 @@
 using Daze.Vectors;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Daze {
     public class GameObject:GameScript {
@@ -91,6 +92,16 @@ namespace Daze {
         /// The layers of colliders that this GameObjects should ignore while checking collisions
         /// </summary>
         public List<IgnoreLayer> ignoreLayers;
+        #endregion
+
+        #region Event Handlers
+        public MouseEventHandler mouseClick;
+        public MouseEventHandler mouseDoubleClick;
+        
+        public MouseEventHandler mouseMove;
+        
+        public MouseEventHandler mouseDown;
+        public MouseEventHandler mouseUp;
         #endregion
 
         #region Constructors
