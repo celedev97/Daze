@@ -76,6 +76,14 @@
             if(typeof(Vector) != obj.GetType()) return false;
             return this == (Vector)obj;
         }
+
+        public override int GetHashCode() {
+            var hashCode = 1502939027;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + x.GetHashCode();
+            hashCode = hashCode * -1521134295 + y.GetHashCode();
+            return hashCode;
+        }
     }
 
     public struct IntVector {

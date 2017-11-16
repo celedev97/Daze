@@ -86,8 +86,11 @@ namespace Daze {
         private static void mouseClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseClick(sender, e);
+                if(gameObject.spriteSet != null){
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseClick?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -95,8 +98,11 @@ namespace Daze {
         private static void mouseDoubleClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseDoubleClick(sender, e);
+                if(gameObject.spriteSet != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseDoubleClick?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -104,8 +110,11 @@ namespace Daze {
         private static void mouseMoved(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseMove(sender, e);
+                if(gameObject.spriteSet != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseMove?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -113,8 +122,11 @@ namespace Daze {
         private static void mouseButtonDown(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseDown(sender, e);
+                if(gameObject.spriteSet != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseDown?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -122,8 +134,11 @@ namespace Daze {
         private static void mouseButtonUp(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseUp(sender, e);
+                if(gameObject.spriteSet != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseUp?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
