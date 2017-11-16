@@ -6,8 +6,15 @@ namespace Daze {
     /// A general collider that can have different shapes as long as it's shape is convex
     /// </summary>
     public abstract class ConvexPolygonCollider : Collider {
+        /// <summary>
+        /// The polygon used to check collisions
+        /// </summary>
         internal protected ConvexPolygon polygon;
 
+        /// <summary>
+        /// Create a ConvexPolygonCollider
+        /// </summary>
+        /// <param name="gameObject">The gameObject that will be used to calculate the polygon position</param>
         protected ConvexPolygonCollider(GameObject gameObject) : base(gameObject) { }
 
         /// <summary>

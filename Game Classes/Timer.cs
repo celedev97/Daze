@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Daze {
+    /// <summary>
+    /// A timer of a GameObject, gameObject can have several timers, you can edit them by using gameObject.createTimer and so on.
+    /// </summary>
     public class Timer {
         #region Variables and properties
         private int _ID;

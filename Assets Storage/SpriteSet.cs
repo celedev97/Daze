@@ -2,6 +2,9 @@
 using Daze.Geometry;
 
 namespace Daze {
+    /// <summary>
+    /// A spriteSet is a list of sprites with a timer, it can be used to create an animation
+    /// </summary>
     public class SpriteSet {
         #region Variables for drawing
         private Sprite[] sprites;
@@ -51,6 +54,9 @@ namespace Daze {
         public int timerID { get => _timerID; }
 
         private int _index;
+        /// <summary>
+        /// The index of the spriteSet in the sprites array
+        /// </summary>
         public int index { get => _index; }
         
         private bool _repeat;
@@ -62,7 +68,8 @@ namespace Daze {
             set {
                 if(value != _repeat) {
                     if(value) {
-                        if(gameObject.getTimer(_timerID) == null) {
+                        if(gameObject.getTimer(_timerID) == null || timer == null) {
+                            gameObject.removeTimer(_timerID);
                             timer = gameObject.createTimer(_timerID, _ChangeMS, next);
                         }
                         timer.restartFlag = true;

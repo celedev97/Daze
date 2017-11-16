@@ -4,26 +4,42 @@ using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Reflection;
-using System.Linq.Expressions;
 using System.Resources;
-using System.Windows.Media;
+using System.IO;
 
 namespace Daze {
+    /// <summary>
+    /// This is the core class of Daze, call Engine.Start() to start your game
+    /// </summary>
     public static partial class Engine {
         #region Variables
         #region Engine Settings
         private static Camera _camera = new Camera();
+        /// <summary>
+        /// This is the camera that is showing on the screen (Daze currently support only one camera)
+        /// </summary>
         public static Camera camera {get => _camera; }
 
+        /// <summary>
+        /// You can hook up an action to the engine to know when the game is not active and make it stop
+        /// </summary>
         public static Action lostFocus;
+        /// <summary>
+        /// You can hook up an action to the engine to know when the game is active again and make it resume
+        /// </summary>
         public static Action gotFocus;
 
         private static GameForm _window;
+        /// <summary>
+        /// This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
+        /// </summary>
         public static GameForm window{get=>_window;}
 
         private static bool _cursorHide = false;
+        /// <summary>
+        /// Setting this to true or false will show of hide the cursor
+        /// </summary>
         public static bool cursorHide {
             get => _cursorHide;
             set {
@@ -36,6 +52,9 @@ namespace Daze {
             }
         }
         
+        /// <summary>
+        /// Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
+        /// </summary>
         public static bool printFpsFlag = false;
         #endregion
         #region Time related variables
@@ -44,6 +63,9 @@ namespace Daze {
         /// This can be used to do physics calculation regardless of FPS.
         /// </summary>
         private static float _deltaTime;
+        /// <summary>
+        /// Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
+        /// </summary>
         public static float deltaTime { get { return _deltaTime; } }
         
         private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
@@ -58,15 +80,25 @@ namespace Daze {
         private static List<GameObject> newGameObjects;
         private static List<GameObject> toDeleteGameObjects;
 
-        //Sprite List
-        internal static Dictionary<string,Sprite> sprites;
+        //Preloading lists
+        internal static Dictionary<string, Sprite> sprites;
+        internal static Dictionary<string, string> wavPaths;
+
+        //sounds list
+        internal static List<Wav> playingWavs;
         #endregion
         #region Drawing variables
         internal static byte[] drawBuffer;
 
         internal static int _drawBufferHeight;
+        /// <summary>
+        /// The height of the screen
+        /// </summary>
         public static int drawBufferHeight { get => _drawBufferHeight; }
         internal static int _drawBufferWidth;
+        /// <summary>
+        /// The width of the screen
+        /// </summary>
         public static int drawBufferWidth { get => _drawBufferWidth; }
 
         internal static int drawBufferStride;
@@ -86,7 +118,7 @@ namespace Daze {
         private static void mouseClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.spriteSet != null){
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
                     if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
                        Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
                         gameObject.mouseClick?.Invoke(gameObject, e);
@@ -98,7 +130,7 @@ namespace Daze {
         private static void mouseDoubleClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.spriteSet != null) {
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
                     if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
                        Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
                         gameObject.mouseDoubleClick?.Invoke(gameObject, e);
@@ -110,7 +142,7 @@ namespace Daze {
         private static void mouseMoved(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.spriteSet != null) {
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
                     if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
                        Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
                         gameObject.mouseMove?.Invoke(gameObject, e);
@@ -122,7 +154,7 @@ namespace Daze {
         private static void mouseButtonDown(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.spriteSet != null) {
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
                     if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
                        Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
                         gameObject.mouseDown?.Invoke(gameObject, e);
@@ -134,7 +166,7 @@ namespace Daze {
         private static void mouseButtonUp(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.spriteSet != null) {
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
                     if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
                        Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
                         gameObject.mouseUp?.Invoke(gameObject, e);
@@ -146,6 +178,10 @@ namespace Daze {
 
         #region Functions
         #region Start/Stop functions
+        /// <summary>
+        /// This function start the Engine
+        /// </summary>
+        /// <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
         public static void Start(int FPSLimit = 60) {
             #region Initial Setup
             //calcolo il timespan di un Update necessario per non superare il limite di troppo il limite di FPS
@@ -182,8 +218,12 @@ namespace Daze {
             #endregion
 
             #region Inizializzazione liste
-            //Inizializzo la lista degli sprite
+            //Inizializzo le liste di preloading
             sprites = new Dictionary<string, Sprite>();
+            wavPaths = new Dictionary<string, string>();
+
+            //inizializzo la lista dei suoni
+            playingWavs = new List<Wav>();
 
             //inizializzo lista gameobjects e degli script
             gameObjects = new List<GameObject>();
@@ -216,6 +256,10 @@ namespace Daze {
             #endregion
         }
 
+        /// <summary>
+        /// This stop the Engine, making your code resume from Engine.Start()
+        /// Use this to close the game
+        /// </summary>
         public static void Stop() {
             _window.Close();
         }
@@ -539,6 +583,13 @@ namespace Daze {
         #endregion
 
         #region Methods for preloading
+        /// <summary>
+        /// This method load a Sprite from a resource.
+        /// After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
+        /// </summary>
+        /// <param name="resource_Name"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
         public static Sprite loadSprite(string resource_Name, int scale = 1) {
             string spriteName = resource_Name+"x"+scale;
             //cerco se lo sprite esiste già
@@ -552,41 +603,98 @@ namespace Daze {
             Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
             Bitmap bitmap = null;
             //ottengo i file di risorse 
-            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
+            foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
                 try {
-                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources",".Resources"),callerAssembly);
+                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources",".Resources"),callerAssembly);
                     bitmap = (Bitmap)rm.GetObject(resource_Name);
                     break;
                 } catch { }
             }
-            if(bitmap == null) throw new Exception("Can't find the sprite: " + resource_Name + " the name must be the same as the Resource's name");
+            if(bitmap == null) throw new Exception("Can't find the sprite " + resource_Name + ": the name must be the same as the Resource's name");
             Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
             sprites.Add(spriteName, newSprite);
             return newSprite;
         }
 
+        /// <summary>
+        /// This method load a Wav from a resource embedded in your project
+        /// </summary>
+        /// <param name="resource_Name">The name of the resource representing the wav</param>
+        /// /// <param name="loop">True if you want the sound to loop till you pause or stop it</param>
+        /// <returns>The Wav loaded</returns>
+        public static Wav loadWavFromResources(string resource_Name,int volume = 100, bool loop = false, Assembly callerAssembly = null) {
+            //cerco se il wav è già stato estratto
+            foreach(KeyValuePair<string, string> keyVal in wavPaths) {
+                if(keyVal.Key == resource_Name) {
+                    return new Wav(keyVal.Value, volume, loop);
+                }
+            }
+            //se sono qui allora il wav non è mai stato caricato
+            //ottengo il namespace del metodo che ha chiamato questo metodo
+            callerAssembly = callerAssembly == null? new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly : callerAssembly;
+            //ottengo i file di risorse 
+            string tempFile = null;
+            foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
+                try {
+                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources", ".Resources"), callerAssembly);
+                    tempFile = writeWavStreamToTempLocation(rm.GetStream(resource_Name));
+                    break;
+                } catch(Exception ex) {
+                    Console.WriteLine(ex);
+                }
+            }
+            if(tempFile == null) throw new Exception("Can't find the wav " + resource_Name + ": the name must be the same as the Resource's name");
+            return new Wav(tempFile, volume, loop);
+        }
+        /// <summary>
+        /// This method load a wav from a file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="loop"></param>
+        /// <returns></returns>
+        public static Wav loadWavFromFile(string filePath, int volume = 100, bool loop = false) {
+            return new Wav(filePath, volume, loop);
+        }
+
+        private static string writeWavStreamToTempLocation(UnmanagedMemoryStream inputStream) {
+            string filePath = String.Format(System.IO.Path.GetTempPath() + Guid.NewGuid().ToString("N") + ".wav");
+            using(FileStream outputStream = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
+                int readByte;
+                byte[] copyBuffer = new byte[524288]; //0,5MB alla volta (512*1024 byte)
+                while((readByte = inputStream.Read(copyBuffer, 0, copyBuffer.Length)) > 0) {
+                    outputStream.Write(copyBuffer, 0, readByte);
+                }
+                outputStream.Flush();
+            }
+            inputStream.Dispose();
+            return filePath;
+        }
         #endregion
 
-        //aggiungi sistema di preloading dei file audio
-        private static void playSound(string resource_Name, bool loop) {
-            //ottengo il namespace del metodo che ha chiamato questo metodo
-            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
-            Bitmap bitmap = null;
-            //ottengo i file di risorse 
-            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
-                try {
-                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources", ".Resources"), callerAssembly);
-                    bitmap = (Bitmap)rm.GetObject(resource_Name);
-                    break;
-                } catch { }
-            }
-            //dopo aver trovato il file di risorse lo estraggo
-
-            
-            MediaPlayer player = new MediaPlayer();
-            player.Open(new Uri(@"C:\windows\media\tada.wav"));
-            player.Play();
+        #region Method for playing sounds for people so lazy that they don't want to create a variable for the Wav
+        /// <summary>
+        /// This method play a Wav from the resources.
+        /// Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+        /// </summary>
+        /// <param name="resource_Name"></param>
+        public static void playWavFromResources(string resource_Name, int volume = 100) {
+            Wav newWav = loadWavFromResources(resource_Name, volume, false, new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly);
+            newWav.disposeAtEnd = true;
+            playingWavs.Add(newWav);
+            newWav.Play();
         }
+        /// <summary>
+        /// This method play a Wav from a file.
+        /// Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+        /// </summary>
+        /// <param name="filePath">The path of the Wav file</param>
+        public static void playWavFromFile(string filePath) {
+            Wav newWav = loadWavFromFile(filePath);
+            newWav.disposeAtEnd = true;
+            playingWavs.Add(newWav);
+            newWav.Play();
+        }
+        #endregion
 
         #region Diagnostic Methods
         private static void printFPS() {

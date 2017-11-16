@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Daze {
+    /// <summary>
+    /// The form used by the Engine to show the game, you have no need to use this.
+    /// </summary>
     public class GameForm:Form {
         #region Variables
         internal bool loaded = false;
@@ -51,8 +54,6 @@ namespace Daze {
         private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, e); }
         private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, e); }
         #endregion
-
-
 
         #region Event handlers
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {

@@ -2,6 +2,9 @@
 using System;
 using System.Drawing;
 namespace Daze {
+    /// <summary>
+    /// A camera object
+    /// </summary>
     public class Camera : GameObject {
         internal Camera() : base(0, 0) {
             
@@ -46,6 +49,12 @@ namespace Daze {
             this.background = new Sprite(Engine.Utility.scaleImage(background, Engine._drawBufferWidth, Engine._drawBufferHeight));
         }
 
+        /// <summary>
+        /// This move the camera
+        /// </summary>
+        /// <param name="xOffset">the x offset of the movement</param>
+        /// <param name="yOffset">the y offset of the movement</param>
+        /// <returns></returns>
         public override bool move(float xOffset, float yOffset) {
             if(isFixed) {
                 throw new MethodAccessException("You cannot move the camera since you set it to fixed");
@@ -62,9 +71,21 @@ namespace Daze {
         /// The struct for showing camera's limits, you don't have reason to use this.
         /// </summary>
         public struct Limits {
+            /// <summary>
+            /// The coordinate in the world plane of the left limit of the camera
+            /// </summary>
             public float minX;
+            /// <summary>
+            /// The coordinate in the world plane of the upper limit of the camera
+            /// </summary>
             public float minY;
+            /// <summary>
+            /// The coordinate in the world plane of the right limit of the camera
+            /// </summary>
             public float maxX;
+            /// <summary>
+            /// The coordinate in the world plane of the bottom limit of the camera
+            /// </summary>
             public float maxY;
         }
 

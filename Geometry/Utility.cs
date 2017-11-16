@@ -1,6 +1,9 @@
 ﻿using System;
 
 namespace Daze.Geometry {
+    /// <summary>
+    /// A static class with some methods that can be useful for creating new collider Types
+    /// </summary>
     public static class Utility {
         public static float distance(Point point1, Point point2) {
             return getHypotenuse((point1.x - point2.x), (point1.y - point2.y));

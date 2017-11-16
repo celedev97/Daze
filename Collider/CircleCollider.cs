@@ -2,9 +2,19 @@
 using Daze.Geometry;
 
 namespace Daze {
+    /// <summary>
+    /// A collider that use a circle as it's shape... wow, so unexpected.
+    /// </summary>
     public class CircleCollider:Collider {
+        /// <summary>
+        /// The circle that's used to perform collision checks
+        /// </summary>
         internal protected Circle circle;
 
+        /// <summary>
+        /// Create a CircleCollider
+        /// </summary>
+        /// <param name="gameObject">The gameObject that will update the collider coordinates when it's coordinates changes</param>
         public CircleCollider(GameObject gameObject) : base(gameObject) {}
 
         /// <summary>
@@ -48,7 +58,7 @@ namespace Daze {
         }
 
         /// <summary>
-        /// This force the coordinates recalculation for this collider when the gameObject is rotated
+        /// This force the coordinates recalculation for this collider when the gameObject is rotated (since this is a circle rotating it is totally pointless, don't use this please :( )
         /// </summary>
         /// <param name="gameObject"></param>
         protected override void rotateCollider(GameObject gameObject) {}

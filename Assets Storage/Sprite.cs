@@ -5,6 +5,9 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Daze {
+    /// <summary>
+    /// A Sprite in daze is a array of bytes representing a Bitmap.
+    /// </summary>
     public class Sprite {
         private BitmapData spriteData;
         #region Variables and properties
@@ -44,7 +47,7 @@ namespace Daze {
         /// In Daze a sprite is nothing more than an array of bytes representing the bitmap so it can be accessed more fastly.
         /// </summary>
         /// <param name="bitmap">The original Bitmap</param>
-        public Sprite(Bitmap bitmap) {
+        internal Sprite(Bitmap bitmap) {
             //inizializzo le variabili della classe
             _Width = bitmap.Width;
             _Height = bitmap.Height;

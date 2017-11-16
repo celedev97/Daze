@@ -2,6 +2,9 @@
 using Daze.Geometry;
 
 namespace Daze {
+    /// <summary>
+    /// A collider with the shape of a rectangle.
+    /// </summary>
     public class RectangleCollider:ConvexPolygonCollider {
         /// <summary>
         /// The distance from the center to a vertex of the rectangle
@@ -9,6 +12,10 @@ namespace Daze {
         /// </summary>
         public override float ray => polygon.ray;
 
+        /// <summary>
+        /// Create a RectangleCollider
+        /// </summary>
+        /// <param name="gameObject">The gameObject that will be used to calculate the rectangle position</param>
         public RectangleCollider(GameObject gameObject) : base(gameObject) {}
 
         /// <summary>

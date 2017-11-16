@@ -7,18 +7,38 @@ using System.Threading.Tasks;
 
 namespace Daze.Geometry {
     #region Geometric structures
-
+    /// <summary>
+    /// A point, it has a X cordinate and a Y coordinate... that's pretty much all.
+    /// </summary>
     public struct Point {
+        /// <summary>
+        /// The position of the point on the X axis
+        /// </summary>
         public float x;
+        /// <summary>
+        /// The position of the point on the Y axis
+        /// </summary>
         public float y;
 
+        /// <summary>
+        /// The origin point (0,0)
+        /// </summary>
         public static readonly Point O = new Point(0,0);
 
+        /// <summary>
+        /// Create a point by it's coordinates
+        /// </summary>
+        /// <param name="x">The position of the point on the X axis</param>
+        /// <param name="y">The position of the point on the Y axis</param>
         public Point(float x, float y) {
             this.x = x;
             this.y = y;
         }
 
+        /// <summary>
+        /// This method rotate the point counterclockwise around the origin point
+        /// </summary>
+        /// <param name="angle">the angle of the rotation</param>
         public void rotatePointAroundO(float angle) {
             double sinA = Math.Sin(angle);
             double cosA = Math.Cos(angle);
@@ -26,16 +46,30 @@ namespace Daze.Geometry {
             y = (float)(x * sinA + y * cosA);
         }
 
+        /// <summary>
+        /// return a copy of this Point
+        /// </summary>
+        /// <returns></returns>
         public Point duplicate() {
             return new Point(x, y);
         }
 
+        /// <summary>
+        /// Sum two points as if they are vectors
+        /// </summary>
+        /// <param name="p1">The first point</param>
+        /// <param name="p2">The second point</param>
+        /// <returns></returns>
         public static Point operator +(Point p1, Point p2) {
             return new Point(p1.x + p2.x, p1.y + p2.y);
         }
 
+        /// <summary>
+        /// A string rapresentation of this point
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() {
-            return "{" + x.ToString().Replace(",", ".") + "," + y.ToString().Replace(",", ".") + "}";
+            return "(" + x.ToString().Replace(",", ".") + "," + y.ToString().Replace(",", ".") + ")";
         }
 
         public static Point operator +(Point point, Vector vector) {

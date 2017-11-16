@@ -34,8 +34,13 @@ namespace Daze {
         #endregion
 
         #region Variable for position
-        //usate per il disegno su schermo
+        /// <summary>
+        /// The position of the gameObject on the screen in the last Cycle
+        /// </summary>
         internal protected IntVector lastPixelPosition;
+        /// <summary>
+        /// The position of the gameObject on the screen
+        /// </summary>
         internal protected IntVector pixelPosition;
 
         /// <summary>
@@ -63,12 +68,17 @@ namespace Daze {
         /// </summary>
         public int drawLayer;
 
-        protected Collider _collider;
+        private Collider _collider;
         /// <summary>
-        /// The collider of this GameObject, colliders can have various shapes and adapt to the SpriteSet
+        /// The collider of this GameObject, colliders can have various shapes and they do adapt to the SpriteSet size
         /// </summary>
-        public virtual Collider collider { get => _collider;
-            set { _collider = value; } }
+        public virtual Collider collider {
+            get => _collider;
+            set {
+                _collider = value;
+                _collider?.recreateCollider();
+            }
+        }
 
         /// <summary>
         /// Returns the object that collided with this Object in the last movement, can be NULL
@@ -76,12 +86,19 @@ namespace Daze {
         public GameObject lastCollision { get { return _lastCollision; } }
 
         /// <summary>
-        /// NOT RECOMMENDED: the list of the timers used by this GameObject.
-        /// You should use the default functions related to timers for editing this, but...
-        /// y'know, i don't really like closed codes in wich you can't fuck up everything, don't cha agree?
+        /// The timers of this gameObject excluding the new created ones
+        /// NOT RECOMMENDED: You should use the default functions related to timers for editing
         /// </summary>
         protected internal List<Timer> timers;
+        /// <summary>
+        /// The timers of this gameObject created in this game cycle
+        /// NOT RECOMMENDED: You should use the default functions related to timers for editing
+        /// </summary>
         protected internal List<Timer> newTimers;
+        /// <summary>
+        /// The timers of this gameObject to be deleted at the end of this game cycle
+        /// NOT RECOMMENDED: You should use the default functions related to timers for editing
+        /// </summary>
         protected internal List<Timer> toDeleteTimers;
 
         /// <summary>
@@ -95,12 +112,27 @@ namespace Daze {
         #endregion
 
         #region Event Handlers
+        /// <summary>
+        /// You can add handler here to manage the click on this gameObject
+        /// </summary>
         public MouseEventHandler mouseClick;
+        /// <summary>
+        /// You can add handler here to manage the double click on this gameObject
+        /// </summary>
         public MouseEventHandler mouseDoubleClick;
-        
+
+        /// <summary>
+        /// You can add handler here to manage the mouse movement inside this gameObject
+        /// </summary>
         public MouseEventHandler mouseMove;
-        
+
+        /// <summary>
+        /// You can add handler here to manage the mouse down event on this gameObject
+        /// </summary>
         public MouseEventHandler mouseDown;
+        /// <summary>
+        /// You can add handler here to manage the mouse up event on this gameObject
+        /// </summary>
         public MouseEventHandler mouseUp;
         #endregion
 
@@ -159,19 +191,31 @@ namespace Daze {
         /// <param name="tickAction">The Action that will be executed when this Timer ticks
         /// <param name="restartFlag">If this flag is set to false then the Timer will not reset automatically once it ticks</param>
         /// <param name="currentMS">The current number of milliseconds passed from the last tick</param>
-        /// <returns></returns>
+        /// <returns>The created timer</returns>
         public Timer createTimer(int timerID, int msPerTick, Action tickAction, bool restartFlag = true, int currentMS = 0) {
             if(msPerTick < 1) throw new Exception("You cannot create a timer that tick every less than one second");
-            //cerco il timer, se esiste cambio il tuo rateo di tick
-            bool timerExists = false;
+            //cerco il timer
+            Timer timerFound = null;
             foreach(Timer timer in timers) {
                 if(timer.ID == timerID) {
-                    timerExists = true;
+                    timerFound = timer;
                 }
             }
-            //se non esiste ne creo uno nuovo
-            if(timerExists) {
-                throw new Exception("A timer with the ID:" + timerID + " already exists");
+            //se esiste devo controllare che non sia già stato cancellato
+            if(timerFound != null) {
+                if(toDeleteTimers.Contains(timerFound)) {
+                    //è stata richiesta la ricreazione di un timer cancellato
+                    toDeleteTimers.Remove(timerFound);
+                    timerFound.msPerTick = msPerTick;
+                    timerFound.tickAction = tickAction;
+                    timerFound.restartFlag = restartFlag;
+                    timerFound.currentMS = currentMS;
+                    timerFound.restart();
+                    return timerFound;
+                } else {
+                    //è stata richiesta la creazione di un timer che esiste già
+                    throw new Exception("A timer with the ID:" + timerID + " already exists");
+                }
             } else {
                 Timer timer = new Timer(timerID, msPerTick, tickAction, restartFlag, currentMS);
                 newTimers.Add(timer);
@@ -317,8 +361,7 @@ namespace Daze {
         #endregion
 
         #region Methods related to collisions
-        //METODO CHE FA USCIRE UN OGGETTO DA UN ALTRO IN CASO DI COLLISIONE
-        protected void extrapolate(float xOffset, float yOffset) {
+        private void extrapolate(float xOffset, float yOffset) {
             position -= new Vector(xOffset, yOffset);
         }
 

@@ -61,14 +61,14 @@ namespace Daze {
         /// <summary>
         /// This method check if a point is inside the Collider
         /// </summary>
-        /// <param name="x">The x of the point to check</param>
-        /// <param name="y">The y of the point to check</param>
+        /// <param name="point">The point to check</param>
         /// <returns>True if the point is inside the Collider, false otherwise</returns>
         internal protected abstract bool inCollider(Point point);
         /// <summary>
         /// This method check if a point is inside the Collider
         /// </summary>
-        /// <param name="point">The point to check</param>
+        /// <param name="x">The x coordinate of the point to check</param>
+        /// <param name="y">The y coordinate of the point to check</param>
         /// <returns>True if the point is inside the Collider, false otherwise</returns>
         internal protected virtual bool inCollider(float x, float y) { return inCollider(new Point(x, y)); }
     }
