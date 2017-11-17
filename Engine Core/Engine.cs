@@ -13,6 +13,56 @@ namespace Daze {
     /// This is the core class of Daze, call Engine.Start() to start your game
     /// </summary>
     public static partial class Engine {
+        #region Constants
+        public enum RenderingSize {
+            SIZE_160X120,
+            SIZE_160X200,
+            SIZE_240X160,
+            SIZE_320X240,
+            SIZE_480X272,
+            SIZE_480X360,
+            SIZE_640X200,
+            SIZE_640X350,
+            SIZE_640X360,
+            SIZE_640X480,
+            SIZE_720X348,
+            SIZE_720X350,
+            SIZE_720X400,
+            SIZE_720X480,
+            SIZE_720X576,
+            SIZE_800X600,
+            SIZE_1024X768,
+            SIZE_1152X864,
+            SIZE_1280X720,
+            SIZE_1280X800,
+            SIZE_1280X1024,
+            SIZE_1360x768,
+            SIZE_1366x768,
+            SIZE_1400X1050,
+            SIZE_1440X900,
+            SIZE_1600X1200,
+            SIZE_1680X1050,
+            SIZE_1920X1080,
+            SIZE_1920X1200,
+            SIZE_2048X1080,
+            SIZE_2048X1536,
+            SIZE_2560X1600,
+            SIZE_2560X2048,
+            SIZE_3200X2048,
+            SIZE_3200X2400,
+            SIZE_3840X2160,
+            SIZE_3840X2400,
+            SIZE_4096X2160,
+            SIZE_4096X3072,
+            SIZE_5120X3200,
+            SIZE_5120X4096,
+            SIZE_6400X4096,
+            SIZE_6400X4800,
+            SIZE_7680X4320,
+            SIZE_7680X4800,
+        }
+        #endregion
+
         #region Variables
         #region Engine Settings
         private static Camera _camera = new Camera();
@@ -43,12 +93,15 @@ namespace Daze {
         public static bool cursorHide {
             get => _cursorHide;
             set {
-                _cursorHide = value;
-                if(value) {
-                    Cursor.Hide();
-                } else {
-                    Cursor.Show();
+                if(value == _cursorHide) {
+                    return;
                 }
+                if(value) {
+                    window.cursorHide();
+                } else {
+                    window.cursorShow();
+                }
+                _cursorHide = value;
             }
         }
         
@@ -56,6 +109,7 @@ namespace Daze {
         /// Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
         /// </summary>
         public static bool printFpsFlag = false;
+        internal static bool stopCycle = false;
         #endregion
         #region Time related variables
         /// <summary>
@@ -182,7 +236,8 @@ namespace Daze {
         /// This function start the Engine
         /// </summary>
         /// <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
-        public static void Start(int FPSLimit = 60) {
+        /// <param name="renderingSize">The internal rendering size</param>
+        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720) {
             #region Initial Setup
             //calcolo il timespan di un Update necessario per non superare il limite di troppo il limite di FPS
             timeSpan = (timeSpan = 1000 / FPSLimit + 1) > 0 ? timeSpan : 1;
@@ -194,9 +249,12 @@ namespace Daze {
             //creo la finestra del gioco
             _window = new GameForm();
 
-            //inizializzo il doppio buffer
-            _drawBufferWidth = Screen.PrimaryScreen.Bounds.Width;
-            _drawBufferHeight = Screen.PrimaryScreen.Bounds.Height;
+            //inizializzo il buffer
+            string sizeString = renderingSize.ToString();
+            int startNumber = sizeString.IndexOf("_")+1;
+            int xPosition = sizeString.IndexOf("X");
+            _drawBufferWidth = int.Parse(sizeString.Substring(startNumber, xPosition - startNumber));
+            _drawBufferHeight = int.Parse(sizeString.Substring(xPosition+1));
 
             _window.buffer = new Bitmap(_drawBufferWidth, _drawBufferHeight);
             using(Graphics g = Graphics.FromImage(_window.buffer)) {
@@ -257,7 +315,7 @@ namespace Daze {
         }
 
         /// <summary>
-        /// This stop the Engine, making your code resume from Engine.Start()
+        /// This stop the Engine,
         /// Use this to close the game
         /// </summary>
         public static void Stop() {
@@ -276,7 +334,7 @@ namespace Daze {
             //disegno lo sfondo
             drawSprite(_camera.background, 0, 0);
 
-            while(true) {
+            while(!stopCycle) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
                 stopwatch.Restart();
 
@@ -286,7 +344,6 @@ namespace Daze {
                     gameObject.pushLastPixelPosition();
                     gameObject.lastSprite = gameObject.spriteSet?.sprite;
                 }
-                
                 #endregion
 
                 #region Executing scripts
@@ -328,6 +385,7 @@ namespace Daze {
                 #region GameObject lists editing
                 //aggiunta gameobject appena creati alla lista dei gameObject
                 for(int i = newGameObjects.Count - 1; i >= 0; i--) {
+                    newGameObjects[i].Start();
                     gameObjects.Add(newGameObjects[i]);
                     newGameObjects.RemoveAt(i);
                 }

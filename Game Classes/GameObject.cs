@@ -68,6 +68,8 @@ namespace Daze {
         /// </summary>
         public int drawLayer;
 
+        internal bool executeStart = true;
+
         private Collider _collider;
         /// <summary>
         /// The collider of this GameObject, colliders can have various shapes and they do adapt to the SpriteSet size
@@ -157,9 +159,6 @@ namespace Daze {
 
             _lastCollision = null;
             ignoreLayers = new List<IgnoreLayer>();
-
-            //avvio il metodo di inizializzazione del gameObject
-            Start();
             
             this.drawLayer = drawLayer;
         }

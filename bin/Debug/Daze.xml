@@ -322,15 +322,16 @@
             The width of the screen
             </summary>
         </member>
-        <member name="M:Daze.Engine.Start(System.Int32)">
+        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize)">
             <summary>
             This function start the Engine
             </summary>
             <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
+            <param name="renderingSize">The internal rendering size</param>
         </member>
         <member name="M:Daze.Engine.Stop">
             <summary>
-            This stop the Engine, making your code resume from Engine.Start()
+            This stop the Engine,
             Use this to close the game
             </summary>
         </member>
