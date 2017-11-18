@@ -30,6 +30,8 @@ namespace Daze {
         /// </summary>
         public Sprite sprite { get => sprites[_index]; }
 
+        public int spriteCount { get => sprites.Length; }
+
         /// <summary>
         /// This reset the SpriteSet, making it go back to the first Sprite and restart the Timer for changing images
         /// </summary>
@@ -57,7 +59,14 @@ namespace Daze {
         /// <summary>
         /// The index of the spriteSet in the sprites array
         /// </summary>
-        public int index { get => _index; }
+        public int index { get => _index;
+            set {
+                if(value<0 || value >= sprites.Length) {
+                    throw new IndexOutOfRangeException();
+                }
+                _index = value;
+            }
+        }
         
         private bool _repeat;
         /// <summary>
@@ -70,7 +79,7 @@ namespace Daze {
                     if(value) {
                         if(gameObject.getTimer(_timerID) == null || timer == null) {
                             gameObject.removeTimer(_timerID);
-                            timer = gameObject.createTimer(_timerID, _ChangeMS, next);
+                            timer = gameObject.createTimer(_timerID, _ChangeMS, callNext);
                         }
                         timer.restartFlag = true;
                     } else {
@@ -185,17 +194,38 @@ namespace Daze {
 
         #endregion
 
+        private void callNext() { next(); }
         /// <summary>
         /// This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
         /// This can be helpful in case you want to use the Sprite manually without using the default timer.
+        /// <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
         /// </summary>
-        public void next() {
+        public bool next() {
+            bool didCycle = false;
             _index++;
             if(_index == sprites.Length) {
                 _index = 0;
                 endAnimationAction?.Invoke();
+                didCycle = true;
             }
             if(_repeat) timer.restart();
+            return didCycle;
+        }
+
+        /// <summary>
+        /// This method forcefully change the SpriteSet's Sprite to the previous one without waiting till the right time to change it
+        /// This can be helpful in case you want to use the Sprite manually without using the default timer.
+        /// <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
+        /// </summary>
+        public bool prev() {
+            bool didCycle = false;
+            _index--;
+            if(_index == -1) {
+                _index = sprites.Length -1;
+                didCycle = true;
+            }
+            if(_repeat) timer.restart();
+            return didCycle;
         }
 
         /// <summary>

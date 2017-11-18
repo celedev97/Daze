@@ -36,8 +36,8 @@ namespace Daze {
             SIZE_1280X720,
             SIZE_1280X800,
             SIZE_1280X1024,
-            SIZE_1360x768,
-            SIZE_1366x768,
+            SIZE_1360X768,
+            SIZE_1366X768,
             SIZE_1400X1050,
             SIZE_1440X900,
             SIZE_1600X1200,
@@ -332,7 +332,7 @@ namespace Daze {
             Stopwatch stopwatch = new Stopwatch();
 
             //disegno lo sfondo
-            drawSprite(_camera.background, 0, 0);
+            if(_camera.background != null) drawSprite(_camera.background, 0, 0);
 
             while(!stopCycle) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
@@ -499,31 +499,36 @@ namespace Daze {
             int originalXPosition = drawXPosition;
             int originalYPosition = drawYPosition;
 
-            //controllo se il gameObject è fuori dallo schermo da uno dei due lati orizzontali
+            //controllo se il gameObject è fuori a sinistra
             if(drawXPosition < 0) {
                 drawWidth += originalXPosition;
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawXPosition = 0;
                 spriteXPosition += (spriteSet.size.width - drawWidth);
-            } else if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
-                drawWidth += Engine._drawBufferWidth - (originalXPosition + drawWidth);
+            }
+            //controllo se il gameObject è fuori a destra
+            if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
+                drawWidth += Engine._drawBufferWidth - (drawXPosition + drawWidth);
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
             }
 
-            //controllo se il gameObject è fuori dallo schermo da uno dei due lati verticali
+            //controllo se il gameObject è fuori in alto
             if(drawYPosition < 0) {
                 drawHeight += originalYPosition;
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawYPosition = 0;
                 spriteYPosition += (spriteSet.size.height - drawHeight);
-            } else if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
-                drawHeight += Engine._drawBufferHeight - (originalYPosition + drawHeight);
+            }
+            //controllo se il gameObject è fuori in basso
+            if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
+                drawHeight += Engine._drawBufferHeight - (drawYPosition + drawHeight);
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
             }
             return true;
         }
 
         internal static void clean(GameObject gameObject, bool checkStatusChange = true, SpriteSet spriteSet = null) {
+            if(_camera.background == null) return;
             if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, true)) {
                 drawSpritePortion(_camera.background,
                                   drawXPosition, drawYPosition,
@@ -648,7 +653,7 @@ namespace Daze {
         /// <param name="resource_Name"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public static Sprite loadSprite(string resource_Name, int scale = 1) {
+        public static Sprite loadSprite(string resource_Name, float scale = 1) {
             string spriteName = resource_Name+"x"+scale;
             //cerco se lo sprite esiste già
             foreach(KeyValuePair<string, Sprite> keyVal in sprites) {

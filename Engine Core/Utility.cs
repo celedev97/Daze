@@ -50,9 +50,8 @@ namespace Daze {
                 return (property.Body as MemberExpression).Member.Name;
             }
 
-            internal static Bitmap scaleImage(Bitmap original, int scale) {
-                if(scale < 2) return original;
-                return scaleImage(original, original.Width * scale, original.Height * scale);
+            internal static Bitmap scaleImage(Bitmap original, float scale) {
+                return scaleImage(original, (int)Math.Round(original.Width * scale), (int)Math.Round(original.Height * scale));
             }
 
             internal static Bitmap scaleImage(Bitmap original, int width, int height) {

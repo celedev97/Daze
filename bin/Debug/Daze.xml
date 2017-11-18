@@ -372,7 +372,7 @@
             </summary>
             <param name="gameObject">The gameObject to remove</param>
         </member>
-        <member name="M:Daze.Engine.loadSprite(System.String,System.Int32)">
+        <member name="M:Daze.Engine.loadSprite(System.String,System.Single)">
             <summary>
             This method load a Sprite from a resource.
             After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
@@ -1033,6 +1033,14 @@
             <summary>
             This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
             This can be helpful in case you want to use the Sprite manually without using the default timer.
+            <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
+            </summary>
+        </member>
+        <member name="M:Daze.SpriteSet.prev">
+            <summary>
+            This method forcefully change the SpriteSet's Sprite to the previous one without waiting till the right time to change it
+            This can be helpful in case you want to use the Sprite manually without using the default timer.
+            <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
             </summary>
         </member>
         <member name="M:Daze.SpriteSet.rotate">
