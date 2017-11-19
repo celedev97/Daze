@@ -122,6 +122,14 @@
             return new IntVector(value.X, value.Y);
         }
 
+        public static bool operator ==(IntVector vect1, IntVector vect2) {
+            return vect1.x == vect2.x && vect1.y == vect2.y;
+        }
+
+        public static bool operator !=(IntVector vect1, IntVector vect2) {
+            return !(vect1 == vect2);
+        }
+
         public static IntVector operator +(IntVector vect1, IntVector vect2) {
             return new IntVector(vect1.x + vect2.x, vect1.y + vect2.y);
         }

@@ -61,10 +61,31 @@ namespace Daze {
             SIZE_7680X4320,
             SIZE_7680X4800,
         }
+
+        public enum DrawingMethod {
+            /// <summary>
+            /// Setting the engine in this way make it so that it redraw only the gameObjects, it is the best setting for action games
+            /// </summary>
+            REDRAW_GAMEOBJECTS,
+            /// <summary>
+            /// This settings redraw everything at every frames, it is the slowest method, and not really advised sice REDRAW_GAMEOBJECTS works better.
+            /// </summary>
+            REDRAW_EVERYTHING,
+            /// <summary>
+            /// This method make it so that the Engine draw only gameObject that moved or changed sprite, this is faster then REDRAW_GAMEOBJECTS, but this can lead to lots of problem with the cleaning if your game is a game in wich there are moving gameObjects that are not physical.
+            /// </summary>
+            REDRAW_MOVED_GAMEOBJECTS,
+        }
+
         #endregion
 
         #region Variables
         #region Engine Settings
+        /// <summary>
+        /// This changes the way the Engine clean and redraw on the screen, read the DrawingMethod enum informations for info about the various options.
+        /// </summary>
+        public static DrawingMethod drawingMethod;
+
         private static Camera _camera = new Camera();
         /// <summary>
         /// This is the camera that is showing on the screen (Daze currently support only one camera)
@@ -237,8 +258,11 @@ namespace Daze {
         /// </summary>
         /// <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
         /// <param name="renderingSize">The internal rendering size</param>
-        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720) {
+        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720, DrawingMethod drawingMethod = DrawingMethod.REDRAW_GAMEOBJECTS) {
             #region Initial Setup
+            //
+            Engine.drawingMethod = drawingMethod;
+
             //calcolo il timespan di un Update necessario per non superare il limite di troppo il limite di FPS
             timeSpan = (timeSpan = 1000 / FPSLimit + 1) > 0 ? timeSpan : 1;
 
@@ -324,15 +348,20 @@ namespace Daze {
         #endregion
 
         private static void GameCycle() {
+            #region Wait till gameFrame is loaded
             while(!_window.loaded) {
                 Thread.Sleep(100);
                 Application.DoEvents();
             }
+            #endregion
+
+            #region Initial gameCycle setup
             //creo lo stopwatch per il ciclo di gioco
             Stopwatch stopwatch = new Stopwatch();
 
             //disegno lo sfondo
-            if(_camera.background != null) drawSprite(_camera.background, 0, 0);
+            drawBackground();
+            #endregion
 
             while(!stopCycle) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
@@ -391,7 +420,7 @@ namespace Daze {
                 }
                 //cancellazione gameobject appena cancellati dalla lista dei gameObject
                 for(int i = toDeleteGameObjects.Count - 1; i >= 0; i--) {
-                    if(toDeleteGameObjects[i]?.spriteSet != null) clean(toDeleteGameObjects[i], false);
+                    if(toDeleteGameObjects[i]?.spriteSet != null) clean(toDeleteGameObjects[i]);
                     gameObjects.Remove(toDeleteGameObjects[i]);
                     toDeleteGameObjects.RemoveAt(i);
                 }
@@ -405,25 +434,24 @@ namespace Daze {
                 }
                 #endregion
 
-                #region Updating the screen
+                #region Draw to buffer
                 //sorting game objects by draw priority
                 sortGameObjectByZ();
 
                 #region Draw on buffer operations
-                //cycle for every gameObject and clean it
-                foreach(GameObject gameObject in gameObjects) {
-                    //i skip the current gameObject if it doesn't have a spriteSet
-                    if(gameObject.spriteSet == null) continue;
-                    clean(gameObject);
-                }
-
-                //cycle for every gameObject and draw it again
-                foreach(GameObject gameObject in gameObjects) {
-                    //i skip the current gameObject if it doesn't have a spriteSet
-                    if(gameObject.spriteSet == null) continue;
-                    //i don't draw the sprite if there is no sprite
-                    if(gameObject.spriteSet.sprite == null) continue;
-                    drawSprite(gameObject);
+                switch(drawingMethod) {
+                    case DrawingMethod.REDRAW_EVERYTHING:
+                        drawBackground();
+                        drawGameObjects();
+                        break;
+                    case DrawingMethod.REDRAW_GAMEOBJECTS:
+                        cleanGameObjects();
+                        drawGameObjects();
+                        break;
+                    case DrawingMethod.REDRAW_MOVED_GAMEOBJECTS:
+                        cleanGameObjects(true);
+                        drawGameObjects(true);
+                        break;
                 }
                 #endregion
 
@@ -442,7 +470,7 @@ namespace Daze {
 
                 //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
                 lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
-                lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
+                if(printFpsFlag) lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
 
                 //imposto il deltaTime per le simulazioni fisiche=
                 _deltaTime = lastCycleMS / 1000;
@@ -453,6 +481,36 @@ namespace Daze {
         }
 
         #region Hidden engine methods for drawing
+        private static void drawBackground() {
+            if(_camera.background != null) drawSprite(_camera.background, 0, 0);
+        }
+
+        private static void cleanGameObjects(bool onlyMoved = false) {
+            //cycle for every gameObject and clean it
+            foreach(GameObject gameObject in gameObjects) {
+                //i skip the current gameObject if it doesn't have a spriteSet
+                if(gameObject.spriteSet == null) continue;
+                if(onlyMoved) {
+                    if(statusChanged(gameObject)) clean(gameObject);
+                } else {
+                    clean(gameObject);
+                }
+            }
+        }
+
+        private static void drawGameObjects(bool onlyMoved = false) {
+            //cycle for every gameObject and clean it
+            foreach(GameObject gameObject in gameObjects) {
+                //i skip the current gameObject if it doesn't have a sprite to draw
+                if(gameObject.spriteSet?.sprite == null) continue;
+                if(onlyMoved) {
+                    if(statusChanged(gameObject)) drawSprite(gameObject);
+                } else {
+                    drawSprite(gameObject);
+                }
+            }
+        }
+
         private static void sortGameObjectByZ() {
             bool nothingReplaced;
             do {
@@ -527,7 +585,7 @@ namespace Daze {
             return true;
         }
 
-        internal static void clean(GameObject gameObject, bool checkStatusChange = true, SpriteSet spriteSet = null) {
+        internal static void clean(GameObject gameObject, SpriteSet spriteSet = null) {
             if(_camera.background == null) return;
             if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, true)) {
                 drawSpritePortion(_camera.background,
@@ -538,7 +596,7 @@ namespace Daze {
         }
 
         private static bool statusChanged(GameObject gameObject) {
-            return (gameObject.pixelPosition.x == gameObject.lastPixelPosition.x && gameObject.pixelPosition.y == gameObject.lastPixelPosition.y && gameObject.spriteSet?.sprite == gameObject.lastSprite);
+            return gameObject.lastPixelPosition != gameObject.pixelPosition || gameObject.lastSprite != gameObject.spriteSet?.sprite;
         }
 
         private static void drawSpritePortion(Sprite sprite, int drawXPosition, int drawYPosition, int spriteXPosition, int spriteYPosition, int width, int height) {

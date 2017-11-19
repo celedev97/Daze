@@ -322,7 +322,7 @@
             The width of the screen
             </summary>
         </member>
-        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize)">
+        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod)">
             <summary>
             This function start the Engine
             </summary>

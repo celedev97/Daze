@@ -23,7 +23,7 @@ namespace Daze {
             set {
                 value.reset();
                 if(_SpriteSet != null) {
-                    Engine.clean(this, false, _SpriteSet);
+                    Engine.clean(this, _SpriteSet);
                 }
                 _SpriteSet = value;
                 collider?.recreateCollider();
@@ -228,6 +228,11 @@ namespace Daze {
         /// <param name="timerID">The if of the Timer to search for</param>
         /// <returns>The searched Timer, can be NULL if there is no Timer with the specified ID</returns>
         public Timer getTimer(int timerID) {
+            foreach(Timer timer in newTimers) {
+                if(timer.ID == timerID) {
+                    return timer;
+                }
+            }
             foreach(Timer timer in timers) {
                 if(timer.ID == timerID) {
                     return timer;
