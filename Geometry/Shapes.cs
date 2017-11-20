@@ -1,10 +1,30 @@
 ﻿namespace Daze.Geometry {
+    /// <summary>
+    /// An abstract class that is the base for creating convex polygons for colliders.
+    /// </summary>
     public abstract class ConvexPolygon {
+        /// <summary>
+        /// The edges of this polygon
+        /// </summary>
         public Line[] lines;
+        /// <summary>
+        /// The center of this polygon
+        /// </summary>
         public abstract Point center { get; set; }
+        /// <summary>
+        /// The rotation of this polygon
+        /// </summary>
         public abstract float rotation { get; set; }
+        /// <summary>
+        /// The ray of the polygon is the distance from the center and a vertex
+        /// </summary>
         public float ray;
 
+        /// <summary>
+        /// Check if this polygon contains the specified point
+        /// </summary>
+        /// <param name="point">the point to check</param>
+        /// <returns>return true if the point is inside the polygon, false otherwise</returns>
         public bool contains(Point point) {
             //creo il segmento che passa per i due centri
             Line centersSegment = new Line(point, center);
@@ -23,12 +43,26 @@
         }
     }
 
+    /// <summary>
+    /// A rectangle. Yes, it's just a rectangle.
+    /// </summary>
     public class Rectangle:ConvexPolygon {
         #region Properties and variables
-        private float _Width; public float width { get => _Width; }
-        private float _Height; public float height { get => _Height; }
+        private float _Width;
+        /// <summary>
+        /// The width of the rectangle
+        /// </summary>
+        public float width { get => _Width; }
+        private float _Height;
+        /// <summary>
+        /// The height of the rectangle
+        /// </summary>
+        public float height { get => _Height; }
 
         private Point _Center;
+        /// <summary>
+        /// The center of the rectangle
+        /// </summary>
         public override Point center {
             get => _Center;
             set {
@@ -49,6 +83,9 @@
         }
 
         private float _Rotation;
+        /// <summary>
+        /// The rotation of the rectangle
+        /// </summary>
         public override float rotation {
             get => _Rotation;
             set {
@@ -62,14 +99,28 @@
            C D */
         private Point A0,B0,C0,D0;//punti senza offset ne rotazione
         private Point RA,RB,RC,RD;//punti senza offset ma rotati
+        /// <summary>
+        /// Vertex of the rectangle
+        /// </summary>
         public Point A,B,C,D;//punti con offset
 
         #endregion
 
+        /// <summary>
+        /// Create a rectangle
+        /// </summary>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <param name="rotation">The rotation of the rectangle</param>
         public Rectangle(float width, float height, float rotation) : this(width, height) {
             this.rotation = rotation;
         }
 
+        /// <summary>
+        /// Create a rectangle
+        /// </summary>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
         public Rectangle(float width, float height) {
             _Width = width;
             _Height = height;
@@ -89,8 +140,7 @@
             D0.y = -halfHeight;
 
             ray = Utility.distance(Point.O, A0);
-
-
+            
             resetRotatedPoints();
             lines = new Line[4];
             calculateLines();
@@ -121,8 +171,17 @@
 
     }
 
+    /// <summary>
+    /// It's a circle... yes, just a circle.
+    /// </summary>
     public struct Circle {
+        /// <summary>
+        /// The center of the circle
+        /// </summary>
         public Point center;
+        /// <summary>
+        /// The radius of the circle
+        /// </summary>
         public float radius;
 
         internal bool contains(Point point) {

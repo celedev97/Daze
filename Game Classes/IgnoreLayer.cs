@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Daze {
+    /// <summary>
+    /// This is a layer for ignoring collisions, you can add Types or specific gameObjects to a layer.
+    /// Adding a layer to a gameObject make that gameObject unable to collide with everything that is inside the layer
+    /// </summary>
     public class IgnoreLayer{
         /// <summary>
         /// The list of gameObjects that should be ignored while checking collisions

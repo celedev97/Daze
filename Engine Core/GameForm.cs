@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Daze {
+    /// <summary>
+    /// The form used by the Engine to show the game, you have no need to use this.
+    /// </summary>
     public class GameForm:Form {
         #region Variables
         internal bool loaded = false;
@@ -22,8 +25,9 @@ namespace Daze {
             WindowState = FormWindowState.Maximized;
 
             //gameFrame
-            this.gameFrame = new PictureBox();
+            gameFrame = new PictureBox();
             gameFrame.Dock = DockStyle.Fill;
+            gameFrame.SizeMode = PictureBoxSizeMode.StretchImage;
             this.Controls.Add(this.gameFrame);
 
             //events
@@ -43,20 +47,18 @@ namespace Daze {
         }
 
         #region Event passed to Engine
-        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, e); }
-        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, e); }
+        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
 
-        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, e); }
+        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
 
-        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, e); }
-        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, e); }
+        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
         #endregion
-
-
 
         #region Event handlers
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
-            Environment.Exit(0);
+            Engine.stopCycle = true;
         }
 
         private void GameForm_Shown(object sender, EventArgs e) {
@@ -83,7 +85,7 @@ namespace Daze {
 
                 for(int y = 0; y < Engine._drawBufferHeight; y++) {
                     IntPtr startOfLine = bmpData.Scan0 + y * bmpData.Stride;
-                    Marshal.Copy(Engine.drawBuffer, y * Engine.drawBufferStride, startOfLine, Engine.drawBufferStride);
+                    Marshal.Copy(Engine.DrawBuffer, y * Engine.DrawBufferStride, startOfLine, Engine.DrawBufferStride);
                 }
 
                 buffer.UnlockBits(bmpData);
@@ -92,6 +94,14 @@ namespace Daze {
             }
         }
         #endregion
+
+        internal void cursorHide() {
+            Cursor.Hide();
+        }
+
+        internal void cursorShow() {
+            Cursor.Show();
+        }
 
         #endregion
     }

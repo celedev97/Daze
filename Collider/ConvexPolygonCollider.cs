@@ -6,8 +6,15 @@ namespace Daze {
     /// A general collider that can have different shapes as long as it's shape is convex
     /// </summary>
     public abstract class ConvexPolygonCollider : Collider {
+        /// <summary>
+        /// The polygon used to check collisions
+        /// </summary>
         internal protected ConvexPolygon polygon;
 
+        /// <summary>
+        /// Create a ConvexPolygonCollider
+        /// </summary>
+        /// <param name="gameObject">The gameObject that will be used to calculate the polygon position</param>
         protected ConvexPolygonCollider(GameObject gameObject) : base(gameObject) { }
 
         /// <summary>
@@ -15,7 +22,7 @@ namespace Daze {
         /// </summary>
         /// <param name="collider2">The second collider to check</param>
         /// <returns>True if the two collider collide, false otherwise</returns>
-        public override bool collide(Collider collider2) {
+        public override bool Collide(Collider collider2) {
             
             Type collider2Type = collider2.GetType();
             if(collider2Type.IsSubclassOf(typeof(ConvexPolygonCollider))) {
@@ -87,7 +94,7 @@ namespace Daze {
         /// This forces the collider's coordinates recalculation after that the gameObject rotates
         /// </summary>
         /// <param name="gameObject">The gameObject that will be used to check rotation and calculate the new coordinates</param>
-        protected override void rotateCollider(GameObject gameObject) {
+        protected override void Rotate(GameObject gameObject) {
             polygon.rotation = gameObject.rotation;
         }
 
@@ -95,7 +102,7 @@ namespace Daze {
         /// This update the collider's coordinates after that the gameObject moves
         /// </summary>
         /// <param name="gameObject">The gameobject that will be used to recalculate the coordinates, it should be this collider's gameobject</param>
-        protected override void moveCollider(GameObject gameObject) {
+        protected override void Move(GameObject gameObject) {
             polygon.center = gameObject.position;
         }
 
@@ -104,7 +111,7 @@ namespace Daze {
         /// </summary>
         /// <param name="point">The point to check</param>
         /// <returns>True if the point is inside the Collider, false otherwise</returns>
-        protected internal override bool inCollider(Point point) {
+        protected internal override bool InCollider(Point point) {
             return polygon.contains(point);
         }
 

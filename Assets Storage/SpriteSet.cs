@@ -2,6 +2,9 @@
 using Daze.Geometry;
 
 namespace Daze {
+    /// <summary>
+    /// A spriteSet is a list of sprites with a timer, it can be used to create an animation
+    /// </summary>
     public class SpriteSet {
         #region Variables for drawing
         private Sprite[] sprites;
@@ -27,13 +30,15 @@ namespace Daze {
         /// </summary>
         public Sprite sprite { get => sprites[_index]; }
 
+        public int spriteCount { get => sprites.Length; }
+
         /// <summary>
         /// This reset the SpriteSet, making it go back to the first Sprite and restart the Timer for changing images
         /// </summary>
         public void reset() {
             _index = 0;
             if(repeat) {
-                gameObject.getTimer(timerID)?.restart();
+                gameObject.getTimer(timerID)?.Restart();
             }
         }
         #endregion
@@ -51,7 +56,17 @@ namespace Daze {
         public int timerID { get => _timerID; }
 
         private int _index;
-        public int index { get => _index; }
+        /// <summary>
+        /// The index of the spriteSet in the sprites array
+        /// </summary>
+        public int index { get => _index;
+            set {
+                if(value<0 || value >= sprites.Length) {
+                    throw new IndexOutOfRangeException();
+                }
+                _index = value;
+            }
+        }
         
         private bool _repeat;
         /// <summary>
@@ -62,8 +77,9 @@ namespace Daze {
             set {
                 if(value != _repeat) {
                     if(value) {
-                        if(gameObject.getTimer(_timerID) == null) {
-                            timer = gameObject.createTimer(_timerID, _ChangeMS, next);
+                        if(gameObject.getTimer(_timerID) == null || timer == null) {
+                            gameObject.removeTimer(_timerID);
+                            timer = gameObject.createTimer(_timerID, _ChangeMS, callNext);
                         }
                         timer.restartFlag = true;
                     } else {
@@ -178,23 +194,44 @@ namespace Daze {
 
         #endregion
 
+        private void callNext() { Next(); }
         /// <summary>
         /// This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
         /// This can be helpful in case you want to use the Sprite manually without using the default timer.
+        /// <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
         /// </summary>
-        public void next() {
+        public bool Next() {
+            bool didCycle = false;
             _index++;
             if(_index == sprites.Length) {
                 _index = 0;
                 endAnimationAction?.Invoke();
+                didCycle = true;
             }
-            if(_repeat) timer.restart();
+            if(_repeat) timer.Restart();
+            return didCycle;
+        }
+
+        /// <summary>
+        /// This method forcefully change the SpriteSet's Sprite to the previous one without waiting till the right time to change it
+        /// This can be helpful in case you want to use the Sprite manually without using the default timer.
+        /// <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
+        /// </summary>
+        public bool Prev() {
+            bool didCycle = false;
+            _index--;
+            if(_index == -1) {
+                _index = sprites.Length -1;
+                didCycle = true;
+            }
+            if(_repeat) timer.Restart();
+            return didCycle;
         }
 
         /// <summary>
         /// This method update the rotation of this SpriteSet
         /// </summary>
-        public void rotate() {
+        public void Rotate() {
             throw new NotImplementedException();
         }
 

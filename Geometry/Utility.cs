@@ -1,15 +1,36 @@
 ﻿using System;
 
 namespace Daze.Geometry {
+    /// <summary>
+    /// A static class with some methods that can be useful for creating new collider Types
+    /// </summary>
     public static class Utility {
+        /// <summary>
+        /// Get the distance between 2 points
+        /// </summary>
+        /// <param name="point1">The first point</param>
+        /// <param name="point2">The second point</param>
+        /// <returns>The calculated distance</returns>
         public static float distance(Point point1, Point point2) {
             return getHypotenuse((point1.x - point2.x), (point1.y - point2.y));
         }
 
+        /// <summary>
+        /// Get the hypotenuse lenght in a triangle with an angle of 90 degrees
+        /// </summary>
+        /// <param name="cathetus1">The length of one of the cathetus</param>
+        /// <param name="cathetus2">The length of one of the cathetus</param>
+        /// <returns></returns>
         public static float getHypotenuse(float cathetus1, float cathetus2) {
             return (float)Math.Sqrt(cathetus1 * cathetus1 + cathetus2 * cathetus2);
         }
 
+        /// <summary>
+        /// Check if two lines have an intersection
+        /// </summary>
+        /// <param name="line1">The firse line</param>
+        /// <param name="line2">The second line</param>
+        /// <returns>True if they have an intersection, false otherwise</returns>
         public static bool linesIntersect(Line line1, Line line2) {
             //ax + by + c = 0
             // by = -ax -c
@@ -121,6 +142,12 @@ namespace Daze.Geometry {
             }
         }
 
+        /// <summary>
+        /// Check if a line and a circle intersect
+        /// </summary>
+        /// <param name="line">The line</param>
+        /// <param name="circle">The circle</param>
+        /// <returns>True if they have an intersection, false otherwise</returns>
         public static bool lineIntersect(Line line, Circle circle) {
             //ax + by + c = 0
             // by = -ax -c
@@ -193,6 +220,13 @@ namespace Daze.Geometry {
 
             }
         }
+        /// <summary>
+        /// Check if a number is between an interval
+        /// </summary>
+        /// <param name="toCheck">The number to check</param>
+        /// <param name="extreme1">One of the extremes of the interval</param>
+        /// <param name="extreme2">One of the extremes of the interval</param>
+        /// <returns></returns>
         public static bool between(float toCheck, float extreme1, float extreme2) {
             if(extreme1 > extreme2) {
                 return extreme1 >= toCheck && toCheck >= extreme2;
@@ -201,11 +235,22 @@ namespace Daze.Geometry {
             }
         }
 
+        /// <summary>
+        /// Get the angular coefficient from a segment
+        /// </summary>
+        /// <param name="line">The segment</param>
+        /// <returns>The angular coefficient</returns>
         public static float getAngularCoefficient(Line line) {
             return getAngularCoefficient(line.point1, line.point2);
         }
 
         //funziona con bounding box con rotazione 0
+        /// <summary>
+        /// Check if a point is in the bounding box of a line (to be use only to do fast checks)
+        /// </summary>
+        /// <param name="pointToCheck">The point</param>
+        /// <param name="line">The line</param>
+        /// <returns>True when the segment is inside the segment bounding box</returns>
         public static bool pointInSegmentBoundingBox(Point pointToCheck, Line line) {
             float firstX = line.point1.x > line.point2.x ? line.point2.x : line.point1.x;
             float firstY = line.point1.y > line.point2.y ? line.point2.y : line.point1.y;
@@ -218,15 +263,32 @@ namespace Daze.Geometry {
             }
             return false;
         }
-
+        
+        /// <summary>
+        /// Get the angular coefficient from a segment
+        /// </summary>
+        /// <param name="p1">One of the extremes of the segment</param>
+        /// <param name="p2">One of the extremes of the segment</param>
+        /// <returns>The angular coefficient</returns>
         public static float getAngularCoefficient(Point p1, Point p2) {
             return (p2.y - p1.y) / (p2.x - p1.x);
         }
 
+        /// <summary>
+        /// Calculate the offset of a line on the Y axis from the origin point
+        /// </summary>
+        /// <param name="line">The line</param>
+        /// <returns>The offset on the Y axis from O</returns>
         public static float calculateLineOffsetYFromO(Line line) {
             return (line.point1.y * line.point2.x - line.point1.x * line.point2.y) / (line.point2.x - line.point1.x);
         }
 
+        /// <summary>
+        /// Check if a line intersect with a circle
+        /// </summary>
+        /// <param name="line1">The line</param>
+        /// <param name="circle">The circle</param>
+        /// <returns></returns>
         public static bool linesIntersect(Line line1, Circle circle) {
             throw new NotImplementedException();
         }

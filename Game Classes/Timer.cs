@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Daze {
+    /// <summary>
+    /// A timer of a GameObject, gameObject can have several timers, you can edit them by using gameObject.createTimer and so on.
+    /// </summary>
     public class Timer {
         #region Variables and properties
         private int _ID;
@@ -59,7 +62,7 @@ namespace Daze {
             this.restartFlag = restartFlag;
             this.tickAction = tickAction;
             _ID = timerID;
-            set(msPerTick, currentMS);
+            Set(msPerTick, currentMS);
         }
         #endregion
 
@@ -72,7 +75,7 @@ namespace Daze {
         public bool ticked() {
             bool output;
             if((output = msPerTick <= currentMS) && restartFlag) {
-                restart();
+                Restart();
             }
             return output;
         }
@@ -80,7 +83,7 @@ namespace Daze {
         /// <summary>
         /// This method restart the timer.
         /// </summary>
-        public void restart() {
+        public void Restart() {
             currentMS = 0;
         }
 
@@ -89,7 +92,7 @@ namespace Daze {
         /// </summary>
         /// <param name="msPerTick"></param>
         /// <param name="currentMS"></param>
-        public void set(int msPerTick, int currentMS = 0) {
+        public void Set(int msPerTick, int currentMS = 0) {
             this.msPerTick = msPerTick;
             this.currentMS = currentMS;
         }

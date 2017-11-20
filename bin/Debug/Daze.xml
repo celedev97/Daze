@@ -1,0 +1,1052 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Daze</name>
+    </assembly>
+    <members>
+        <member name="T:Daze.Wav">
+            <summary>
+            A Wav is exactly what you would expect... a Wav.
+            You can create it from resources using Engine.loadWavFromResources
+            </summary>
+        </member>
+        <member name="P:Daze.Wav.disposeAtEnd">
+            <summary>
+            Set to true to make the Wav remove from the Engine managed Wavs at the end of the sound
+            </summary>
+        </member>
+        <member name="P:Daze.Wav.volume">
+            <summary>
+            The volume of this Wav, it goes from 0 to 100
+            </summary>
+        </member>
+        <member name="P:Daze.Wav.loop">
+            <summary>
+            Set to true to make the Wav restart after it finished playing.
+            </summary>
+        </member>
+        <member name="M:Daze.Wav.Play">
+            <summary>
+            You don't really need this comment, right?
+            (It start the sound)
+            </summary>
+        </member>
+        <member name="M:Daze.Wav.Pause">
+            <summary>
+            You don't really need this comment, do you?
+            (It pause the sound)
+            </summary>
+        </member>
+        <member name="M:Daze.Wav.Stop">
+            <summary>
+            You don't really need this comment, do you?
+            (It stop the sound)
+            </summary>
+        </member>
+        <member name="T:Daze.Collider">
+            <summary>
+            This class represent a collider
+            </summary>
+        </member>
+        <member name="F:Daze.Collider.gameObject">
+            <summary>
+            The gameObject of this collider
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.#ctor(Daze.GameObject)">
+            <summary>
+            The gameObject of this collider
+            </summary>
+            <param name="gameObject"></param>
+        </member>
+        <member name="P:Daze.Collider.ray">
+            <summary>
+            The maximum distance from the center and a vertex of this collider
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.collide(Daze.Collider)">
+            <summary>
+            A method to check if a collider is colliding with this one
+            </summary>
+            <param name="otherCollider">The second collider to check</param>
+            <returns>True if they collide, false otherwise</returns>
+        </member>
+        <member name="M:Daze.Collider.recreateCollider">
+            <summary>
+            It forces the collider's coordinates recalculation
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.moveCollider">
+            <summary>
+            This move the collider, it will be called automatically when his gameObject is moved
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.moveCollider(Daze.GameObject)">
+            <summary>
+            This move the collider, it will be called automatically when his gameObject is moved
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.rotateCollider">
+            <summary>
+            It forces the collider's coordinates recalculation after a gameObject rotation
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.rotateCollider(Daze.GameObject)">
+            <summary>
+            It forces the collider's coordinates recalculation after a gameObject rotation
+            </summary>
+        </member>
+        <member name="M:Daze.Collider.inCollider(Daze.Geometry.Point)">
+            <summary>
+            This method check if a point is inside the Collider
+            </summary>
+            <param name="point">The point to check</param>
+            <returns>True if the point is inside the Collider, false otherwise</returns>
+        </member>
+        <member name="M:Daze.Collider.inCollider(System.Single,System.Single)">
+            <summary>
+            This method check if a point is inside the Collider
+            </summary>
+            <param name="x">The x coordinate of the point to check</param>
+            <param name="y">The y coordinate of the point to check</param>
+            <returns>True if the point is inside the Collider, false otherwise</returns>
+        </member>
+        <member name="T:Daze.CircleCollider">
+            <summary>
+            A collider that use a circle as it's shape... wow, so unexpected.
+            </summary>
+        </member>
+        <member name="F:Daze.CircleCollider.circle">
+            <summary>
+            The circle that's used to perform collision checks
+            </summary>
+        </member>
+        <member name="M:Daze.CircleCollider.#ctor(Daze.GameObject)">
+            <summary>
+            Create a CircleCollider
+            </summary>
+            <param name="gameObject">The gameObject that will update the collider coordinates when it's coordinates changes</param>
+        </member>
+        <member name="P:Daze.CircleCollider.ray">
+            <summary>
+            The radius of the circle
+            </summary>
+        </member>
+        <member name="M:Daze.CircleCollider.collide(Daze.Collider)">
+            <summary>
+            Check if this collider collides with another one
+            </summary>
+            <param name="otherCollider">The second collider to check</param>
+            <returns>True if they collide, false otherwise</returns>
+        </member>
+        <member name="M:Daze.CircleCollider.recreateCollider">
+            <summary>
+            This force the coordinates recalculation for this collider
+            </summary>
+        </member>
+        <member name="M:Daze.CircleCollider.moveCollider(Daze.GameObject)">
+            <summary>
+            This force the coordinates recalculation for this collider when the gameObject is moved
+            </summary>
+            <param name="gameObject"></param>
+        </member>
+        <member name="M:Daze.CircleCollider.rotateCollider(Daze.GameObject)">
+            <summary>
+            This force the coordinates recalculation for this collider when the gameObject is rotated (since this is a circle rotating it is totally pointless, don't use this please :( )
+            </summary>
+            <param name="gameObject"></param>
+        </member>
+        <member name="M:Daze.CircleCollider.inCollider(Daze.Geometry.Point)">
+            <summary>
+            This method check if a point is inside the Collider
+            </summary>
+            <param name="point">The point to check</param>
+            <returns>True if the point is inside the Collider, false otherwise</returns>
+        </member>
+        <member name="T:Daze.RectangleCollider">
+            <summary>
+            A collider with the shape of a rectangle.
+            </summary>
+        </member>
+        <member name="P:Daze.RectangleCollider.ray">
+            <summary>
+            The distance from the center to a vertex of the rectangle
+            (Pratically it's half of a diagonal)
+            </summary>
+        </member>
+        <member name="M:Daze.RectangleCollider.#ctor(Daze.GameObject)">
+            <summary>
+            Create a RectangleCollider
+            </summary>
+            <param name="gameObject">The gameObject that will be used to calculate the rectangle position</param>
+        </member>
+        <member name="M:Daze.RectangleCollider.moveCollider(Daze.GameObject)">
+            <summary>
+            This force the recalculation of the coordinates after the gameObject moves
+            </summary>
+            <param name="gameObject">The gameObject that moved(it should be this collider's gameObject)</param>
+        </member>
+        <member name="M:Daze.RectangleCollider.recreateCollider">
+            <summary>
+            This recalculate every coordinate of the collider
+            </summary>
+        </member>
+        <member name="M:Daze.RectangleCollider.collide(Daze.Collider)">
+            <summary>
+            This function check if a collider is colliding with this one
+            </summary>
+            <param name="collider2">The other collider to check</param>
+            <returns>Return true when they collide, false otherwise</returns>
+        </member>
+        <member name="T:Daze.ConvexPolygonCollider">
+            <summary>
+            A general collider that can have different shapes as long as it's shape is convex
+            </summary>
+        </member>
+        <member name="F:Daze.ConvexPolygonCollider.polygon">
+            <summary>
+            The polygon used to check collisions
+            </summary>
+        </member>
+        <member name="M:Daze.ConvexPolygonCollider.#ctor(Daze.GameObject)">
+            <summary>
+            Create a ConvexPolygonCollider
+            </summary>
+            <param name="gameObject">The gameObject that will be used to calculate the polygon position</param>
+        </member>
+        <member name="M:Daze.ConvexPolygonCollider.collide(Daze.Collider)">
+            <summary>
+            This check if this collider is colliding with another one
+            </summary>
+            <param name="collider2">The second collider to check</param>
+            <returns>True if the two collider collide, false otherwise</returns>
+        </member>
+        <member name="M:Daze.ConvexPolygonCollider.rotateCollider(Daze.GameObject)">
+            <summary>
+            This forces the collider's coordinates recalculation after that the gameObject rotates
+            </summary>
+            <param name="gameObject">The gameObject that will be used to check rotation and calculate the new coordinates</param>
+        </member>
+        <member name="M:Daze.ConvexPolygonCollider.moveCollider(Daze.GameObject)">
+            <summary>
+            This update the collider's coordinates after that the gameObject moves
+            </summary>
+            <param name="gameObject">The gameobject that will be used to recalculate the coordinates, it should be this collider's gameobject</param>
+        </member>
+        <member name="M:Daze.ConvexPolygonCollider.inCollider(Daze.Geometry.Point)">
+            <summary>
+            This method check if a point is inside the Collider
+            </summary>
+            <param name="point">The point to check</param>
+            <returns>True if the point is inside the Collider, false otherwise</returns>
+        </member>
+        <member name="T:Daze.GameForm">
+            <summary>
+            The form used by the Engine to show the game, you have no need to use this.
+            </summary>
+        </member>
+        <member name="T:Daze.Engine">
+            <summary>
+            This is the core class of Daze, call Engine.Start() to start your game
+            </summary>
+        </member>
+        <member name="T:Daze.Engine.Utility">
+            <summary>
+            This is a static class that contains some method that can be used to do various things
+            </summary>
+        </member>
+        <member name="M:Daze.Engine.Utility.RandomInt(System.Int32)">
+            <summary>
+            This method generate a random int number
+            </summary>
+            <param name="max">The maximum number generated</param>
+            <returns>A number from 0 to max (both included in the range)</returns>
+        </member>
+        <member name="M:Daze.Engine.Utility.countStringOccurrences(System.String,System.String)">
+            <summary>
+            (Wait... you really need me to explain this... ?)
+            A simple function that count the occurrence of a string in another string
+            </summary>
+            <param name="haystack">The large string</param>
+            <param name="needle">The small string that must be searched in the larger one</param>
+            <returns></returns>
+        </member>
+        <member name="P:Daze.Engine.camera">
+            <summary>
+            This is the camera that is showing on the screen (Daze currently support only one camera)
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.lostFocus">
+            <summary>
+            You can hook up an action to the engine to know when the game is not active and make it stop
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.gotFocus">
+            <summary>
+            You can hook up an action to the engine to know when the game is active again and make it resume
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.window">
+            <summary>
+            This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.cursorHide">
+            <summary>
+            Setting this to true or false will show of hide the cursor
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.printFpsFlag">
+            <summary>
+            Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
+            </summary>
+        </member>
+        <member name="F:Daze.Engine._deltaTime">
+            <summary>
+            The milliseconds that the last game cycle took
+            This can be used to do physics calculation regardless of FPS.
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.deltaTime">
+            <summary>
+            Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.drawBufferHeight">
+            <summary>
+            The height of the screen
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.drawBufferWidth">
+            <summary>
+            The width of the screen
+            </summary>
+        </member>
+        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod)">
+            <summary>
+            This function start the Engine
+            </summary>
+            <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
+            <param name="renderingSize">The internal rendering size</param>
+        </member>
+        <member name="M:Daze.Engine.Stop">
+            <summary>
+            This stop the Engine,
+            Use this to close the game
+            </summary>
+        </member>
+        <member name="M:Daze.Engine.findGameObjects">
+            <summary>
+            Get all the gameObject currently in the Game
+            </summary>
+            <returns>An array that contains all the gameObject that are not deleted</returns>
+        </member>
+        <member name="M:Daze.Engine.findGameObjects``1">
+            <summary>
+            Get all the gameObjects of a given GameObject subClass
+            </summary>
+            <typeparam name="GameObjectClass">The type of the gameObjects to find</typeparam>
+        </member>
+        <member name="M:Daze.Engine.gameObjectExists(Daze.GameObject)">
+            <summary>
+            Check if a GameObject exists currently
+            </summary>
+            <param name="gameObject">The GameObject to search</param>
+        </member>
+        <member name="M:Daze.Engine.isGameObjectDestroyed(Daze.GameObject)">
+            <summary>
+            Check if a GameObject is destroyed
+            </summary>
+            <param name="gameObject">The GameObject to search</param>
+            <returns>true if the gameObject doesn't exists</returns>
+        </member>
+        <member name="M:Daze.Engine.AddGameObject(Daze.GameObject)">
+            <summary>
+            NOT RECOMMENDED: This method add forcefully a gameObject in the gameObjects list, when a gameObject is created it is automaticaly added to the list, don't use this method if you are not sure what you are doing
+            </summary>
+            <param name="gameObject">The GameObject to add</param>
+        </member>
+        <member name="M:Daze.Engine.DeleteGameObject(Daze.GameObject)">
+            <summary>
+            Delete a gameObject from the gameObject list
+            </summary>
+            <param name="gameObject">The gameObject to remove</param>
+        </member>
+        <member name="M:Daze.Engine.loadSprite(System.String,System.Single)">
+            <summary>
+            This method load a Sprite from a resource.
+            After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
+            </summary>
+            <param name="resource_Name"></param>
+            <param name="scale"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Engine.loadWavFromResources(System.String,System.Int32,System.Boolean,System.Reflection.Assembly)">
+            <summary>
+            This method load a Wav from a resource embedded in your project
+            </summary>
+            <param name="resource_Name">The name of the resource representing the wav</param>
+            /// <param name="loop">True if you want the sound to loop till you pause or stop it</param>
+            <returns>The Wav loaded</returns>
+        </member>
+        <member name="M:Daze.Engine.loadWavFromFile(System.String,System.Int32,System.Boolean)">
+            <summary>
+            This method load a wav from a file
+            </summary>
+            <param name="filePath"></param>
+            <param name="loop"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Engine.playWavFromResources(System.String,System.Int32)">
+            <summary>
+            This method play a Wav from the resources.
+            Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+            </summary>
+            <param name="resource_Name"></param>
+        </member>
+        <member name="M:Daze.Engine.playWavFromFile(System.String)">
+            <summary>
+            This method play a Wav from a file.
+            Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+            </summary>
+            <param name="filePath">The path of the Wav file</param>
+        </member>
+        <member name="T:Daze.Camera">
+            <summary>
+            A camera object
+            </summary>
+        </member>
+        <member name="P:Daze.Camera.collider">
+            <summary>
+            The collider of the Camera. (Except for the fact that the camera can't have a collider :P)
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.isFixed">
+            <summary>
+            It set the camera to being fixed.
+            A fixed camera cannot move, and the GameObjects can't go out of his limits
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.limits">
+            <summary>
+            The bounds of the camera, you can use them to check if an object is out or in the camera.
+            You shouldn't edit them, they are updated automatically as the Camera moves.
+            NOTE: if you need to avoid GameObjects going out of camera and your camera doesn't move just set the camera to be fixed;
+            </summary>
+        </member>
+        <member name="M:Daze.Camera.setBackGround(System.Drawing.Bitmap)">
+            <summary>
+            This set the background of the Camera.
+            </summary>
+            <param name="background"></param>
+        </member>
+        <member name="M:Daze.Camera.move(System.Single,System.Single)">
+            <summary>
+            This move the camera
+            </summary>
+            <param name="xOffset">the x offset of the movement</param>
+            <param name="yOffset">the y offset of the movement</param>
+            <returns></returns>
+        </member>
+        <member name="T:Daze.Camera.Limits">
+            <summary>
+            The struct for showing camera's limits, you don't have reason to use this.
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.Limits.minX">
+            <summary>
+            The coordinate in the world plane of the left limit of the camera
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.Limits.minY">
+            <summary>
+            The coordinate in the world plane of the upper limit of the camera
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.Limits.maxX">
+            <summary>
+            The coordinate in the world plane of the right limit of the camera
+            </summary>
+        </member>
+        <member name="F:Daze.Camera.Limits.maxY">
+            <summary>
+            The coordinate in the world plane of the bottom limit of the camera
+            </summary>
+        </member>
+        <member name="T:Daze.IgnoreLayer">
+            <summary>
+            This is a layer for ignoring collisions, you can add Types or specific gameObjects to a layer.
+            Adding a layer to a gameObject make that gameObject unable to collide with everything that is inside the layer
+            </summary>
+        </member>
+        <member name="F:Daze.IgnoreLayer.gameObjects">
+            <summary>
+            The list of gameObjects that should be ignored while checking collisions
+            </summary>
+        </member>
+        <member name="F:Daze.IgnoreLayer.types">
+            <summary>
+            The list of Types of gameObjects that should be ignored while checking collisions
+            </summary>
+        </member>
+        <member name="M:Daze.IgnoreLayer.#ctor">
+            <summary>
+            The constructor simply initialize the lists
+            </summary>
+        </member>
+        <member name="T:Daze.Geometry.Utility">
+            <summary>
+            A static class with some methods that can be useful for creating new collider Types
+            </summary>
+        </member>
+        <member name="T:Daze.Geometry.ConvexPolygon">
+            <summary>
+            An abstract class that is the base for creating convex polygons for colliders.
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.ConvexPolygon.lines">
+            <summary>
+            The edges of this polygon
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.ConvexPolygon.center">
+            <summary>
+            The center of this polygon
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.ConvexPolygon.rotation">
+            <summary>
+            The rotation of this polygon
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.ConvexPolygon.ray">
+            <summary>
+            The ray of the polygon is the distance from the center and a vertex
+            </summary>
+        </member>
+        <member name="M:Daze.Geometry.ConvexPolygon.contains(Daze.Geometry.Point)">
+            <summary>
+            Check if this polygon contains the specified point
+            </summary>
+            <param name="point">the point to check</param>
+            <returns>return true if the point is inside the polygon, false otherwise</returns>
+        </member>
+        <member name="T:Daze.Geometry.Rectangle">
+            <summary>
+            A rectangle. Yes, it's just a rectangle.
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.Rectangle.width">
+            <summary>
+            The width of the rectangle
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.Rectangle.height">
+            <summary>
+            The height of the rectangle
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.Rectangle.center">
+            <summary>
+            The center of the rectangle
+            </summary>
+        </member>
+        <member name="P:Daze.Geometry.Rectangle.rotation">
+            <summary>
+            The rotation of the rectangle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Rectangle.A">
+            <summary>
+            Vertex of the rectangle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Rectangle.B">
+            <summary>
+            Vertex of the rectangle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Rectangle.C">
+            <summary>
+            Vertex of the rectangle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Rectangle.D">
+            <summary>
+            Vertex of the rectangle
+            </summary>
+        </member>
+        <member name="M:Daze.Geometry.Rectangle.#ctor(System.Single,System.Single,System.Single)">
+            <summary>
+            Create a rectangle
+            </summary>
+            <param name="width">The width of the rectangle</param>
+            <param name="height">The height of the rectangle</param>
+            <param name="rotation">The rotation of the rectangle</param>
+        </member>
+        <member name="M:Daze.Geometry.Rectangle.#ctor(System.Single,System.Single)">
+            <summary>
+            Create a rectangle
+            </summary>
+            <param name="width">The width of the rectangle</param>
+            <param name="height">The height of the rectangle</param>
+        </member>
+        <member name="T:Daze.Geometry.Circle">
+            <summary>
+            It's a circle... yes, just a circle.
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Circle.center">
+            <summary>
+            The center of the circle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Circle.radius">
+            <summary>
+            The radius of the circle
+            </summary>
+        </member>
+        <member name="T:Daze.Geometry.Point">
+            <summary>
+            A point, it has a X cordinate and a Y coordinate... that's pretty much all.
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Point.x">
+            <summary>
+            The position of the point on the X axis
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Point.y">
+            <summary>
+            The position of the point on the Y axis
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Point.O">
+            <summary>
+            The origin point (0,0)
+            </summary>
+        </member>
+        <member name="M:Daze.Geometry.Point.#ctor(System.Single,System.Single)">
+            <summary>
+            Create a point by it's coordinates
+            </summary>
+            <param name="x">The position of the point on the X axis</param>
+            <param name="y">The position of the point on the Y axis</param>
+        </member>
+        <member name="M:Daze.Geometry.Point.rotatePointAroundO(System.Single)">
+            <summary>
+            This method rotate the point counterclockwise around the origin point
+            </summary>
+            <param name="angle">the angle of the rotation</param>
+        </member>
+        <member name="M:Daze.Geometry.Point.duplicate">
+            <summary>
+            return a copy of this Point
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Point.op_Addition(Daze.Geometry.Point,Daze.Geometry.Point)">
+            <summary>
+            Sum two points as if they are vectors
+            </summary>
+            <param name="p1">The first point</param>
+            <param name="p2">The second point</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Point.ToString">
+            <summary>
+            A string rapresentation of this point
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Daze.Sprite">
+            <summary>
+            A Sprite in daze is a array of bytes representing a Bitmap.
+            </summary>
+        </member>
+        <member name="P:Daze.Sprite.pixelArray">
+            <summary>
+            The array of pixels that represent this sprite
+            </summary>
+        </member>
+        <member name="P:Daze.Sprite.width">
+            <summary>
+            The width of the sprite
+            </summary>
+        </member>
+        <member name="P:Daze.Sprite.height">
+            <summary>
+            The height of the sprite
+            </summary>
+        </member>
+        <member name="P:Daze.Sprite.stride">
+            <summary>
+            The length of a line of pixel of this sprite measured in bytes
+            </summary>
+        </member>
+        <member name="P:Daze.Sprite.bytesPerPixel">
+            <summary>
+            How many bytes a pixel takes
+            </summary>
+        </member>
+        <member name="M:Daze.Sprite.#ctor(System.Drawing.Bitmap)">
+            <summary>
+            This create a sprite from a Bitmap.
+            In Daze a sprite is nothing more than an array of bytes representing the bitmap so it can be accessed more fastly.
+            </summary>
+            <param name="bitmap">The original Bitmap</param>
+        </member>
+        <member name="T:Daze.Timer">
+            <summary>
+            A timer of a GameObject, gameObject can have several timers, you can edit them by using gameObject.createTimer and so on.
+            </summary>
+        </member>
+        <member name="P:Daze.Timer.ID">
+            <summary>
+            The ID of the timer
+            </summary>
+        </member>
+        <member name="P:Daze.Timer.msPerTick">
+            <summary>
+            The number of MS of the duration of this timer
+            </summary>
+        </member>
+        <member name="F:Daze.Timer.currentMS">
+            <summary>
+            The current milliseconds of this timer
+            </summary>
+        </member>
+        <member name="F:Daze.Timer.tickAction">
+            <summary>
+            The action that this timer execute every time it reach the msPerTick number of milliseconds
+            </summary>
+        </member>
+        <member name="F:Daze.Timer.restartFlag">
+            <summary>
+            If this flag is set to true the timer will automatically restart after it ticks,
+            otherwise you will have to start it again manually
+            </summary>
+        </member>
+        <member name="M:Daze.Timer.#ctor(System.Int32,System.Int32,System.Action,System.Boolean,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="timerID">The ID of the timer</param>
+            <param name="msPerTick">The number of MS of the duration of this timer</param>
+            <param name="tickAction">The action that this timer execute every time it reach the msPerTick number of milliseconds</param>
+            <param name="restartFlag"></param>
+            <param name="currentMS"></param>
+        </member>
+        <member name="M:Daze.Timer.ticked">
+            <summary>
+            Return true if the time ticked
+            NOTE: this method will also restart the timer if the resetFlag is true
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Timer.restart">
+            <summary>
+            This method restart the timer.
+            </summary>
+        </member>
+        <member name="M:Daze.Timer.set(System.Int32,System.Int32)">
+            <summary>
+            This method can be used to set the timer again in one line
+            </summary>
+            <param name="msPerTick"></param>
+            <param name="currentMS"></param>
+        </member>
+        <member name="P:Daze.GameObject.spriteSet">
+            <summary>
+            The SpriteSet for this gameObject
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.lastPixelPosition">
+            <summary>
+            The position of the gameObject on the screen in the last Cycle
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.pixelPosition">
+            <summary>
+            The position of the gameObject on the screen
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.position">
+            <summary>
+            The position of the gameObject
+            </summary>
+        </member>
+        <member name="P:Daze.GameObject.rotation">
+            <summary>
+            The rotation of the gameObjects
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.drawLayer">
+            <summary>
+            The position of the GameObject on the Z axis
+            (note: the Z axis is Only used for drawing's priority)
+            </summary>
+        </member>
+        <member name="P:Daze.GameObject.collider">
+            <summary>
+            The collider of this GameObject, colliders can have various shapes and they do adapt to the SpriteSet size
+            </summary>
+        </member>
+        <member name="P:Daze.GameObject.lastCollision">
+            <summary>
+            Returns the object that collided with this Object in the last movement, can be NULL
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.timers">
+            <summary>
+            The timers of this gameObject excluding the new created ones
+            NOT RECOMMENDED: You should use the default functions related to timers for editing
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.newTimers">
+            <summary>
+            The timers of this gameObject created in this game cycle
+            NOT RECOMMENDED: You should use the default functions related to timers for editing
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.toDeleteTimers">
+            <summary>
+            The timers of this gameObject to be deleted at the end of this game cycle
+            NOT RECOMMENDED: You should use the default functions related to timers for editing
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject._lastCollision">
+            <summary>
+            This contain the GameObject that collided with this one in the last movement (NULL if there was no collision)
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.ignoreLayers">
+            <summary>
+            The layers of colliders that this GameObjects should ignore while checking collisions
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.mouseClick">
+            <summary>
+            You can add handler here to manage the click on this gameObject
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.mouseDoubleClick">
+            <summary>
+            You can add handler here to manage the double click on this gameObject
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.mouseMove">
+            <summary>
+            You can add handler here to manage the mouse movement inside this gameObject
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.mouseDown">
+            <summary>
+            You can add handler here to manage the mouse down event on this gameObject
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.mouseUp">
+            <summary>
+            You can add handler here to manage the mouse up event on this gameObject
+            </summary>
+        </member>
+        <member name="M:Daze.GameObject.#ctor(System.Single,System.Single,System.Int32)">
+            <summary>
+            Create a GameObject
+            </summary>
+            <param name="x">The position of the GameObject on the X axis</param>
+            <param name="y">The position of the GameObject on the Y axis</param>
+            <param name="drawLayer">The priority for drawing this Object</param>
+        </member>
+        <member name="M:Daze.GameObject.#ctor(System.Single,System.Single)">
+            <summary>
+            Create a GameObject
+            </summary>
+            <param name="x">The position of the GameObject on the X axis</param>
+            <param name="y">The position of the GameObject on the Y axis</param>
+        </member>
+        <!-- Commento XML in formato non corretto ignorato per il membro 'M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Int32)' -->
+        <!-- Commento XML in formato non corretto ignorato per il membro 'M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Boolean,System.Int32)' -->
+        <member name="M:Daze.GameObject.getTimer(System.Int32)">
+            <summary>
+            It retrives a Timer in this GameObject from its ID
+            </summary>
+            <param name="timerID">The if of the Timer to search for</param>
+            <returns>The searched Timer, can be NULL if there is no Timer with the specified ID</returns>
+        </member>
+        <member name="M:Daze.GameObject.removeTimer(System.Int32)">
+            <summary>
+            It deletes a Timer in this GameObject from its ID
+            </summary>
+            <param name="timerID">The if of the Timer to delete</param>
+            <returns>Returns true if the timer was found and deleted, false otherwise</returns>
+        </member>
+        <member name="M:Daze.GameObject.move(Daze.Vectors.Vector)">
+            <summary>
+            This function moves the gameObject of a certain offset
+            </summary>
+            <param name="offset">The vector representing the movement of the gameObject</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.GameObject.move(System.Single,System.Single)">
+            <summary>
+            This function moves the gameObject of a certain offset
+            </summary>
+            <param name="xOffset">The offset of the movement of the GameObject on the X axis</param>
+            <param name="yOffset">The offset of the movement of the GameObject on the Y axis</param>
+            <returns>This return true if the gameObject moved without collisions, false otherwise</returns>
+        </member>
+        <member name="M:Daze.GameObject.checkCollisions">
+            <summary>
+            Check if this object collides with some other objects.
+            </summary>
+            <returns>This method return ONLY the first gameObject found that collides, NOT ALL OF THEM.</returns>
+        </member>
+        <member name="M:Daze.GameObject.Update">
+            <summary>
+            This method is called every game cycle, here you should check your timers, input flags, process movements and so on.
+            </summary>
+        </member>
+        <member name="M:Daze.GameObject.Start">
+            <summary>
+            This method is called once after the Object is created and before the first Update.
+            </summary>
+        </member>
+        <member name="M:Daze.GameObject.OnCollisionEnter">
+            <summary>
+            This method is called when this object is colliding with another Object, the collision data are in the lastCollision property
+            </summary>
+        </member>
+        <member name="M:Daze.GameObject.delete">
+            <summary>
+            Deletes this gameObject, is just a call to the Engine.DeleteGameObject function
+            </summary>
+        </member>
+        <member name="T:Daze.GameScript">
+            <summary>
+            A GameScript is a script called by the Engine when it starts and then automatically every Game Cycle
+            </summary>
+        </member>
+        <member name="M:Daze.GameScript.Update">
+            <summary>
+            A method that keep being called continuosly
+            </summary>
+        </member>
+        <member name="M:Daze.GameScript.Start">
+            <summary>
+            This method is called just once, just after the script initialization
+            </summary>
+        </member>
+        <member name="T:Daze.SpriteSet">
+            <summary>
+            A spriteSet is a list of sprites with a timer, it can be used to create an animation
+            </summary>
+        </member>
+        <member name="F:Daze.SpriteSet.size">
+            <summary>
+            The size of an image of this spriteSet
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.minX">
+            <summary>
+            The starting X of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.minY">
+            <summary>
+            The starting Y of the first coloured pixel, this is used to draw just the coloured part of a sprite and not an alpha part (if present)
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.sprite">
+            <summary>
+            The sprite currently used from this SpriteSet
+            </summary>
+        </member>
+        <member name="M:Daze.SpriteSet.reset">
+            <summary>
+            This reset the SpriteSet, making it go back to the first Sprite and restart the Timer for changing images
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.timerID">
+            <summary>
+            The ID of the timer used by this SpriteSet, SpriteSets always use negative timer IDs.
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.index">
+            <summary>
+            The index of the spriteSet in the sprites array
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.repeat">
+            <summary>
+            Set to true to make this SpriteSet cycle Sprites automatically
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.changeMS">
+            <summary>
+            The number of milliseconds that the SpriteSet will wait before going to the next Sprite
+            </summary>
+        </member>
+        <member name="M:Daze.SpriteSet.#ctor(Daze.GameObject,Daze.Sprite[])">
+            <summary>
+            This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+            </summary>
+            <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+            <param name="sprites">The Sprites that this SpriteSet will have</param>
+        </member>
+        <member name="M:Daze.SpriteSet.#ctor(Daze.GameObject,System.Action,Daze.Sprite[])">
+            <summary>
+            This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+            </summary>
+            <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+            <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+            <param name="sprites">The Sprites that this SpriteSet will have</param>
+        </member>
+        <member name="M:Daze.SpriteSet.#ctor(Daze.GameObject,System.Boolean,Daze.Sprite[])">
+            <summary>
+            This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+            </summary>
+            <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+            <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+            <param name="sprites">The Sprites that this SpriteSet will have</param>
+        </member>
+        <member name="M:Daze.SpriteSet.#ctor(Daze.GameObject,System.Boolean,System.Action,Daze.Sprite[])">
+            <summary>
+            This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+            </summary>
+            <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+            <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+            <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+            <param name="sprites">The Sprites that this SpriteSet will have</param>
+        </member>
+        <member name="M:Daze.SpriteSet.#ctor(Daze.GameObject,System.Int32,System.Boolean,System.Action,Daze.Sprite[])">
+            <summary>
+            This create a SpriteSet, a SpriteSet is a list of sprites, it can be used to create an animation
+            </summary>
+            <param name="gameObject">The GameObject that this SpriteSet will be attached to</param>
+            <param name="msToChangeSprite">The number of milliseconds that the SpriteSet will wait before changing Sprite</param>
+            <param name="repeat">If this flat is set to true the Sprites will change automatically, if you don't set the number of milliseconds for changing the Sprites then the SpriteSet cycle will last 1 second</param>
+            <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
+            <param name="sprites">The Sprites that this SpriteSet will have</param>
+        </member>
+        <member name="M:Daze.SpriteSet.next">
+            <summary>
+            This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
+            This can be helpful in case you want to use the Sprite manually without using the default timer.
+            <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
+            </summary>
+        </member>
+        <member name="M:Daze.SpriteSet.prev">
+            <summary>
+            This method forcefully change the SpriteSet's Sprite to the previous one without waiting till the right time to change it
+            This can be helpful in case you want to use the Sprite manually without using the default timer.
+            <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
+            </summary>
+        </member>
+        <member name="M:Daze.SpriteSet.rotate">
+            <summary>
+            This method update the rotation of this SpriteSet
+            </summary>
+        </member>
+    </members>
+</doc>

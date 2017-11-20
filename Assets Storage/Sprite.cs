@@ -5,38 +5,41 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Daze {
+    /// <summary>
+    /// A Sprite in daze is a array of bytes representing a Bitmap.
+    /// </summary>
     public class Sprite {
         private BitmapData spriteData;
         #region Variables and properties
-        private byte[] _PixelArray;
+        private byte[] _pixelArray;
         /// <summary>
         /// The array of pixels that represent this sprite
         /// </summary>
-        public byte[] pixelArray { get => _PixelArray; }
+        public byte[] pixelArray { get => _pixelArray; }
         
-        private int _Width;
+        private int _width;
         /// <summary>
         /// The width of the sprite
         /// </summary>
-        public int width { get => _Width; }
+        public int width { get => _width; }
 
-        private int _Height;
+        private int _height;
         /// <summary>
         /// The height of the sprite
         /// </summary>
-        public int height { get => _Height; }
+        public int height { get => _height; }
 
-        private int _Stride;
+        private int _stride;
         /// <summary>
         /// The length of a line of pixel of this sprite measured in bytes
         /// </summary>
-        public int stride { get => _Stride; }
+        public int stride { get => _stride; }
         
-        private int _BytesPerPixel;
+        private int _bytesPerPixel;
         /// <summary>
         /// How many bytes a pixel takes
         /// </summary>
-        public int bytesPerPixel { get => _BytesPerPixel; }
+        public int bytesPerPixel { get => _bytesPerPixel; }
         #endregion
 
         /// <summary>
@@ -44,23 +47,23 @@ namespace Daze {
         /// In Daze a sprite is nothing more than an array of bytes representing the bitmap so it can be accessed more fastly.
         /// </summary>
         /// <param name="bitmap">The original Bitmap</param>
-        public Sprite(Bitmap bitmap) {
+        internal Sprite(Bitmap bitmap) {
             //inizializzo le variabili della classe
-            _Width = bitmap.Width;
-            _Height = bitmap.Height;
-            _BytesPerPixel = (bitmap.PixelFormat == PixelFormat.Format32bppArgb ? 4 : 3);
+            _width = bitmap.Width;
+            _height = bitmap.Height;
+            _bytesPerPixel = (bitmap.PixelFormat == PixelFormat.Format32bppArgb ? 4 : 3);
 
             //blocco il bitmap in memoria (verrà purtoppo sbloccato dal GC, quindi sono costretto a metterlo in un area di memoria fissa)
-            spriteData = bitmap.LockBits(new Rectangle(0, 0, _Width, _Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-            _Stride = spriteData.Stride;
+            spriteData = bitmap.LockBits(new Rectangle(0, 0, _width, _height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            _stride = spriteData.Stride;
             IntPtr ptr_startOfSpriteLock = spriteData.Scan0;
 
             //copio il bitmap in un array di byte
-            _PixelArray = new byte[4*_Width*_Height];
-            Marshal.Copy(ptr_startOfSpriteLock, _PixelArray, 0, _PixelArray.Length);
+            _pixelArray = new byte[4*_width*_height];
+            Marshal.Copy(ptr_startOfSpriteLock, _pixelArray, 0, _pixelArray.Length);
 
             //rendo l'array di byte fisso in memoria
-            GCHandle handle = GCHandle.Alloc(_PixelArray, GCHandleType.Pinned);
+            GCHandle handle = GCHandle.Alloc(_pixelArray, GCHandleType.Pinned);
 
             //sblocco il bitmap e forzo il rilascio
             bitmap.UnlockBits(spriteData);

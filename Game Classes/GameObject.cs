@@ -5,11 +5,29 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Daze {
+    /// <summary>
+    /// A GameObject is a sprite with a position, it can get mouse events, it can have timers, a collider, and a lot more.
+    /// </summary>
     public class GameObject:GameScript {
         #region variables
         #region variables for timers
-        internal int lastTimerIndex = -1;
-
+        internal int lastSpriteTimerIndex = -1;
+        
+        /// <summary>
+        /// The timers of this gameObject excluding the new created ones
+        /// NOT RECOMMENDED: You should use the default functions related to timers to edit this
+        /// </summary>
+        protected internal List<Timer> timers;
+        /// <summary>
+        /// The timers of this gameObject created in this game cycle
+        /// NOT RECOMMENDED: You should use the default functions related to timers to edit this
+        /// </summary>
+        protected internal List<Timer> newTimers;
+        /// <summary>
+        /// The timers of this gameObject to be deleted at the end of this game cycle
+        /// NOT RECOMMENDED: You should use the default functions related to timers to edit this
+        /// </summary>
+        protected internal List<Timer> toDeleteTimers;
         #endregion
 
         #region variables for sprites
@@ -23,10 +41,10 @@ namespace Daze {
             set {
                 value.reset();
                 if(_SpriteSet != null) {
-                    Engine.clean(this, false, _SpriteSet);
+                    Engine.clean(this, _SpriteSet);
                 }
                 _SpriteSet = value;
-                collider?.recreateCollider();
+                collider?.RecreateCollider();
                 pushPixelPosition();
             }
         }
@@ -34,8 +52,13 @@ namespace Daze {
         #endregion
 
         #region Variable for position
-        //usate per il disegno su schermo
+        /// <summary>
+        /// The position of the gameObject on the screen in the last Cycle
+        /// </summary>
         internal protected IntVector lastPixelPosition;
+        /// <summary>
+        /// The position of the gameObject on the screen
+        /// </summary>
         internal protected IntVector pixelPosition;
 
         /// <summary>
@@ -51,8 +74,8 @@ namespace Daze {
             get => _Rotation;
             set {
                 _Rotation = value;
-                spriteSet?.rotate();
-                collider?.rotateCollider();
+                spriteSet?.Rotate();
+                collider?.Rotate();
             }
         }
         #endregion
@@ -63,26 +86,24 @@ namespace Daze {
         /// </summary>
         public int drawLayer;
 
-        protected Collider _collider;
+        internal bool executeStart = true;
+
+        private Collider _collider;
         /// <summary>
-        /// The collider of this GameObject, colliders can have various shapes and adapt to the SpriteSet
+        /// The collider of this GameObject, colliders can have various shapes and they do adapt to the SpriteSet size
         /// </summary>
-        public virtual Collider collider { get => _collider;
-            set { _collider = value; } }
+        public virtual Collider collider {
+            get => _collider;
+            set {
+                _collider = value;
+                _collider?.RecreateCollider();
+            }
+        }
 
         /// <summary>
         /// Returns the object that collided with this Object in the last movement, can be NULL
         /// </summary>
         public GameObject lastCollision { get { return _lastCollision; } }
-
-        /// <summary>
-        /// NOT RECOMMENDED: the list of the timers used by this GameObject.
-        /// You should use the default functions related to timers for editing this, but...
-        /// y'know, i don't really like closed codes in wich you can't fuck up everything, don't cha agree?
-        /// </summary>
-        protected internal List<Timer> timers;
-        protected internal List<Timer> newTimers;
-        protected internal List<Timer> toDeleteTimers;
 
         /// <summary>
         /// This contain the GameObject that collided with this one in the last movement (NULL if there was no collision)
@@ -95,12 +116,27 @@ namespace Daze {
         #endregion
 
         #region Event Handlers
+        /// <summary>
+        /// You can add handler here to manage the click on this gameObject
+        /// </summary>
         public MouseEventHandler mouseClick;
+        /// <summary>
+        /// You can add handler here to manage the double click on this gameObject
+        /// </summary>
         public MouseEventHandler mouseDoubleClick;
-        
+
+        /// <summary>
+        /// You can add handler here to manage the mouse movement inside this gameObject
+        /// </summary>
         public MouseEventHandler mouseMove;
-        
+
+        /// <summary>
+        /// You can add handler here to manage the mouse down event on this gameObject
+        /// </summary>
         public MouseEventHandler mouseDown;
+        /// <summary>
+        /// You can add handler here to manage the mouse up event on this gameObject
+        /// </summary>
         public MouseEventHandler mouseUp;
         #endregion
 
@@ -125,9 +161,6 @@ namespace Daze {
 
             _lastCollision = null;
             ignoreLayers = new List<IgnoreLayer>();
-
-            //avvio il metodo di inizializzazione del gameObject
-            Start();
             
             this.drawLayer = drawLayer;
         }
@@ -146,7 +179,7 @@ namespace Daze {
         /// </summary>
         /// <param name="timerID">The ID of the timerw, different gameObject can have the same ID for different timer</param>
         /// <param name="msPerTick">The number of milliseconds necessary for this timer to tick</param>
-        /// <param name="tickAction">The Action that will be executed when this Timer ticks
+        /// <param name="tickAction">The Action that will be executed when this Timer ticks</param>
         /// <param name="currentMS">The current number of milliseconds passed from the last tick</param>
         public Timer createTimer(int timerID, int msPerTick, Action tickAction, int currentMS) {
             return createTimer(timerID, msPerTick, tickAction, true, currentMS);
@@ -156,22 +189,34 @@ namespace Daze {
         /// </summary>
         /// <param name="timerID">The ID of the timerw, different gameObject can have the same ID for different timer</param>
         /// <param name="msPerTick">The number of milliseconds necessary for this timer to tick</param>
-        /// <param name="tickAction">The Action that will be executed when this Timer ticks
+        /// <param name="tickAction">The Action that will be executed when this Timer ticks</param>
         /// <param name="restartFlag">If this flag is set to false then the Timer will not reset automatically once it ticks</param>
         /// <param name="currentMS">The current number of milliseconds passed from the last tick</param>
-        /// <returns></returns>
+        /// <returns>The created timer</returns>
         public Timer createTimer(int timerID, int msPerTick, Action tickAction, bool restartFlag = true, int currentMS = 0) {
             if(msPerTick < 1) throw new Exception("You cannot create a timer that tick every less than one second");
-            //cerco il timer, se esiste cambio il tuo rateo di tick
-            bool timerExists = false;
+            //cerco il timer
+            Timer timerFound = null;
             foreach(Timer timer in timers) {
                 if(timer.ID == timerID) {
-                    timerExists = true;
+                    timerFound = timer;
                 }
             }
-            //se non esiste ne creo uno nuovo
-            if(timerExists) {
-                throw new Exception("A timer with the ID:" + timerID + " already exists");
+            //se esiste devo controllare che non sia già stato cancellato
+            if(timerFound != null) {
+                if(toDeleteTimers.Contains(timerFound)) {
+                    //è stata richiesta la ricreazione di un timer cancellato
+                    toDeleteTimers.Remove(timerFound);
+                    timerFound.msPerTick = msPerTick;
+                    timerFound.tickAction = tickAction;
+                    timerFound.restartFlag = restartFlag;
+                    timerFound.currentMS = currentMS;
+                    timerFound.Restart();
+                    return timerFound;
+                } else {
+                    //è stata richiesta la creazione di un timer che esiste già
+                    throw new Exception("A timer with the ID:" + timerID + " already exists");
+                }
             } else {
                 Timer timer = new Timer(timerID, msPerTick, tickAction, restartFlag, currentMS);
                 newTimers.Add(timer);
@@ -185,6 +230,11 @@ namespace Daze {
         /// <param name="timerID">The if of the Timer to search for</param>
         /// <returns>The searched Timer, can be NULL if there is no Timer with the specified ID</returns>
         public Timer getTimer(int timerID) {
+            foreach(Timer timer in newTimers) {
+                if(timer.ID == timerID) {
+                    return timer;
+                }
+            }
             foreach(Timer timer in timers) {
                 if(timer.ID == timerID) {
                     return timer;
@@ -232,8 +282,8 @@ namespace Daze {
         /// </summary>
         /// <param name="offset">The vector representing the movement of the gameObject</param>
         /// <returns></returns>
-        public virtual bool move(Vector offset) {
-            return move(offset.x, offset.y);
+        public virtual bool Move(Vector offset) {
+            return Move(offset.x, offset.y);
         }
 
 
@@ -243,7 +293,7 @@ namespace Daze {
         /// <param name="xOffset">The offset of the movement of the GameObject on the X axis</param>
         /// <param name="yOffset">The offset of the movement of the GameObject on the Y axis</param>
         /// <returns>This return true if the gameObject moved without collisions, false otherwise</returns>
-        public virtual bool move(float xOffset, float yOffset) {
+        public virtual bool Move(float xOffset, float yOffset) {
             _lastCollision = null;
             bool moved = moveX(xOffset);
             moved = moveY(yOffset) && moved;
@@ -265,7 +315,7 @@ namespace Daze {
             if(collider == null) {
                 return true;
             } else {
-                collider.moveCollider();
+                collider.Move();
                 if((_lastCollision = checkCollisions()) != null) {
                     extrapolate(xOffset, 0);
 
@@ -296,7 +346,7 @@ namespace Daze {
             if(collider == null) {
                 return true;
             } else {
-                collider.moveCollider();
+                collider.Move();
                 GameObject collision2;
                 if((collision2 = checkCollisions()) != null) {
                     _lastCollision = collision2;
@@ -317,8 +367,7 @@ namespace Daze {
         #endregion
 
         #region Methods related to collisions
-        //METODO CHE FA USCIRE UN OGGETTO DA UN ALTRO IN CASO DI COLLISIONE
-        protected void extrapolate(float xOffset, float yOffset) {
+        private void extrapolate(float xOffset, float yOffset) {
             position -= new Vector(xOffset, yOffset);
         }
 
@@ -328,14 +377,14 @@ namespace Daze {
         /// <returns>This method return ONLY the first gameObject found that collides, NOT ALL OF THEM.</returns>
         protected GameObject checkCollisions() {
             foreach(GameObject gameObject2 in Engine.findGameObjects()) {
-                if(this.collide(gameObject2)) {
+                if(this.Collide(gameObject2)) {
                     return gameObject2;
                 }
             }
             return null;
         }
 
-        private bool collide(GameObject gameObject2) {
+        private bool Collide(GameObject gameObject2) {
             //non controllo la collisione con oggetti senza collider o con se stesso
             if(gameObject2.collider == null || gameObject2 == this) return false;
             //se sono qui significa che è un altro oggetto, quindi devo controllare se è da ignorare, e se non lo è devo controllare la collisione;
@@ -352,7 +401,7 @@ namespace Daze {
                 }
             }
             //se sono qui significa che è un altro oggetto e non è da ignorare, quindi controllo la collisione regolarment
-            return collider.collide(gameObject2.collider);
+            return collider.Collide(gameObject2.collider);
         }
 
 
@@ -378,7 +427,7 @@ namespace Daze {
         /// <summary>
         /// Deletes this gameObject, is just a call to the Engine.DeleteGameObject function
         /// </summary>
-        public void delete() {
+        public void Delete() {
             Engine.DeleteGameObject(this);
         }
     }

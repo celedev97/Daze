@@ -4,39 +4,275 @@ using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Reflection;
-using System.Linq.Expressions;
 using System.Resources;
-using System.Windows.Media;
+using System.IO;
 
 namespace Daze {
+    /// <summary>
+    /// This is the core class of Daze, call Engine.Start() to start your game
+    /// </summary>
     public static partial class Engine {
+        #region Enums
+        /// <summary>
+        /// The rendering resolutions
+        /// </summary>
+        public enum RenderingSize {
+            /// <summary>
+            /// Resolution 160X120
+            /// </summary>
+            SIZE_160X120,
+            /// <summary>
+            /// Resolution 160X200
+            /// </summary>
+            SIZE_160X200,
+            /// <summary>
+            /// Resolution 240X160
+            /// </summary>
+            SIZE_240X160,
+            /// <summary>
+            /// Resolution 320X240
+            /// </summary>
+            SIZE_320X240,
+            /// <summary>
+            /// Resolution 480X272
+            /// </summary>
+            SIZE_480X272,
+            /// <summary>
+            /// Resolution 480X360
+            /// </summary>
+            SIZE_480X360,
+            /// <summary>
+            /// Resolution 640X200
+            /// </summary>
+            SIZE_640X200,
+            /// <summary>
+            /// Resolution 640X350
+            /// </summary>
+            SIZE_640X350,
+            /// <summary>
+            /// Resolution 640X360
+            /// </summary>
+            SIZE_640X360,
+            /// <summary>
+            /// Resolution 640X480
+            /// </summary>
+            SIZE_640X480,
+            /// <summary>
+            /// Resolution 720X348
+            /// </summary>
+            SIZE_720X348,
+            /// <summary>
+            /// Resolution 720X350
+            /// </summary>
+            SIZE_720X350,
+            /// <summary>
+            /// Resolution 720X400
+            /// </summary>
+            SIZE_720X400,
+            /// <summary>
+            /// Resolution 720X480
+            /// </summary>
+            SIZE_720X480,
+            /// <summary>
+            /// Resolution 720X576
+            /// </summary>
+            SIZE_720X576,
+            /// <summary>
+            /// Resolution 800X600
+            /// </summary>
+            SIZE_800X600,
+            /// <summary>
+            /// Resolution 1024X768
+            /// </summary>
+            SIZE_1024X768,
+            /// <summary>
+            /// Resolution 1152X864
+            /// </summary>
+            SIZE_1152X864,
+            /// <summary>
+            /// Resolution 1280X720
+            /// </summary>
+            SIZE_1280X720,
+            /// <summary>
+            /// Resolution 1280X800
+            /// </summary>
+            SIZE_1280X800,
+            /// <summary>
+            /// Resolution 1280X1024
+            /// </summary>
+            SIZE_1280X1024,
+            /// <summary>
+            /// Resolution 1360X768
+            /// </summary>
+            SIZE_1360X768,
+            /// <summary>
+            /// Resolution 1366X768
+            /// </summary>
+            SIZE_1366X768,
+            /// <summary>
+            /// Resolution 1400X1050
+            /// </summary>
+            SIZE_1400X1050,
+            /// <summary>
+            /// Resolution 1440X900
+            /// </summary>
+            SIZE_1440X900,
+            /// <summary>
+            /// Resolution 1600X1200
+            /// </summary>
+            SIZE_1600X1200,
+            /// <summary>
+            /// Resolution 1680X1050
+            /// </summary>
+            SIZE_1680X1050,
+            /// <summary>
+            /// Resolution 1920X1080
+            /// </summary>
+            SIZE_1920X1080,
+            /// <summary>
+            /// Resolution 1920X1200
+            /// </summary>
+            SIZE_1920X1200,
+            /// <summary>
+            /// Resolution 2048X1080
+            /// </summary>
+            SIZE_2048X1080,
+            /// <summary>
+            /// Resolution 2048X1536
+            /// </summary>
+            SIZE_2048X1536,
+            /// <summary>
+            /// Resolution 2560X1600
+            /// </summary>
+            SIZE_2560X1600,
+            /// <summary>
+            /// Resolution 2560X2048
+            /// </summary>
+            SIZE_2560X2048,
+            /// <summary>
+            /// Resolution 3200X2048
+            /// </summary>
+            SIZE_3200X2048,
+            /// <summary>
+            /// Resolution 3200X2400
+            /// </summary>
+            SIZE_3200X2400,
+            /// <summary>
+            /// Resolution 3840X2160
+            /// </summary>
+            SIZE_3840X2160,
+            /// <summary>
+            /// Resolution 3840X2400
+            /// </summary>
+            SIZE_3840X2400,
+            /// <summary>
+            /// Resolution 4096X2160
+            /// </summary>
+            SIZE_4096X2160,
+            /// <summary>
+            /// Resolution 4096X3072
+            /// </summary>
+            SIZE_4096X3072,
+            /// <summary>
+            /// Resolution 5120X3200
+            /// </summary>
+            SIZE_5120X3200,
+            /// <summary>
+            /// Resolution 5120X4096
+            /// </summary>
+            SIZE_5120X4096,
+            /// <summary>
+            /// Resolution 6400X4096
+            /// </summary>
+            SIZE_6400X4096,
+            /// <summary>
+            /// Resolution 6400X4800
+            /// </summary>
+            SIZE_6400X4800,
+            /// <summary>
+            /// Resolution 7680X4320
+            /// </summary>
+            SIZE_7680X4320,
+            /// <summary>
+            /// Resolution 7680X4800
+            /// </summary>
+            SIZE_7680X4800,
+        }
+
+        /// <summary>
+        /// The method that the Engine use to clear and redraw the screen
+        /// </summary>
+        public enum DrawingMethod {
+            /// <summary>
+            /// Setting the engine in this way make it so that it redraw only the gameObjects, it is the best setting for action games
+            /// </summary>
+            REDRAW_GAMEOBJECTS,
+            /// <summary>
+            /// This settings redraw everything at every frames, it is the slowest method, and not really advised sice REDRAW_GAMEOBJECTS works better.
+            /// </summary>
+            REDRAW_EVERYTHING,
+            /// <summary>
+            /// This method make it so that the Engine draw only gameObject that moved, changed sprite, or had collisions, this the faster option, but this can lead to visual glitches if your game is a game in wich there are lots of moving gameObjects that are not physical, think about it carefully before choosing to use this option.
+            /// </summary>
+            //TODO: crea un flag invalidate per i gameObject così da poter ridisegnare qualsiasi gameObject ha avuto una collisione, dovrebbe tamponare un po' il problema del cleaning
+            REDRAW_MOVED_GAMEOBJECTS,
+        }
+
+        #endregion
+
         #region Variables
         #region Engine Settings
+        /// <summary>
+        /// This changes the way the Engine clean and redraw on the screen, read the Engine.DrawingMethod enum informations for info about the various options.
+        /// </summary>
+        public static DrawingMethod drawingMethod;
+
         private static Camera _camera = new Camera();
+        /// <summary>
+        /// This is the camera that is showing on the screen (Daze currently support only one camera)
+        /// </summary>
         public static Camera camera {get => _camera; }
 
+        /// <summary>
+        /// You can hook up an action to the engine to know when the game is not active and make it stop
+        /// </summary>
         public static Action lostFocus;
+        /// <summary>
+        /// You can hook up an action to the engine to know when the game is active again and make it resume
+        /// </summary>
         public static Action gotFocus;
 
         private static GameForm _window;
+        /// <summary>
+        /// This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
+        /// </summary>
         public static GameForm window{get=>_window;}
 
-        private static bool _cursorHide = false;
-        public static bool cursorHide {
-            get => _cursorHide;
+        private static bool _hideCursor = false;
+        /// <summary>
+        /// Setting this to true or false will show of hide the cursor
+        /// </summary>
+        public static bool hideCursor {
+            get => _hideCursor;
             set {
-                _cursorHide = value;
-                if(value) {
-                    Cursor.Hide();
-                } else {
-                    Cursor.Show();
+                if(value == _hideCursor) {
+                    return;
                 }
+                if(value) {
+                    window.cursorHide();
+                } else {
+                    window.cursorShow();
+                }
+                _hideCursor = value;
             }
         }
         
+        /// <summary>
+        /// Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
+        /// </summary>
         public static bool printFpsFlag = false;
+        internal static bool stopCycle = false;
         #endregion
         #region Time related variables
         /// <summary>
@@ -44,11 +280,14 @@ namespace Daze {
         /// This can be used to do physics calculation regardless of FPS.
         /// </summary>
         private static float _deltaTime;
-        public static float deltaTime { get { return _deltaTime; } }
+        /// <summary>
+        /// Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
+        /// </summary>
+        public static float DeltaTime { get { return _deltaTime; } }
         
-        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
+        private static float LastCycleMS = 0; private static float LastCycleDrawMS = 0;
 
-        private static int timeSpan;
+        private static int TargetCycleMS;
         #endregion
         #region Private Game Lists
         //Game Scripts Lists
@@ -58,18 +297,28 @@ namespace Daze {
         private static List<GameObject> newGameObjects;
         private static List<GameObject> toDeleteGameObjects;
 
-        //Sprite List
-        internal static Dictionary<string,Sprite> sprites;
+        //Preloading lists
+        internal static Dictionary<string, Sprite> sprites;
+        internal static Dictionary<string, string> wavPaths;
+
+        //sounds list
+        internal static List<Wav> playingWavs;
         #endregion
         #region Drawing variables
-        internal static byte[] drawBuffer;
+        internal static byte[] DrawBuffer;
 
         internal static int _drawBufferHeight;
-        public static int drawBufferHeight { get => _drawBufferHeight; }
+        /// <summary>
+        /// The height of the screen
+        /// </summary>
+        public static int BufferHeight { get => _drawBufferHeight; }
         internal static int _drawBufferWidth;
-        public static int drawBufferWidth { get => _drawBufferWidth; }
+        /// <summary>
+        /// The width of the screen
+        /// </summary>
+        public static int BufferWidth { get => _drawBufferWidth; }
 
-        internal static int drawBufferStride;
+        internal static int DrawBufferStride;
 
         #endregion
         #endregion
@@ -86,8 +335,11 @@ namespace Daze {
         private static void mouseClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseClick(sender, e);
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseClick?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -95,8 +347,11 @@ namespace Daze {
         private static void mouseDoubleClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseDoubleClick(sender, e);
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseDoubleClick?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -104,8 +359,11 @@ namespace Daze {
         private static void mouseMoved(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseMove(sender, e);
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseMove?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -113,8 +371,11 @@ namespace Daze {
         private static void mouseButtonDown(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseDown(sender, e);
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseDown?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -122,8 +383,11 @@ namespace Daze {
         private static void mouseButtonUp(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
                 if(toDeleteGameObjects.Contains(gameObject)) continue;
-                if(gameObject.collider?.inCollider(e.X, e.Y) == true) {
-                    gameObject.mouseUp(sender, e);
+                if(gameObject.spriteSet != null && gameObject.spriteSet.sprite != null) {
+                    if(Geometry.Utility.between(e.X, gameObject.pixelPosition.x, gameObject.pixelPosition.x + gameObject.spriteSet.sprite.width) &&
+                       Geometry.Utility.between(e.Y, gameObject.pixelPosition.y, gameObject.pixelPosition.y + gameObject.spriteSet.sprite.height)) {
+                        gameObject.mouseUp?.Invoke(gameObject, e);
+                    }
                 }
             }
         }
@@ -131,10 +395,19 @@ namespace Daze {
 
         #region Functions
         #region Start/Stop functions
-        public static void Start(int FPSLimit = 60) {
+        /// <summary>
+        /// This function start the Engine
+        /// </summary>
+        /// <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
+        /// <param name="renderingSize">The internal rendering size</param>
+        /// <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
+        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720, DrawingMethod drawingMethod = DrawingMethod.REDRAW_GAMEOBJECTS) {
             #region Initial Setup
-            //calcolo il timespan di un Update necessario per non superare il limite di troppo il limite di FPS
-            timeSpan = (timeSpan = 1000 / FPSLimit + 1) > 0 ? timeSpan : 1;
+            //
+            Engine.drawingMethod = drawingMethod;
+
+            //calcolo il timeSpan di un Update necessario per non superare il limite di troppo il limite di FPS
+            TargetCycleMS = (TargetCycleMS = 1000 / FPSLimit + 1) > 0 ? TargetCycleMS : 1;
 
             //inizializzo l'utility per la generazione di numeri casuali
             Utility.random = new Random();
@@ -143,17 +416,20 @@ namespace Daze {
             //creo la finestra del gioco
             _window = new GameForm();
 
-            //inizializzo il doppio buffer
-            _drawBufferWidth = Screen.PrimaryScreen.Bounds.Width;
-            _drawBufferHeight = Screen.PrimaryScreen.Bounds.Height;
+            //inizializzo il buffer
+            string sizeString = renderingSize.ToString();
+            int startNumber = sizeString.IndexOf("_")+1;
+            int xPosition = sizeString.IndexOf("X");
+            _drawBufferWidth = int.Parse(sizeString.Substring(startNumber, xPosition - startNumber));
+            _drawBufferHeight = int.Parse(sizeString.Substring(xPosition+1));
 
             _window.buffer = new Bitmap(_drawBufferWidth, _drawBufferHeight);
             using(Graphics g = Graphics.FromImage(_window.buffer)) {
                 g.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
             }
 
-            drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
-            drawBufferStride = _drawBufferWidth * 3;
+            DrawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
+            DrawBufferStride = _drawBufferWidth * 3;
             #endregion
 
             #region Eventi
@@ -167,8 +443,12 @@ namespace Daze {
             #endregion
 
             #region Inizializzazione liste
-            //Inizializzo la lista degli sprite
+            //Inizializzo le liste di preloading
             sprites = new Dictionary<string, Sprite>();
+            wavPaths = new Dictionary<string, string>();
+
+            //inizializzo la lista dei suoni
+            playingWavs = new List<Wav>();
 
             //inizializzo lista gameobjects e degli script
             gameObjects = new List<GameObject>();
@@ -201,23 +481,32 @@ namespace Daze {
             #endregion
         }
 
+        /// <summary>
+        /// This stop the Engine,
+        /// Use this to close the game
+        /// </summary>
         public static void Stop() {
             _window.Close();
         }
         #endregion
 
         private static void GameCycle() {
+            #region Wait till gameFrame is loaded
             while(!_window.loaded) {
                 Thread.Sleep(100);
                 Application.DoEvents();
             }
+            #endregion
+
+            #region Initial gameCycle setup
             //creo lo stopwatch per il ciclo di gioco
             Stopwatch stopwatch = new Stopwatch();
 
             //disegno lo sfondo
-            drawSprite(_camera.background, 0, 0);
+            drawBackground();
+            #endregion
 
-            while(true) {
+            while(!stopCycle) {
                 //reinizializzo lo stopwatch per misurare questo ciclo
                 stopwatch.Restart();
 
@@ -227,7 +516,6 @@ namespace Daze {
                     gameObject.pushLastPixelPosition();
                     gameObject.lastSprite = gameObject.spriteSet?.sprite;
                 }
-                
                 #endregion
 
                 #region Executing scripts
@@ -245,7 +533,7 @@ namespace Daze {
                     foreach(Timer timer in gameObject.timers) {
                         //non aggiorno il timer se è un timer di uno spriteSet e non è attivo
                         if(timer.ID < 0 && timer.ID != gameObject.spriteSet?.timerID) continue;
-                        if(timer.currentMS < timer.msPerTick) timer.currentMS += lastCycleMS;
+                        if(timer.currentMS < timer.msPerTick) timer.currentMS += LastCycleMS;
                         if(timer.ticked()) {
                             timer.tickAction?.Invoke();
                         }
@@ -269,12 +557,13 @@ namespace Daze {
                 #region GameObject lists editing
                 //aggiunta gameobject appena creati alla lista dei gameObject
                 for(int i = newGameObjects.Count - 1; i >= 0; i--) {
+                    newGameObjects[i].Start();
                     gameObjects.Add(newGameObjects[i]);
                     newGameObjects.RemoveAt(i);
                 }
                 //cancellazione gameobject appena cancellati dalla lista dei gameObject
                 for(int i = toDeleteGameObjects.Count - 1; i >= 0; i--) {
-                    if(toDeleteGameObjects[i]?.spriteSet != null) clean(toDeleteGameObjects[i], false);
+                    if(toDeleteGameObjects[i]?.spriteSet != null) clean(toDeleteGameObjects[i]);
                     gameObjects.Remove(toDeleteGameObjects[i]);
                     toDeleteGameObjects.RemoveAt(i);
                 }
@@ -288,25 +577,24 @@ namespace Daze {
                 }
                 #endregion
 
-                #region Updating the screen
+                #region Draw to buffer
                 //sorting game objects by draw priority
                 sortGameObjectByZ();
 
                 #region Draw on buffer operations
-                //cycle for every gameObject and clean it
-                foreach(GameObject gameObject in gameObjects) {
-                    //i skip the current gameObject if it doesn't have a spriteSet
-                    if(gameObject.spriteSet == null) continue;
-                    clean(gameObject);
-                }
-
-                //cycle for every gameObject and draw it again
-                foreach(GameObject gameObject in gameObjects) {
-                    //i skip the current gameObject if it doesn't have a spriteSet
-                    if(gameObject.spriteSet == null) continue;
-                    //i don't draw the sprite if there is no sprite
-                    if(gameObject.spriteSet.sprite == null) continue;
-                    drawSprite(gameObject);
+                switch(drawingMethod) {
+                    case DrawingMethod.REDRAW_EVERYTHING:
+                        drawBackground();
+                        drawGameObjects();
+                        break;
+                    case DrawingMethod.REDRAW_GAMEOBJECTS:
+                        cleanGameObjects();
+                        drawGameObjects();
+                        break;
+                    case DrawingMethod.REDRAW_MOVED_GAMEOBJECTS:
+                        cleanGameObjects(true);
+                        drawGameObjects(true);
+                        break;
                 }
                 #endregion
 
@@ -318,17 +606,17 @@ namespace Daze {
 
                 #region FPS check
                 //aspetto il numero di MS necessari per arrivare al timestep oppure aspetto 0MS se l'esecuzione dell'update ne ha richiesti più di 100
-                if(timeSpan > 0) {
-                    int temp = timeSpan - (int)stopwatch.Elapsed.TotalMilliseconds;
+                if(TargetCycleMS > 0) {
+                    int temp = TargetCycleMS - (int)stopwatch.Elapsed.TotalMilliseconds;
                     if(temp > 0) Thread.Sleep(temp);
                 }
 
                 //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
-                lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
-                lastCycleDrawMS = lastCycleMS - now;//CANCELLA IN RELEASE
+                LastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
+                if(printFpsFlag) LastCycleDrawMS = LastCycleMS - now;//CANCELLA IN RELEASE
 
                 //imposto il deltaTime per le simulazioni fisiche=
-                _deltaTime = lastCycleMS / 1000;
+                _deltaTime = LastCycleMS / 1000;
 
                 if(printFpsFlag) printFPS();
                 #endregion
@@ -336,6 +624,36 @@ namespace Daze {
         }
 
         #region Hidden engine methods for drawing
+        private static void drawBackground() {
+            if(_camera.background != null) drawSprite(_camera.background, 0, 0);
+        }
+
+        private static void cleanGameObjects(bool onlyMoved = false) {
+            //cycle for every gameObject and clean it
+            foreach(GameObject gameObject in gameObjects) {
+                //i skip the current gameObject if it doesn't have a spriteSet
+                if(gameObject.spriteSet == null) continue;
+                if(onlyMoved) {
+                    if(statusChanged(gameObject)) clean(gameObject);
+                } else {
+                    clean(gameObject);
+                }
+            }
+        }
+
+        private static void drawGameObjects(bool onlyMoved = false) {
+            //cycle for every gameObject and clean it
+            foreach(GameObject gameObject in gameObjects) {
+                //i skip the current gameObject if it doesn't have a sprite to draw
+                if(gameObject.spriteSet?.sprite == null) continue;
+                if(onlyMoved) {
+                    if(statusChanged(gameObject)) drawSprite(gameObject);
+                } else {
+                    drawSprite(gameObject);
+                }
+            }
+        }
+
         private static void sortGameObjectByZ() {
             bool nothingReplaced;
             do {
@@ -382,31 +700,36 @@ namespace Daze {
             int originalXPosition = drawXPosition;
             int originalYPosition = drawYPosition;
 
-            //controllo se il gameObject è fuori dallo schermo da uno dei due lati orizzontali
+            //controllo se il gameObject è fuori a sinistra
             if(drawXPosition < 0) {
                 drawWidth += originalXPosition;
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawXPosition = 0;
                 spriteXPosition += (spriteSet.size.width - drawWidth);
-            } else if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
-                drawWidth += Engine._drawBufferWidth - (originalXPosition + drawWidth);
+            }
+            //controllo se il gameObject è fuori a destra
+            if((drawXPosition + drawWidth) > Engine._drawBufferWidth) {
+                drawWidth += Engine._drawBufferWidth - (drawXPosition + drawWidth);
                 if(drawWidth < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
             }
 
-            //controllo se il gameObject è fuori dallo schermo da uno dei due lati verticali
+            //controllo se il gameObject è fuori in alto
             if(drawYPosition < 0) {
                 drawHeight += originalYPosition;
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
                 drawYPosition = 0;
                 spriteYPosition += (spriteSet.size.height - drawHeight);
-            } else if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
-                drawHeight += Engine._drawBufferHeight - (originalYPosition + drawHeight);
+            }
+            //controllo se il gameObject è fuori in basso
+            if((drawYPosition + drawHeight) > Engine._drawBufferHeight) {
+                drawHeight += Engine._drawBufferHeight - (drawYPosition + drawHeight);
                 if(drawHeight < 0) return false;// il gameObject non è disegnabile in quanto totalmente fuori dallo schermo
             }
             return true;
         }
 
-        internal static void clean(GameObject gameObject, bool checkStatusChange = true, SpriteSet spriteSet = null) {
+        internal static void clean(GameObject gameObject, SpriteSet spriteSet = null) {
+            if(_camera.background == null) return;
             if(getDrawData(gameObject, out int drawXPosition, out int drawWidth, out int spriteXPosition, out int drawYPosition, out int drawHeight, out int spriteYPosition, true)) {
                 drawSpritePortion(_camera.background,
                                   drawXPosition, drawYPosition,
@@ -416,7 +739,7 @@ namespace Daze {
         }
 
         private static bool statusChanged(GameObject gameObject) {
-            return (gameObject.pixelPosition.x == gameObject.lastPixelPosition.x && gameObject.pixelPosition.y == gameObject.lastPixelPosition.y && gameObject.spriteSet?.sprite == gameObject.lastSprite);
+            return gameObject.lastPixelPosition != gameObject.pixelPosition || gameObject.lastSprite != gameObject.spriteSet?.sprite;
         }
 
         private static void drawSpritePortion(Sprite sprite, int drawXPosition, int drawYPosition, int spriteXPosition, int spriteYPosition, int width, int height) {
@@ -425,20 +748,20 @@ namespace Daze {
 
             for(int y = 0; y < height; y++) {
                 for(int x = 0; x < width; x++) {
-                    int bufferPixelEnd = ((drawYPosition+y) * drawBufferStride) + ((drawXPosition + x) * 3) + 2;
+                    int bufferPixelEnd = ((drawYPosition+y) * DrawBufferStride) + ((drawXPosition + x) * 3) + 2;
                     int spritePixelEnd = ((spriteYPosition+y) * spriteStride) + ((spriteXPosition + x) * 4) + 3;
 
                     byte alpha =  sprite.pixelArray[spritePixelEnd];
                     if(alpha != 0) {
                         //(R)
                         spritePixelEnd--;
-                        drawBuffer[bufferPixelEnd] = Utility.alphaBlend(drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                         //(G)
                         spritePixelEnd--; bufferPixelEnd--;
-                        drawBuffer[bufferPixelEnd] = Utility.alphaBlend(drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                         //(B)
                         spritePixelEnd--; bufferPixelEnd--;
-                        drawBuffer[bufferPixelEnd] = Utility.alphaBlend(drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                     }
                 }
             }
@@ -524,7 +847,14 @@ namespace Daze {
         #endregion
 
         #region Methods for preloading
-        public static Sprite loadSprite(string resource_Name, int scale = 1) {
+        /// <summary>
+        /// This method load a Sprite from a resource.
+        /// After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
+        /// </summary>
+        /// <param name="resource_Name"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        public static Sprite loadSprite(string resource_Name, float scale = 1) {
             string spriteName = resource_Name+"x"+scale;
             //cerco se lo sprite esiste già
             foreach(KeyValuePair<string, Sprite> keyVal in sprites) {
@@ -537,45 +867,106 @@ namespace Daze {
             Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
             Bitmap bitmap = null;
             //ottengo i file di risorse 
-            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
+            foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
                 try {
-                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources",".Resources"),callerAssembly);
+                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources",".Resources"),callerAssembly);
                     bitmap = (Bitmap)rm.GetObject(resource_Name);
                     break;
                 } catch { }
             }
-            if(bitmap == null) throw new Exception("Can't find the sprite: " + resource_Name + " the name must be the same as the Resource's name");
+            if(bitmap == null) throw new Exception("Can't find the sprite " + resource_Name + ": the name must be the same as the Resource's name");
             Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
             sprites.Add(spriteName, newSprite);
             return newSprite;
         }
 
+        /// <summary>
+        /// This method load a Wav from a resource embedded in your project
+        /// </summary>
+        /// <param name="resource_Name">The name of the resource representing the wav</param>
+        /// <param name="volume">The volume of the Wav (from 0 to 100)</param>
+        /// <param name="loop">True if you want the sound to loop till you pause or stop it</param>
+        /// <param name="callerAssembly">The assembly in wich the resources are placed, if you don't set this it will be the assembly that call this function</param>
+        /// <returns>The Wav loaded</returns>
+        public static Wav loadWavFromResources(string resource_Name,int volume = 100, bool loop = false, Assembly callerAssembly = null) {
+            //cerco se il wav è già stato estratto
+            foreach(KeyValuePair<string, string> keyVal in wavPaths) {
+                if(keyVal.Key == resource_Name) {
+                    return new Wav(keyVal.Value, volume, loop);
+                }
+            }
+            //se sono qui allora il wav non è mai stato caricato
+            //ottengo il namespace del metodo che ha chiamato questo metodo
+            callerAssembly = callerAssembly == null? new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly : callerAssembly;
+            //ottengo i file di risorse 
+            string tempFile = null;
+            foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
+                try {
+                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources", ".Resources"), callerAssembly);
+                    tempFile = writeWavStreamToTempLocation(rm.GetStream(resource_Name));
+                    break;
+                } catch(Exception ex) {
+                    Console.WriteLine(ex);
+                }
+            }
+            if(tempFile == null) throw new Exception("Can't find the wav " + resource_Name + ": the name must be the same as the Resource's name");
+            return new Wav(tempFile, volume, loop);
+        }
+        /// <summary>
+        /// This method load a wav from a file
+        /// </summary>
+        /// <param name="filePath">The path of the file to load</param>
+        /// <param name="volume">The volume of the Wav (from 0 to 100)</param>
+        /// <param name="loop">True if you want this Wav to restart at the end of the file</param>
+        /// <returns></returns>
+        public static Wav loadWavFromFile(string filePath, int volume = 100, bool loop = false) {
+            return new Wav(filePath, volume, loop);
+        }
+
+        private static string writeWavStreamToTempLocation(UnmanagedMemoryStream inputStream) {
+            string filePath = String.Format(System.IO.Path.GetTempPath() + Guid.NewGuid().ToString("N") + ".wav");
+            using(FileStream outputStream = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
+                int readByte;
+                byte[] copyBuffer = new byte[524288]; //0,5MB alla volta (512*1024 byte)
+                while((readByte = inputStream.Read(copyBuffer, 0, copyBuffer.Length)) > 0) {
+                    outputStream.Write(copyBuffer, 0, readByte);
+                }
+                outputStream.Flush();
+            }
+            inputStream.Dispose();
+            return filePath;
+        }
         #endregion
 
-        //aggiungi sistema di preloading dei file audio
-        private static void playSound(string resource_Name, bool loop) {
-            //ottengo il namespace del metodo che ha chiamato questo metodo
-            Assembly callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
-            Bitmap bitmap = null;
-            //ottengo i file di risorse 
-            foreach(string resourceName in callerAssembly.GetManifestResourceNames()) {
-                try {
-                    ResourceManager rm = new ResourceManager(resourceName.Replace(".Resources.resources", ".Resources"), callerAssembly);
-                    bitmap = (Bitmap)rm.GetObject(resource_Name);
-                    break;
-                } catch { }
-            }
-            //dopo aver trovato il file di risorse lo estraggo
-
-            
-            MediaPlayer player = new MediaPlayer();
-            player.Open(new Uri(@"C:\windows\media\tada.wav"));
-            player.Play();
+        #region Method for playing sounds for people so lazy that they don't want to create a variable for the Wav
+        /// <summary>
+        /// This method play a Wav from the resources.
+        /// Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+        /// </summary>
+        /// <param name="resource_Name"></param>
+        /// <param name="volume">The volume of the Wav (from 0 to 100)</param>
+        public static void playWavFromResources(string resource_Name, int volume = 100) {
+            Wav newWav = loadWavFromResources(resource_Name, volume, false, new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly);
+            newWav.disposeAtEnd = true;
+            playingWavs.Add(newWav);
+            newWav.Play();
         }
+        /// <summary>
+        /// This method play a Wav from a file.
+        /// Using this method you don't need to manage the Wav initialization and disposition when the sound ends
+        /// </summary>
+        /// <param name="filePath">The path of the Wav file</param>
+        public static void playWavFromFile(string filePath) {
+            Wav newWav = loadWavFromFile(filePath);
+            newWav.disposeAtEnd = true;
+            playingWavs.Add(newWav);
+            newWav.Play();
+        }
+        #endregion
 
         #region Diagnostic Methods
         private static void printFPS() {
-            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
+            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / LastCycleMS) + " MS:" + LastCycleMS + " DRAW:" + LastCycleDrawMS);
         }
         #endregion
         #endregion
