@@ -25,9 +25,10 @@ namespace Daze {
             WindowState = FormWindowState.Maximized;
 
             //gameFrame
-            gameFrame = new PictureBox();
-            gameFrame.Dock = DockStyle.Fill;
-            gameFrame.SizeMode = PictureBoxSizeMode.StretchImage;
+            gameFrame = new PictureBox {
+                Dock = DockStyle.Fill,
+                SizeMode = PictureBoxSizeMode.StretchImage
+            };
             this.Controls.Add(this.gameFrame);
 
             //events
@@ -46,14 +47,14 @@ namespace Daze {
             gameFrame.MouseUp += GameFrame_MouseUp;
         }
 
-        #region Event passed to Engine
-        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
-        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
+        #region Events passed to Engine
+        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
 
-        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
 
-        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
-        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.BufferWidth / Size.Width, e.Y * Engine.BufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
         #endregion
 
         #region Event handlers
@@ -85,7 +86,7 @@ namespace Daze {
 
                 for(int y = 0; y < Engine._drawBufferHeight; y++) {
                     IntPtr startOfLine = bmpData.Scan0 + y * bmpData.Stride;
-                    Marshal.Copy(Engine.DrawBuffer, y * Engine.DrawBufferStride, startOfLine, Engine.DrawBufferStride);
+                    Marshal.Copy(Engine.DrawBuffer, y * Engine.drawBufferStride, startOfLine, Engine.drawBufferStride);
                 }
 
                 buffer.UnlockBits(bmpData);

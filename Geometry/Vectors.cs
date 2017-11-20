@@ -186,7 +186,7 @@ namespace Daze.Vectors {
             if(typeof(Vector) != obj.GetType()) return false;
             return this == (Vector)obj;
         }
-
+        
         /// <summary>
         /// Get the hash code of this object
         /// </summary>
@@ -307,7 +307,7 @@ namespace Daze.Vectors {
         public static implicit operator IntVector(Point value) {
             return new IntVector((int)Math.Round(value.x), (int)Math.Round(value.y));
         }
-
+        
         /// <summary>
         /// Check if two vectors are the same vector
         /// </summary>
@@ -317,7 +317,7 @@ namespace Daze.Vectors {
         public static bool operator ==(IntVector vect1, IntVector vect2) {
             return vect1.x == vect2.x && vect1.y == vect2.y;
         }
-
+        
         /// <summary>
         /// Check if two vectors are the same vector
         /// </summary>

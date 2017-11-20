@@ -283,11 +283,11 @@ namespace Daze {
         /// <summary>
         /// Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
         /// </summary>
-        public static float DeltaTime { get { return _deltaTime; } }
+        public static float deltaTime { get { return _deltaTime; } }
         
-        private static float LastCycleMS = 0; private static float LastCycleDrawMS = 0;
+        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
 
-        private static int TargetCycleMS;
+        private static int targetCycleMS;
         #endregion
         #region Private Game Lists
         //Game Scripts Lists
@@ -311,14 +311,15 @@ namespace Daze {
         /// <summary>
         /// The height of the screen
         /// </summary>
-        public static int BufferHeight { get => _drawBufferHeight; }
+        public static int bufferHeight { get => _drawBufferHeight; }
+
         internal static int _drawBufferWidth;
         /// <summary>
         /// The width of the screen
         /// </summary>
-        public static int BufferWidth { get => _drawBufferWidth; }
+        public static int bufferWidth { get => _drawBufferWidth; }
 
-        internal static int DrawBufferStride;
+        internal static int drawBufferStride;
 
         #endregion
         #endregion
@@ -405,9 +406,9 @@ namespace Daze {
             #region Initial Setup
             //
             Engine.drawingMethod = drawingMethod;
-
+            
             //calcolo il timeSpan di un Update necessario per non superare il limite di troppo il limite di FPS
-            TargetCycleMS = (TargetCycleMS = 1000 / FPSLimit + 1) > 0 ? TargetCycleMS : 1;
+            targetCycleMS = (targetCycleMS = 1000 / FPSLimit + 1) > 0 ? targetCycleMS : 1;
 
             //inizializzo l'utility per la generazione di numeri casuali
             Utility.random = new Random();
@@ -429,7 +430,7 @@ namespace Daze {
             }
 
             DrawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
-            DrawBufferStride = _drawBufferWidth * 3;
+            drawBufferStride = _drawBufferWidth * 3;
             #endregion
 
             #region Eventi
@@ -533,7 +534,7 @@ namespace Daze {
                     foreach(Timer timer in gameObject.timers) {
                         //non aggiorno il timer se è un timer di uno spriteSet e non è attivo
                         if(timer.ID < 0 && timer.ID != gameObject.spriteSet?.timerID) continue;
-                        if(timer.currentMS < timer.msPerTick) timer.currentMS += LastCycleMS;
+                        if(timer.currentMS < timer.msPerTick) timer.currentMS += lastCycleMS;
                         if(timer.ticked()) {
                             timer.tickAction?.Invoke();
                         }
@@ -606,17 +607,17 @@ namespace Daze {
 
                 #region FPS check
                 //aspetto il numero di MS necessari per arrivare al timestep oppure aspetto 0MS se l'esecuzione dell'update ne ha richiesti più di 100
-                if(TargetCycleMS > 0) {
-                    int temp = TargetCycleMS - (int)stopwatch.Elapsed.TotalMilliseconds;
+                if(targetCycleMS > 0) {
+                    int temp = targetCycleMS - (int)stopwatch.Elapsed.TotalMilliseconds;
                     if(temp > 0) Thread.Sleep(temp);
                 }
 
                 //ora dopo lo sleep posso calcolare i tempi necessari per questo ciclo
-                LastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
-                if(printFpsFlag) LastCycleDrawMS = LastCycleMS - now;//CANCELLA IN RELEASE
+                lastCycleMS = (float)stopwatch.Elapsed.TotalMilliseconds;
+                if(printFpsFlag) lastCycleDrawMS = lastCycleMS - now;
 
                 //imposto il deltaTime per le simulazioni fisiche=
-                _deltaTime = LastCycleMS / 1000;
+                _deltaTime = lastCycleMS / 1000;
 
                 if(printFpsFlag) printFPS();
                 #endregion
@@ -748,7 +749,7 @@ namespace Daze {
 
             for(int y = 0; y < height; y++) {
                 for(int x = 0; x < width; x++) {
-                    int bufferPixelEnd = ((drawYPosition+y) * DrawBufferStride) + ((drawXPosition + x) * 3) + 2;
+                    int bufferPixelEnd = ((drawYPosition+y) * drawBufferStride) + ((drawXPosition + x) * 3) + 2;
                     int spritePixelEnd = ((spriteYPosition+y) * spriteStride) + ((spriteXPosition + x) * 4) + 3;
 
                     byte alpha =  sprite.pixelArray[spritePixelEnd];
@@ -897,7 +898,7 @@ namespace Daze {
             }
             //se sono qui allora il wav non è mai stato caricato
             //ottengo il namespace del metodo che ha chiamato questo metodo
-            callerAssembly = callerAssembly == null? new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly : callerAssembly;
+            if(callerAssembly == null) callerAssembly = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Assembly;
             //ottengo i file di risorse 
             string tempFile = null;
             foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
@@ -966,7 +967,7 @@ namespace Daze {
 
         #region Diagnostic Methods
         private static void printFPS() {
-            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / LastCycleMS) + " MS:" + LastCycleMS + " DRAW:" + LastCycleDrawMS);
+            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
         }
         #endregion
         #endregion

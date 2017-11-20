@@ -30,6 +30,9 @@ namespace Daze {
         /// </summary>
         public Sprite sprite { get => sprites[_index]; }
 
+        /// <summary>
+        /// The number of the sprites in this spriteSet
+        /// </summary>
         public int spriteCount { get => sprites.Length; }
 
         /// <summary>
@@ -151,8 +154,8 @@ namespace Daze {
 
             //inizializzazione parametri GameObject e timer
             this.gameObject = gameObject;
-            this._timerID = gameObject.lastTimerIndex;
-            gameObject.lastTimerIndex--;
+            this._timerID = gameObject.lastSpriteTimerIndex;
+            gameObject.lastSpriteTimerIndex--;
             _ChangeMS = msToChangeSprite;
             this.repeat = repeat;//così facendo avvio anche il timer se serve
 
@@ -193,7 +196,7 @@ namespace Daze {
         }
 
         #endregion
-
+        
         private void callNext() { Next(); }
         /// <summary>
         /// This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
