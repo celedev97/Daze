@@ -223,6 +223,13 @@ namespace Daze {
 
         #region Variables
         #region Engine Settings
+
+        /// <summary>
+        /// The destination in wich the Game Cycle will draw
+        /// </summary>
+        public static IDrawable drawDestination { get => _drawDestination; }
+        private static IDrawable _drawDestination;
+
         /// <summary>
         /// This changes the way the Engine clean and redraw on the screen, read the Engine.DrawingMethod enum informations for info about the various options.
         /// </summary>
@@ -242,31 +249,6 @@ namespace Daze {
         /// You can hook up an action to the engine to know when the game is active again and make it resume
         /// </summary>
         public static Action gotFocus;
-
-        private static GameForm _window;
-        /// <summary>
-        /// This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
-        /// </summary>
-        public static GameForm window{get=>_window;}
-
-        private static bool _hideCursor = false;
-        /// <summary>
-        /// Setting this to true or false will show of hide the cursor
-        /// </summary>
-        public static bool hideCursor {
-            get => _hideCursor;
-            set {
-                if(value == _hideCursor) {
-                    return;
-                }
-                if(value) {
-                    window.cursorHide();
-                } else {
-                    window.cursorShow();
-                }
-                _hideCursor = value;
-            }
-        }
         
         /// <summary>
         /// Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
@@ -305,7 +287,10 @@ namespace Daze {
         internal static List<Wav> playingWavs;
         #endregion
         #region Drawing variables
-        internal static byte[] DrawBuffer;
+
+        internal static byte[] _drawBuffer;
+
+        public static byte[] drawBuffer { get => _drawBuffer; }
 
         internal static int _drawBufferHeight;
         /// <summary>
@@ -319,19 +304,21 @@ namespace Daze {
         /// </summary>
         public static int bufferWidth { get => _drawBufferWidth; }
 
-        internal static int drawBufferStride;
+        public static int drawBufferStride { get => _drawBufferStride; }
+
+        internal static int _drawBufferStride;
 
         #endregion
         #endregion
 
         #region Event handlers
-        internal static MouseEventHandler mouseClick;
-        internal static MouseEventHandler mouseDoubleClick;
-        
-        internal static MouseEventHandler mouseMove;
-        
-        internal static MouseEventHandler mouseDown;
-        internal static MouseEventHandler mouseUp;
+        public static MouseEventHandler mouseClick;
+        public static MouseEventHandler mouseDoubleClick;
+
+        public static MouseEventHandler mouseMove;
+
+        public static MouseEventHandler mouseDown;
+        public static MouseEventHandler mouseUp;
 
         private static void mouseClicked(object sender, MouseEventArgs e) {
             foreach(GameObject gameObject in gameObjects) {
@@ -402,9 +389,10 @@ namespace Daze {
         /// <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
         /// <param name="renderingSize">The internal rendering size</param>
         /// <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
-        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720, DrawingMethod drawingMethod = DrawingMethod.REDRAW_GAMEOBJECTS) {
+        public static void Start(int FPSLimit = 60, RenderingSize renderingSize = RenderingSize.SIZE_1280X720, DrawingMethod drawingMethod = DrawingMethod.REDRAW_GAMEOBJECTS, IDrawable drawDestination = null) {
             #region Initial Setup
-            //
+            //draw setup
+            _drawDestination = drawDestination;
             Engine.drawingMethod = drawingMethod;
             
             //calcolo il timeSpan di un Update necessario per non superare il limite di troppo il limite di FPS
@@ -412,25 +400,24 @@ namespace Daze {
 
             //inizializzo l'utility per la generazione di numeri casuali
             Utility.random = new Random();
-
+            if(_drawDestination == null) {
+                _drawDestination = new DrawOnWinform();
+            }
             #region Finestra e buffer
             //creo la finestra del gioco
-            _window = new GameForm();
+            _drawDestination.IntialSetup();
 
-            //inizializzo il buffer
+            //inizializzo il buffer di Daze
             string sizeString = renderingSize.ToString();
             int startNumber = sizeString.IndexOf("_")+1;
             int xPosition = sizeString.IndexOf("X");
             _drawBufferWidth = int.Parse(sizeString.Substring(startNumber, xPosition - startNumber));
             _drawBufferHeight = int.Parse(sizeString.Substring(xPosition+1));
+            _drawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
+            _drawBufferStride = _drawBufferWidth * 3;
 
-            _window.buffer = new Bitmap(_drawBufferWidth, _drawBufferHeight);
-            using(Graphics g = Graphics.FromImage(_window.buffer)) {
-                g.DrawRectangle(new System.Drawing.Pen(System.Drawing.Color.Blue), 0, 0, _drawBufferWidth, _drawBufferHeight);
-            }
-
-            DrawBuffer = new byte[_drawBufferWidth * _drawBufferHeight * 3];
-            drawBufferStride = _drawBufferWidth * 3;
+            //inizializzo il buffer della finestra
+            _drawDestination.BufferSetup();
             #endregion
 
             #region Eventi
@@ -473,9 +460,15 @@ namespace Daze {
             }
             #endregion
 
-            //avvio la finestra del gioco (avviarla prima avrebbe bloccato l'esecuzione del codice)
-            _window.Show();
-            _window.Activate();
+            //avvio la finestra del gioco
+            _drawDestination.Start();
+
+            #region Wait till the window is loaded
+            while(!_drawDestination.loaded) {
+                Thread.Sleep(100);
+                Application.DoEvents();
+            }
+            #endregion
 
             //avvio il ciclo di gioco
             GameCycle();
@@ -487,18 +480,11 @@ namespace Daze {
         /// Use this to close the game
         /// </summary>
         public static void Stop() {
-            _window.Close();
+            _drawDestination.Stop();
         }
         #endregion
 
         private static void GameCycle() {
-            #region Wait till gameFrame is loaded
-            while(!_window.loaded) {
-                Thread.Sleep(100);
-                Application.DoEvents();
-            }
-            #endregion
-
             #region Initial gameCycle setup
             //creo lo stopwatch per il ciclo di gioco
             Stopwatch stopwatch = new Stopwatch();
@@ -601,7 +587,7 @@ namespace Daze {
 
                 float now = (float)stopwatch.Elapsed.TotalMilliseconds;
                 //aggiorno l'immagine sullo schermo
-                _window.updateImage();
+                _drawDestination.Draw();
                 Application.DoEvents();
                 #endregion
 
@@ -749,20 +735,20 @@ namespace Daze {
 
             for(int y = 0; y < height; y++) {
                 for(int x = 0; x < width; x++) {
-                    int bufferPixelEnd = ((drawYPosition+y) * drawBufferStride) + ((drawXPosition + x) * 3) + 2;
+                    int bufferPixelEnd = ((drawYPosition+y) * _drawBufferStride) + ((drawXPosition + x) * 3) + 2;
                     int spritePixelEnd = ((spriteYPosition+y) * spriteStride) + ((spriteXPosition + x) * 4) + 3;
 
                     byte alpha =  sprite.pixelArray[spritePixelEnd];
                     if(alpha != 0) {
                         //(R)
                         spritePixelEnd--;
-                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        _drawBuffer[bufferPixelEnd] = Utility.alphaBlend(_drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                         //(G)
                         spritePixelEnd--; bufferPixelEnd--;
-                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        _drawBuffer[bufferPixelEnd] = Utility.alphaBlend(_drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                         //(B)
                         spritePixelEnd--; bufferPixelEnd--;
-                        DrawBuffer[bufferPixelEnd] = Utility.alphaBlend(DrawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
+                        _drawBuffer[bufferPixelEnd] = Utility.alphaBlend(_drawBuffer[bufferPixelEnd], sprite.pixelArray[spritePixelEnd], alpha);
                     }
                 }
             }
@@ -967,7 +953,7 @@ namespace Daze {
 
         #region Diagnostic Methods
         private static void printFPS() {
-            if(_window.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
+            if(_drawDestination.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
         }
         #endregion
         #endregion

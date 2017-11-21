@@ -64,46 +64,46 @@
             The maximum distance from the center and a vertex of this collider
             </summary>
         </member>
-        <member name="M:Daze.Collider.collide(Daze.Collider)">
+        <member name="M:Daze.Collider.Collide(Daze.Collider)">
             <summary>
             A method to check if a collider is colliding with this one
             </summary>
             <param name="otherCollider">The second collider to check</param>
             <returns>True if they collide, false otherwise</returns>
         </member>
-        <member name="M:Daze.Collider.recreateCollider">
+        <member name="M:Daze.Collider.RecreateCollider">
             <summary>
             It forces the collider's coordinates recalculation
             </summary>
         </member>
-        <member name="M:Daze.Collider.moveCollider">
+        <member name="M:Daze.Collider.Move">
             <summary>
             This move the collider, it will be called automatically when his gameObject is moved
             </summary>
         </member>
-        <member name="M:Daze.Collider.moveCollider(Daze.GameObject)">
+        <member name="M:Daze.Collider.Move(Daze.GameObject)">
             <summary>
             This move the collider, it will be called automatically when his gameObject is moved
             </summary>
         </member>
-        <member name="M:Daze.Collider.rotateCollider">
+        <member name="M:Daze.Collider.Rotate">
             <summary>
             It forces the collider's coordinates recalculation after a gameObject rotation
             </summary>
         </member>
-        <member name="M:Daze.Collider.rotateCollider(Daze.GameObject)">
+        <member name="M:Daze.Collider.Rotate(Daze.GameObject)">
             <summary>
             It forces the collider's coordinates recalculation after a gameObject rotation
             </summary>
         </member>
-        <member name="M:Daze.Collider.inCollider(Daze.Geometry.Point)">
+        <member name="M:Daze.Collider.InCollider(Daze.Geometry.Point)">
             <summary>
             This method check if a point is inside the Collider
             </summary>
             <param name="point">The point to check</param>
             <returns>True if the point is inside the Collider, false otherwise</returns>
         </member>
-        <member name="M:Daze.Collider.inCollider(System.Single,System.Single)">
+        <member name="M:Daze.Collider.InCollider(System.Single,System.Single)">
             <summary>
             This method check if a point is inside the Collider
             </summary>
@@ -132,31 +132,31 @@
             The radius of the circle
             </summary>
         </member>
-        <member name="M:Daze.CircleCollider.collide(Daze.Collider)">
+        <member name="M:Daze.CircleCollider.Collide(Daze.Collider)">
             <summary>
             Check if this collider collides with another one
             </summary>
             <param name="otherCollider">The second collider to check</param>
             <returns>True if they collide, false otherwise</returns>
         </member>
-        <member name="M:Daze.CircleCollider.recreateCollider">
+        <member name="M:Daze.CircleCollider.RecreateCollider">
             <summary>
             This force the coordinates recalculation for this collider
             </summary>
         </member>
-        <member name="M:Daze.CircleCollider.moveCollider(Daze.GameObject)">
+        <member name="M:Daze.CircleCollider.Move(Daze.GameObject)">
             <summary>
             This force the coordinates recalculation for this collider when the gameObject is moved
             </summary>
             <param name="gameObject"></param>
         </member>
-        <member name="M:Daze.CircleCollider.rotateCollider(Daze.GameObject)">
+        <member name="M:Daze.CircleCollider.Rotate(Daze.GameObject)">
             <summary>
             This force the coordinates recalculation for this collider when the gameObject is rotated (since this is a circle rotating it is totally pointless, don't use this please :( )
             </summary>
             <param name="gameObject"></param>
         </member>
-        <member name="M:Daze.CircleCollider.inCollider(Daze.Geometry.Point)">
+        <member name="M:Daze.CircleCollider.InCollider(Daze.Geometry.Point)">
             <summary>
             This method check if a point is inside the Collider
             </summary>
@@ -180,18 +180,18 @@
             </summary>
             <param name="gameObject">The gameObject that will be used to calculate the rectangle position</param>
         </member>
-        <member name="M:Daze.RectangleCollider.moveCollider(Daze.GameObject)">
+        <member name="M:Daze.RectangleCollider.Move(Daze.GameObject)">
             <summary>
             This force the recalculation of the coordinates after the gameObject moves
             </summary>
             <param name="gameObject">The gameObject that moved(it should be this collider's gameObject)</param>
         </member>
-        <member name="M:Daze.RectangleCollider.recreateCollider">
+        <member name="M:Daze.RectangleCollider.RecreateCollider">
             <summary>
             This recalculate every coordinate of the collider
             </summary>
         </member>
-        <member name="M:Daze.RectangleCollider.collide(Daze.Collider)">
+        <member name="M:Daze.RectangleCollider.Collide(Daze.Collider)">
             <summary>
             This function check if a collider is colliding with this one
             </summary>
@@ -214,35 +214,55 @@
             </summary>
             <param name="gameObject">The gameObject that will be used to calculate the polygon position</param>
         </member>
-        <member name="M:Daze.ConvexPolygonCollider.collide(Daze.Collider)">
+        <member name="M:Daze.ConvexPolygonCollider.Collide(Daze.Collider)">
             <summary>
             This check if this collider is colliding with another one
             </summary>
             <param name="collider2">The second collider to check</param>
             <returns>True if the two collider collide, false otherwise</returns>
         </member>
-        <member name="M:Daze.ConvexPolygonCollider.rotateCollider(Daze.GameObject)">
+        <member name="M:Daze.ConvexPolygonCollider.Rotate(Daze.GameObject)">
             <summary>
             This forces the collider's coordinates recalculation after that the gameObject rotates
             </summary>
             <param name="gameObject">The gameObject that will be used to check rotation and calculate the new coordinates</param>
         </member>
-        <member name="M:Daze.ConvexPolygonCollider.moveCollider(Daze.GameObject)">
+        <member name="M:Daze.ConvexPolygonCollider.Move(Daze.GameObject)">
             <summary>
             This update the collider's coordinates after that the gameObject moves
             </summary>
             <param name="gameObject">The gameobject that will be used to recalculate the coordinates, it should be this collider's gameobject</param>
         </member>
-        <member name="M:Daze.ConvexPolygonCollider.inCollider(Daze.Geometry.Point)">
+        <member name="M:Daze.ConvexPolygonCollider.InCollider(Daze.Geometry.Point)">
             <summary>
             This method check if a point is inside the Collider
             </summary>
             <param name="point">The point to check</param>
             <returns>True if the point is inside the Collider, false otherwise</returns>
         </member>
+        <member name="P:Daze.DrawOnWinform.window">
+            <summary>
+            This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
+            </summary>
+        </member>
+        <member name="P:Daze.DrawOnWinform.hideCursor">
+            <summary>
+            Setting this to true or false will show of hide the cursor
+            </summary>
+        </member>
         <member name="T:Daze.GameForm">
             <summary>
             The form used by the Engine to show the game, you have no need to use this.
+            </summary>
+        </member>
+        <member name="T:Daze.IDrawable">
+            <summary>
+            Extend this class to create a different way to draw on screen
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Draw">
+            <summary>
+            Implement this method to draw on the screen
             </summary>
         </member>
         <member name="T:Daze.Engine">
@@ -255,7 +275,7 @@
             This is a static class that contains some method that can be used to do various things
             </summary>
         </member>
-        <member name="M:Daze.Engine.Utility.RandomInt(System.Int32)">
+        <member name="M:Daze.Engine.Utility.randomInt(System.Int32)">
             <summary>
             This method generate a random int number
             </summary>
@@ -271,6 +291,266 @@
             <param name="needle">The small string that must be searched in the larger one</param>
             <returns></returns>
         </member>
+        <member name="T:Daze.Engine.RenderingSize">
+            <summary>
+            The rendering resolutions
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_160X120">
+            <summary>
+            Resolution 160X120
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_160X200">
+            <summary>
+            Resolution 160X200
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_240X160">
+            <summary>
+            Resolution 240X160
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_320X240">
+            <summary>
+            Resolution 320X240
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_480X272">
+            <summary>
+            Resolution 480X272
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_480X360">
+            <summary>
+            Resolution 480X360
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_640X200">
+            <summary>
+            Resolution 640X200
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_640X350">
+            <summary>
+            Resolution 640X350
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_640X360">
+            <summary>
+            Resolution 640X360
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_640X480">
+            <summary>
+            Resolution 640X480
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_720X348">
+            <summary>
+            Resolution 720X348
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_720X350">
+            <summary>
+            Resolution 720X350
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_720X400">
+            <summary>
+            Resolution 720X400
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_720X480">
+            <summary>
+            Resolution 720X480
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_720X576">
+            <summary>
+            Resolution 720X576
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_800X600">
+            <summary>
+            Resolution 800X600
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1024X768">
+            <summary>
+            Resolution 1024X768
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1152X864">
+            <summary>
+            Resolution 1152X864
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1280X720">
+            <summary>
+            Resolution 1280X720
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1280X800">
+            <summary>
+            Resolution 1280X800
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1280X1024">
+            <summary>
+            Resolution 1280X1024
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1360X768">
+            <summary>
+            Resolution 1360X768
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1366X768">
+            <summary>
+            Resolution 1366X768
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1400X1050">
+            <summary>
+            Resolution 1400X1050
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1440X900">
+            <summary>
+            Resolution 1440X900
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1600X1200">
+            <summary>
+            Resolution 1600X1200
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1680X1050">
+            <summary>
+            Resolution 1680X1050
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1920X1080">
+            <summary>
+            Resolution 1920X1080
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_1920X1200">
+            <summary>
+            Resolution 1920X1200
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_2048X1080">
+            <summary>
+            Resolution 2048X1080
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_2048X1536">
+            <summary>
+            Resolution 2048X1536
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_2560X1600">
+            <summary>
+            Resolution 2560X1600
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_2560X2048">
+            <summary>
+            Resolution 2560X2048
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_3200X2048">
+            <summary>
+            Resolution 3200X2048
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_3200X2400">
+            <summary>
+            Resolution 3200X2400
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_3840X2160">
+            <summary>
+            Resolution 3840X2160
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_3840X2400">
+            <summary>
+            Resolution 3840X2400
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_4096X2160">
+            <summary>
+            Resolution 4096X2160
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_4096X3072">
+            <summary>
+            Resolution 4096X3072
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_5120X3200">
+            <summary>
+            Resolution 5120X3200
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_5120X4096">
+            <summary>
+            Resolution 5120X4096
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_6400X4096">
+            <summary>
+            Resolution 6400X4096
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_6400X4800">
+            <summary>
+            Resolution 6400X4800
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_7680X4320">
+            <summary>
+            Resolution 7680X4320
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.RenderingSize.SIZE_7680X4800">
+            <summary>
+            Resolution 7680X4800
+            </summary>
+        </member>
+        <member name="T:Daze.Engine.DrawingMethod">
+            <summary>
+            The method that the Engine use to clear and redraw the screen
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.DrawingMethod.REDRAW_GAMEOBJECTS">
+            <summary>
+            Setting the engine in this way make it so that it redraw only the gameObjects, it is the best setting for action games
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.DrawingMethod.REDRAW_EVERYTHING">
+            <summary>
+            This settings redraw everything at every frames, it is the slowest method, and not really advised sice REDRAW_GAMEOBJECTS works better.
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.DrawingMethod.REDRAW_MOVED_GAMEOBJECTS">
+            <summary>
+            This method make it so that the Engine draw only gameObject that moved, changed sprite, or had collisions, this the faster option, but this can lead to visual glitches if your game is a game in wich there are lots of moving gameObjects that are not physical, think about it carefully before choosing to use this option.
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.drawDestination">
+            <summary>
+            The destination in wich the Game Cycle will draw
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.drawingMethod">
+            <summary>
+            This changes the way the Engine clean and redraw on the screen, read the Engine.DrawingMethod enum informations for info about the various options.
+            </summary>
+        </member>
         <member name="P:Daze.Engine.camera">
             <summary>
             This is the camera that is showing on the screen (Daze currently support only one camera)
@@ -284,16 +564,6 @@
         <member name="F:Daze.Engine.gotFocus">
             <summary>
             You can hook up an action to the engine to know when the game is active again and make it resume
-            </summary>
-        </member>
-        <member name="P:Daze.Engine.window">
-            <summary>
-            This is the window that is showing the game, theorically you shouldn't need it, but if you want to do something particular... go for it ;)
-            </summary>
-        </member>
-        <member name="P:Daze.Engine.cursorHide">
-            <summary>
-            Setting this to true or false will show of hide the cursor
             </summary>
         </member>
         <member name="F:Daze.Engine.printFpsFlag">
@@ -312,22 +582,23 @@
             Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
             </summary>
         </member>
-        <member name="P:Daze.Engine.drawBufferHeight">
+        <member name="P:Daze.Engine.bufferHeight">
             <summary>
             The height of the screen
             </summary>
         </member>
-        <member name="P:Daze.Engine.drawBufferWidth">
+        <member name="P:Daze.Engine.bufferWidth">
             <summary>
             The width of the screen
             </summary>
         </member>
-        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod)">
+        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod,Daze.IDrawable)">
             <summary>
             This function start the Engine
             </summary>
             <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
             <param name="renderingSize">The internal rendering size</param>
+            <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
         </member>
         <member name="M:Daze.Engine.Stop">
             <summary>
@@ -386,15 +657,18 @@
             This method load a Wav from a resource embedded in your project
             </summary>
             <param name="resource_Name">The name of the resource representing the wav</param>
-            /// <param name="loop">True if you want the sound to loop till you pause or stop it</param>
+            <param name="volume">The volume of the Wav (from 0 to 100)</param>
+            <param name="loop">True if you want the sound to loop till you pause or stop it</param>
+            <param name="callerAssembly">The assembly in wich the resources are placed, if you don't set this it will be the assembly that call this function</param>
             <returns>The Wav loaded</returns>
         </member>
         <member name="M:Daze.Engine.loadWavFromFile(System.String,System.Int32,System.Boolean)">
             <summary>
             This method load a wav from a file
             </summary>
-            <param name="filePath"></param>
-            <param name="loop"></param>
+            <param name="filePath">The path of the file to load</param>
+            <param name="volume">The volume of the Wav (from 0 to 100)</param>
+            <param name="loop">True if you want this Wav to restart at the end of the file</param>
             <returns></returns>
         </member>
         <member name="M:Daze.Engine.playWavFromResources(System.String,System.Int32)">
@@ -403,6 +677,7 @@
             Using this method you don't need to manage the Wav initialization and disposition when the sound ends
             </summary>
             <param name="resource_Name"></param>
+            <param name="volume">The volume of the Wav (from 0 to 100)</param>
         </member>
         <member name="M:Daze.Engine.playWavFromFile(System.String)">
             <summary>
@@ -440,7 +715,7 @@
             </summary>
             <param name="background"></param>
         </member>
-        <member name="M:Daze.Camera.move(System.Single,System.Single)">
+        <member name="M:Daze.Camera.Move(System.Single,System.Single)">
             <summary>
             This move the camera
             </summary>
@@ -498,6 +773,85 @@
             <summary>
             A static class with some methods that can be useful for creating new collider Types
             </summary>
+        </member>
+        <member name="M:Daze.Geometry.Utility.distance(Daze.Geometry.Point,Daze.Geometry.Point)">
+            <summary>
+            Get the distance between 2 points
+            </summary>
+            <param name="point1">The first point</param>
+            <param name="point2">The second point</param>
+            <returns>The calculated distance</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.getHypotenuse(System.Single,System.Single)">
+            <summary>
+            Get the hypotenuse lenght in a triangle with an angle of 90 degrees
+            </summary>
+            <param name="cathetus1">The length of one of the cathetus</param>
+            <param name="cathetus2">The length of one of the cathetus</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.linesIntersect(Daze.Geometry.Line,Daze.Geometry.Line)">
+            <summary>
+            Check if two lines have an intersection
+            </summary>
+            <param name="line1">The firse line</param>
+            <param name="line2">The second line</param>
+            <returns>True if they have an intersection, false otherwise</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.lineIntersect(Daze.Geometry.Line,Daze.Geometry.Circle)">
+            <summary>
+            Check if a line and a circle intersect
+            </summary>
+            <param name="line">The line</param>
+            <param name="circle">The circle</param>
+            <returns>True if they have an intersection, false otherwise</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.between(System.Single,System.Single,System.Single)">
+            <summary>
+            Check if a number is between an interval
+            </summary>
+            <param name="toCheck">The number to check</param>
+            <param name="extreme1">One of the extremes of the interval</param>
+            <param name="extreme2">One of the extremes of the interval</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.getAngularCoefficient(Daze.Geometry.Line)">
+            <summary>
+            Get the angular coefficient from a segment
+            </summary>
+            <param name="line">The segment</param>
+            <returns>The angular coefficient</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.pointInSegmentBoundingBox(Daze.Geometry.Point,Daze.Geometry.Line)">
+            <summary>
+            Check if a point is in the bounding box of a line (to be use only to do fast checks)
+            </summary>
+            <param name="pointToCheck">The point</param>
+            <param name="line">The line</param>
+            <returns>True when the segment is inside the segment bounding box</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.getAngularCoefficient(Daze.Geometry.Point,Daze.Geometry.Point)">
+            <summary>
+            Get the angular coefficient from a segment
+            </summary>
+            <param name="p1">One of the extremes of the segment</param>
+            <param name="p2">One of the extremes of the segment</param>
+            <returns>The angular coefficient</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.calculateLineOffsetYFromO(Daze.Geometry.Line)">
+            <summary>
+            Calculate the offset of a line on the Y axis from the origin point
+            </summary>
+            <param name="line">The line</param>
+            <returns>The offset on the Y axis from O</returns>
+        </member>
+        <member name="M:Daze.Geometry.Utility.linesIntersect(Daze.Geometry.Line,Daze.Geometry.Circle)">
+            <summary>
+            Check if a line intersect with a circle
+            </summary>
+            <param name="line1">The line</param>
+            <param name="circle">The circle</param>
+            <returns></returns>
         </member>
         <member name="T:Daze.Geometry.ConvexPolygon">
             <summary>
@@ -659,6 +1013,141 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Daze.Geometry.Point.op_Addition(Daze.Geometry.Point,Daze.Vectors.Vector)">
+            <summary>
+            Sum a point and a vector
+            </summary>
+            <param name="point">The point</param>
+            <param name="vector">The vector to sum to the point</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Point.op_Subtraction(Daze.Geometry.Point,Daze.Vectors.Vector)">
+            <summary>
+            Sum the opposite of a vector to a point
+            </summary>
+            <param name="point">The point</param>
+            <param name="vector">The vector to sum to the point</param>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Point.op_Subtraction(Daze.Geometry.Point,Daze.Geometry.Point)">
+            <summary>
+            Decrease the first point x and y by the second point x and y
+            </summary>
+            <param name="point">The first point</param>
+            <param name="point2">The second point</param>
+            <returns></returns>
+        </member>
+        <member name="T:Daze.Geometry.Line">
+            <summary>
+            A line segment
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Line.point1">
+            <summary>
+            One for the point of the line
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Line.point2">
+            <summary>
+            One for the point of the line
+            </summary>
+        </member>
+        <member name="M:Daze.Geometry.Line.#ctor(Daze.Geometry.Point,Daze.Geometry.Point)">
+            <summary>
+            Create a line segment
+            </summary>
+            <param name="point1">One of the extremes of the segment</param>
+            <param name="point2">One of the extremes of the segment</param>
+        </member>
+        <member name="M:Daze.Geometry.Line.ToString">
+            <summary>
+            Return a string representing the line, can be useful for debug
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Daze.Geometry.Size">
+            <summary>
+            A struct that represent a Size, ideally it's like a rectangle
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Size.width">
+            <summary>
+            The width of this item
+            </summary>
+        </member>
+        <member name="F:Daze.Geometry.Size.height">
+            <summary>
+            The height of this item
+            </summary>
+        </member>
+        <member name="M:Daze.Geometry.Size.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a Size object
+            </summary>
+            <param name="width">The width of this item</param>
+            <param name="height">The height of this item</param>
+        </member>
+        <member name="M:Daze.Geometry.Size.set(System.Int32,System.Int32)">
+            <summary>
+            Set this width without recreating it
+            </summary>
+            <param name="width">The width of this item</param>
+            <param name="height">The height of this item</param>
+        </member>
+        <member name="M:Daze.Geometry.Size.duplicate">
+            <summary>
+            this return a duplicate of this Size
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Addition(Daze.Geometry.Size,Daze.Geometry.Size)">
+            <summary>
+            Add a size to this one
+            </summary>
+            <param name="size1">The firse size</param>
+            <param name="size2">The size to sum</param>
+            <returns>A new size that is the result of the sum</returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Subtraction(Daze.Geometry.Size,Daze.Geometry.Size)">
+            <summary>
+            Subtract a size from this size
+            </summary>
+            <param name="size1">This size</param>
+            <param name="size2">The size to subtract</param>
+            <returns>The size after the operation</returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Multiply(Daze.Geometry.Size,System.Single)">
+            <summary>
+            Scale a size by a multiplier
+            </summary>
+            <param name="size1">The size to be scaled</param>
+            <param name="multiplier">The multiplier</param>
+            <returns>The scaled Size</returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Division(Daze.Geometry.Size,System.Single)">
+            <summary>
+            Scale a size by a dividend
+            </summary>
+            <param name="size1">The size to be scaled</param>
+            <param name="dividend">The dividend</param>
+            <returns>The scaled Size</returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Multiply(Daze.Geometry.Size,System.Int32)">
+            <summary>
+            Scale a size by a multiplier
+            </summary>
+            <param name="size1">The size to be scaled</param>
+            <param name="multiplier">The multiplier</param>
+            <returns>The scaled Size</returns>
+        </member>
+        <member name="M:Daze.Geometry.Size.op_Division(Daze.Geometry.Size,System.Int32)">
+            <summary>
+            Scale a size by a dividend
+            </summary>
+            <param name="size1">The size to be scaled</param>
+            <param name="dividend">The dividend</param>
+            <returns>The scaled Size</returns>
+        </member>
         <member name="T:Daze.Sprite">
             <summary>
             A Sprite in daze is a array of bytes representing a Bitmap.
@@ -744,17 +1233,40 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Daze.Timer.restart">
+        <member name="M:Daze.Timer.Restart">
             <summary>
             This method restart the timer.
             </summary>
         </member>
-        <member name="M:Daze.Timer.set(System.Int32,System.Int32)">
+        <member name="M:Daze.Timer.Set(System.Int32,System.Int32)">
             <summary>
             This method can be used to set the timer again in one line
             </summary>
             <param name="msPerTick"></param>
             <param name="currentMS"></param>
+        </member>
+        <member name="T:Daze.GameObject">
+            <summary>
+            A GameObject is a sprite with a position, it can get mouse events, it can have timers, a collider, and a lot more.
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.timers">
+            <summary>
+            The timers of this gameObject excluding the new created ones
+            NOT RECOMMENDED: You should use the default functions related to timers to edit this
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.newTimers">
+            <summary>
+            The timers of this gameObject created in this game cycle
+            NOT RECOMMENDED: You should use the default functions related to timers to edit this
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.toDeleteTimers">
+            <summary>
+            The timers of this gameObject to be deleted at the end of this game cycle
+            NOT RECOMMENDED: You should use the default functions related to timers to edit this
+            </summary>
         </member>
         <member name="P:Daze.GameObject.spriteSet">
             <summary>
@@ -795,24 +1307,6 @@
         <member name="P:Daze.GameObject.lastCollision">
             <summary>
             Returns the object that collided with this Object in the last movement, can be NULL
-            </summary>
-        </member>
-        <member name="F:Daze.GameObject.timers">
-            <summary>
-            The timers of this gameObject excluding the new created ones
-            NOT RECOMMENDED: You should use the default functions related to timers for editing
-            </summary>
-        </member>
-        <member name="F:Daze.GameObject.newTimers">
-            <summary>
-            The timers of this gameObject created in this game cycle
-            NOT RECOMMENDED: You should use the default functions related to timers for editing
-            </summary>
-        </member>
-        <member name="F:Daze.GameObject.toDeleteTimers">
-            <summary>
-            The timers of this gameObject to be deleted at the end of this game cycle
-            NOT RECOMMENDED: You should use the default functions related to timers for editing
             </summary>
         </member>
         <member name="F:Daze.GameObject._lastCollision">
@@ -865,8 +1359,26 @@
             <param name="x">The position of the GameObject on the X axis</param>
             <param name="y">The position of the GameObject on the Y axis</param>
         </member>
-        <!-- Commento XML in formato non corretto ignorato per il membro 'M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Int32)' -->
-        <!-- Commento XML in formato non corretto ignorato per il membro 'M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Boolean,System.Int32)' -->
+        <member name="M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Int32)">
+            <summary>
+            This method create a timer that you can check in the Update method
+            </summary>
+            <param name="timerID">The ID of the timerw, different gameObject can have the same ID for different timer</param>
+            <param name="msPerTick">The number of milliseconds necessary for this timer to tick</param>
+            <param name="tickAction">The Action that will be executed when this Timer ticks</param>
+            <param name="currentMS">The current number of milliseconds passed from the last tick</param>
+        </member>
+        <member name="M:Daze.GameObject.createTimer(System.Int32,System.Int32,System.Action,System.Boolean,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="timerID">The ID of the timerw, different gameObject can have the same ID for different timer</param>
+            <param name="msPerTick">The number of milliseconds necessary for this timer to tick</param>
+            <param name="tickAction">The Action that will be executed when this Timer ticks</param>
+            <param name="restartFlag">If this flag is set to false then the Timer will not reset automatically once it ticks</param>
+            <param name="currentMS">The current number of milliseconds passed from the last tick</param>
+            <returns>The created timer</returns>
+        </member>
         <member name="M:Daze.GameObject.getTimer(System.Int32)">
             <summary>
             It retrives a Timer in this GameObject from its ID
@@ -881,14 +1393,14 @@
             <param name="timerID">The if of the Timer to delete</param>
             <returns>Returns true if the timer was found and deleted, false otherwise</returns>
         </member>
-        <member name="M:Daze.GameObject.move(Daze.Vectors.Vector)">
+        <member name="M:Daze.GameObject.Move(Daze.Vectors.Vector)">
             <summary>
             This function moves the gameObject of a certain offset
             </summary>
             <param name="offset">The vector representing the movement of the gameObject</param>
             <returns></returns>
         </member>
-        <member name="M:Daze.GameObject.move(System.Single,System.Single)">
+        <member name="M:Daze.GameObject.Move(System.Single,System.Single)">
             <summary>
             This function moves the gameObject of a certain offset
             </summary>
@@ -917,7 +1429,7 @@
             This method is called when this object is colliding with another Object, the collision data are in the lastCollision property
             </summary>
         </member>
-        <member name="M:Daze.GameObject.delete">
+        <member name="M:Daze.GameObject.Delete">
             <summary>
             Deletes this gameObject, is just a call to the Engine.DeleteGameObject function
             </summary>
@@ -960,6 +1472,11 @@
         <member name="P:Daze.SpriteSet.sprite">
             <summary>
             The sprite currently used from this SpriteSet
+            </summary>
+        </member>
+        <member name="P:Daze.SpriteSet.spriteCount">
+            <summary>
+            The number of the sprites in this spriteSet
             </summary>
         </member>
         <member name="M:Daze.SpriteSet.reset">
@@ -1029,24 +1546,340 @@
             <param name="endAnimationAction">This method will be fired when the SpriteSet finished the Sprite cycle and it's going back to the first Sprite</param>
             <param name="sprites">The Sprites that this SpriteSet will have</param>
         </member>
-        <member name="M:Daze.SpriteSet.next">
+        <member name="M:Daze.SpriteSet.Next">
             <summary>
             This method forcefully change the SpriteSet's Sprite without waiting till the right time to change it
             This can be helpful in case you want to use the Sprite manually without using the default timer.
             <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
             </summary>
         </member>
-        <member name="M:Daze.SpriteSet.prev">
+        <member name="M:Daze.SpriteSet.Prev">
             <summary>
             This method forcefully change the SpriteSet's Sprite to the previous one without waiting till the right time to change it
             This can be helpful in case you want to use the Sprite manually without using the default timer.
             <returns>True if there wasn't a next sprite and the animation restarted from the start</returns>
             </summary>
         </member>
-        <member name="M:Daze.SpriteSet.rotate">
+        <member name="M:Daze.SpriteSet.Rotate">
             <summary>
             This method update the rotation of this SpriteSet
             </summary>
+        </member>
+        <member name="T:Daze.Vectors.Vector">
+            <summary>
+            A vector
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.ZERO">
+            <summary>
+            An empty vector
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.UP">
+            <summary>
+            A vector pointing up
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.DOWN">
+            <summary>
+            A vector pointing down
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.LEFT">
+            <summary>
+            A vector pointing left
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.RIGHT">
+            <summary>
+            A vector pointing right
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.x">
+            <summary>
+            The x of the vector
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.Vector.y">
+            <summary>
+            The y of the vector
+            </summary>
+        </member>
+        <member name="M:Daze.Vectors.Vector.#ctor(System.Single,System.Single)">
+            <summary>
+            Create a vector from it's coordinates
+            </summary>
+            <param name="x">The x of the vector</param>
+            <param name="y">The y of the vector</param>
+        </member>
+        <member name="M:Daze.Vectors.Vector.#ctor(Daze.Vectors.Vector)">
+            <summary>
+            Create a Vector by copying another one (it's the same as duplicate)
+            </summary>
+            <param name="vectorToCopy"></param>
+        </member>
+        <member name="M:Daze.Vectors.Vector.set(Daze.Vectors.Vector)">
+            <summary>
+            Copy another vector into this one
+            </summary>
+            <param name="vectorToCopy">The vector to copy</param>
+        </member>
+        <member name="M:Daze.Vectors.Vector.set(System.Single,System.Single)">
+            <summary>
+            Set the vector without recreating it
+            </summary>
+            <param name="x">The x coordinate of the Vector</param>
+            <param name="y">The y coordinate of the Vector</param>
+        </member>
+        <member name="M:Daze.Vectors.Vector.duplicate">
+            <summary>
+            Create a vector from another one
+            </summary>
+            <returns>The new created vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Implicit(Daze.Geometry.Point)~Daze.Vectors.Vector">
+            <summary>
+            Convert a Point to a Vector
+            </summary>
+            <param name="value">The point to convert</param>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Addition(Daze.Vectors.Vector,Daze.Vectors.Vector)">
+            <summary>
+            Sum two vectors
+            </summary>
+            <param name="vect1">The first vector to sum</param>
+            <param name="vect2">The second vector to sum</param>
+            <returns>The resul of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Addition(Daze.Vectors.Vector,Daze.Vectors.IntVector)">
+            <summary>
+            Sum two vectors
+            </summary>
+            <param name="vect1">The first vector to sum</param>
+            <param name="vect2">The second vector to sum</param>
+            <returns>The resul of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Subtraction(Daze.Vectors.Vector,Daze.Vectors.Vector)">
+            <summary>
+            Sum the first vector to the opposite of the second one
+            </summary>
+            <param name="vect1">The first vector</param>
+            <param name="vect2">The vector that will be subtracted</param>
+            <returns>The result of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Subtraction(Daze.Vectors.Vector,Daze.Vectors.IntVector)">
+            <summary>
+            Sum the first vector to the opposite of the second one
+            </summary>
+            <param name="vect1">The first vector</param>
+            <param name="vect2">The vector that will be subtracted</param>
+            <returns>The result of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Multiply(Daze.Vectors.Vector,System.Single)">
+            <summary>
+            Scale the vector by a multiplier
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="multiplier">multiplier</param>
+            <returns>The scaled vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Division(Daze.Vectors.Vector,System.Single)">
+            <summary>
+            Scale the vector down by dividing it
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="dividend">The dividend</param>
+            <returns>The scaled vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Inequality(Daze.Vectors.Vector,Daze.Vectors.Vector)">
+            <summary>
+            Check it two vectors are not the same vector
+            </summary>
+            <param name="v1">The first vector to check</param>
+            <param name="v2">The second vector to check</param>
+            <returns>False if the the two vector coincide</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.op_Equality(Daze.Vectors.Vector,Daze.Vectors.Vector)">
+            <summary>
+            Check it two vectors are the same vector
+            </summary>
+            <param name="v1">The first vector to check</param>
+            <param name="v2">The second vector to check</param>
+            <returns>True if the the two vector coincide</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.normalize">
+            <summary>
+            Return this vector normalized (with the same orientation but a length of 1)
+            </summary>
+            <returns>The normalized vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.Equals(System.Object)">
+            <summary>
+            Return true if the second object is a vector with the same informations as this one
+            </summary>
+            <param name="obj">The object to check</param>
+            <returns>True if the two vectors coincide</returns>
+        </member>
+        <member name="M:Daze.Vectors.Vector.GetHashCode">
+            <summary>
+            Get the hash code of this object
+            </summary>
+            <returns>The hash code</returns>
+        </member>
+        <member name="T:Daze.Vectors.IntVector">
+            <summary>
+            A vector with int coordinates, it should be used only for drawing, use Vector for physics
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.ZERO">
+            <summary>
+            An empty vector
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.UP">
+            <summary>
+            A vector pointing up
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.DOWN">
+            <summary>
+            A vector pointing down
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.LEFT">
+            <summary>
+            A vector pointing left
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.RIGHT">
+            <summary>
+            A vector pointing right
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.x">
+            <summary>
+            The x offset of the Vector
+            </summary>
+        </member>
+        <member name="F:Daze.Vectors.IntVector.y">
+            <summary>
+            The y offset of the Vector
+            </summary>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create an IntVector
+            </summary>
+            <param name="x">The x offset of the Vector</param>
+            <param name="y">The y offset of the Vector</param>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.#ctor(Daze.Vectors.IntVector)">
+            <summary>
+            Create an IntVector from another IntVector (it is equivalent to IntVector.duplicate())
+            </summary>
+            <param name="vectorToCopy"></param>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.set(Daze.Vectors.IntVector)">
+            <summary>
+            Copy the vector passed as a parameter into this one (it's the same as duplicate())
+            </summary>
+            <param name="vectorToCopy">The vector to copy</param>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.set(System.Int32,System.Int32)">
+            <summary>
+            Change this vector values without recreating it
+            </summary>
+            <param name="x">The x coordinate of the vector</param>
+            <param name="y">The y coordinate of the vector</param>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.duplicate">
+            <summary>
+            Return a new IntVector with the same information as this one
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.Equals(System.Object)">
+            <summary>
+            Return true if the second object is a vector with the same informations as this one
+            </summary>
+            <param name="obj">The object to check</param>
+            <returns>True if the two vectors coincide</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.GetHashCode">
+            <summary>
+            Get the Hash code of this object
+            </summary>
+            <returns>The hash code</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Implicit(Daze.Geometry.Point)~Daze.Vectors.IntVector">
+            <summary>
+            Convert a Point to an IntVector
+            </summary>
+            <param name="value">The converted IntVector</param>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Equality(Daze.Vectors.IntVector,Daze.Vectors.IntVector)">
+            <summary>
+            Check if two vectors are the same vector
+            </summary>
+            <param name="vect1">The first vector</param>
+            <param name="vect2">The second vector</param>
+            <returns>True if the two vectors have the same information</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Inequality(Daze.Vectors.IntVector,Daze.Vectors.IntVector)">
+            <summary>
+            Check if two vectors are the same vector
+            </summary>
+            <param name="vect1">The first vector</param>
+            <param name="vect2">The second vector</param>
+            <returns>False if the two vectors have the same information</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Addition(Daze.Vectors.IntVector,Daze.Vectors.IntVector)">
+            <summary>
+            Sum two vectors
+            </summary>
+            <param name="vect1">The first vector to sum</param>
+            <param name="vect2">The second vector to sum</param>
+            <returns>The resul of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Subtraction(Daze.Vectors.IntVector,Daze.Vectors.IntVector)">
+            <summary>
+            Sum the first vector to the opposite of the second one
+            </summary>
+            <param name="vect1">The first vector</param>
+            <param name="vect2">The vector that will be subtracted</param>
+            <returns>The result of the operation</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Multiply(Daze.Vectors.IntVector,System.Single)">
+            <summary>
+            Scale the vector by a multiplier
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="multiplier">multiplier</param>
+            <returns>The scaled vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Division(Daze.Vectors.IntVector,System.Single)">
+            <summary>
+            Scale the vector down by dividing it
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="dividend">The dividend</param>
+            <returns>The scaled vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Multiply(Daze.Vectors.IntVector,System.Int32)">
+            <summary>
+            Scale the vector by a multiplier
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="multiplier">multiplier</param>
+            <returns>The scaled vector</returns>
+        </member>
+        <member name="M:Daze.Vectors.IntVector.op_Division(Daze.Vectors.IntVector,System.Int32)">
+            <summary>
+            Scale the vector down by dividing it
+            </summary>
+            <param name="vect1">Vector to scale</param>
+            <param name="dividend">The dividend</param>
+            <returns>The scaled vector</returns>
         </member>
     </members>
 </doc>

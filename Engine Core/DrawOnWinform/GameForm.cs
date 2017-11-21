@@ -86,7 +86,7 @@ namespace Daze {
 
                 for(int y = 0; y < Engine._drawBufferHeight; y++) {
                     IntPtr startOfLine = bmpData.Scan0 + y * bmpData.Stride;
-                    Marshal.Copy(Engine.DrawBuffer, y * Engine.drawBufferStride, startOfLine, Engine.drawBufferStride);
+                    Marshal.Copy(Engine._drawBuffer, y * Engine._drawBufferStride, startOfLine, Engine._drawBufferStride);
                 }
 
                 buffer.UnlockBits(bmpData);

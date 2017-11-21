@@ -37,6 +37,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AivDraw, Version=1.0.5827.19933, Culture=neutral, processorArchitecture=x86">
+      <HintPath>C:\Users\fedec\Dropbox\Space Invaders DAZE\packages\Aiv.Draw.0.5\lib\net40\AivDraw.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,9 +59,11 @@
     <Compile Include="Collider\CircleCollider.cs" />
     <Compile Include="Collider\RectangleCollider.cs" />
     <Compile Include="Collider\ConvexPolygonCollider.cs" />
-    <Compile Include="Engine Core\GameForm.cs">
+    <Compile Include="Engine Core\DrawOnWinform\DrawOnWinform.cs" />
+    <Compile Include="Engine Core\DrawOnWinform\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Engine Core\IDrawable.cs" />
     <Compile Include="Engine Core\Utility.cs" />
     <Compile Include="Game Classes\Camera.cs" />
     <Compile Include="Game Classes\IgnoreLayer.cs" />
@@ -76,9 +81,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Engine Core\GameForm.resx">
+    <EmbeddedResource Include="Engine Core\DrawOnWinform\GameForm.resx">
       <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
