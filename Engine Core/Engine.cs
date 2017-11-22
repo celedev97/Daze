@@ -919,7 +919,7 @@ namespace Daze {
                 } catch { }
             }
             if(bitmap == null) throw new Exception("Can't find the sprite " + resource_Name + ": the name must be the same as the Resource's name");
-            Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
+            Sprite newSprite = new Sprite(bitmap,scale);
             sprites.Add(spriteName, newSprite);
             return newSprite;
         }
