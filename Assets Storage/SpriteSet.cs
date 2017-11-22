@@ -244,62 +244,64 @@ namespace Daze {
 
             int xMin = lastX;
             int xMax = 0;
-            //ricerca della prima e dell'ultima colonna contenenti pixel con alpha>0
+            //searching the first and the last X with a pixel that have alpha != 0
             for(int y = 0; y < sprite.height; y++) {
                 int firstColouredPixel = lastX;
                 int lastColouredPixel = 0;
-                //faccio un ciclo in avanti e cerco il primo pixel colorato
+                //i cycle for all the x in this row
                 for(int x = 0; x < sprite.width; x++) {
                     int alphaByteIndex = y*sprite.stride + x*sprite.bytesPerPixel + 3;
-                    //se il pixel è colorato
+                    //if the pixel is coloured
                     if(sprite.pixelArray[alphaByteIndex] != 0) {
-                        //ho trovato il primo pixel colorato della linea, esco
+                        //i've found the first coloured pixel of this row, i stop the cycle
                         firstColouredPixel = x;
                         break;
                     }
                 }
-                //faccio un ciclo all'indietro e cerco il primo pixel colorato
+                //i cycle backward for all the x in this row
                 for(int x = lastX; x > -1; x--) {
                     int alphaByteIndex = y*sprite.stride + x*sprite.bytesPerPixel + 3;
-                    //se il pixel è colorato
+                    //if the pixel is coloured
                     if(sprite.pixelArray[alphaByteIndex] != 0) {
-                        //ho trovato il primo pixel colorato della linea, esco
+                        //i've found the last coloured pixel of this row, i stop the cycle
                         lastColouredPixel = x;
                         break;
                     }
                 }
 
+                //i check if the pixel found this row are the minimum and the maximum till now
                 if(firstColouredPixel < xMin) xMin = firstColouredPixel;
                 if(lastColouredPixel > xMax) xMax = lastColouredPixel;
             }
 
             int yMin = lastY;
             int yMax = 0;
-            //ricerca della prima e dell'ultima colonna contenenti pixel con alpha>0
+            //searching the first and the last Y with a pixel that have alpha != 0
             for(int x = 0; x < sprite.width; x++) {
                 int firstColouredPixel = lastY;
                 int lastColouredPixel = 0;
-                //faccio un ciclo in avanti e cerco il primo pixel colorato
+                //i cycle for all the y in this column
                 for(int y = 0; y < sprite.height; y++) {
                     int alphaByteIndex = y*sprite.stride + x*sprite.bytesPerPixel + 3;
-                    //se il pixel è colorato
+                    //if the pixel is coloured
                     if(sprite.pixelArray[alphaByteIndex] != 0) {
-                        //ho trovato il primo pixel colorato della linea, esco
+                        //i've found the first coloured pixel of this column, i stop the cycle
                         firstColouredPixel = y;
                         break;
                     }
                 }
-                //faccio un ciclo all'indietro e cerco il primo pixel colorato
+                //i cycle backward for all the y in this column
                 for(int y = lastY; y > -1; y--) {
                     int alphaByteIndex = y*sprite.stride + x*sprite.bytesPerPixel + 3;
-                    //se il pixel è colorato
+                    //if the pixel is coloured
                     if(sprite.pixelArray[alphaByteIndex] != 0) {
-                        //ho trovato il primo pixel colorato della linea, esco
+                        //i've found the last coloured pixel of this column, i stop the cycle
                         lastColouredPixel = y;
                         break;
                     }
                 }
 
+                //i check if the pixel found this column are the minimum and the maximum till now
                 if(firstColouredPixel < yMin) yMin = firstColouredPixel;
                 if(lastColouredPixel > yMax) yMax = lastColouredPixel;
             }

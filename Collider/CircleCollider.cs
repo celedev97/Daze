@@ -25,19 +25,19 @@ namespace Daze {
         /// <summary>
         /// Check if this collider collides with another one
         /// </summary>
-        /// <param name="otherCollider">The second collider to check</param>
+        /// <param name="collider2">The second collider to check</param>
+        /// <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
         /// <returns>True if they collide, false otherwise</returns>
-        public override bool Collide(Collider otherCollider) {
-            if(otherCollider.GetType().IsSubclassOf(typeof(CircleCollider))) {
-                Circle circle2 = ((CircleCollider) otherCollider).circle;
-                if(Utility.distance(circle.center, circle2.center)>(circle.radius + circle2.radius)){
+        public override bool Collide(Collider collider2, bool firstTry = true) {
+            if(collider2.GetType() == typeof(CircleCollider) || collider2.GetType().IsSubclassOf(typeof(CircleCollider))) {
+                Circle circle2 = ((CircleCollider) collider2).circle;
+                if(Utility.distance(circle.center, circle2.center) > (circle.radius + circle2.radius)) {
                     return false;
                 }
                 return true;
-            } else if(otherCollider.GetType().IsSubclassOf(typeof(ConvexPolygonCollider))) {
-                return otherCollider.Collide(this);
+            } else {
+                return handleNotImplementedCollision(collider2, firstTry);
             }
-            throw new NotImplementedException("This collider has no idea how to check the collision with the other one");
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Daze {
         public override void RecreateCollider() {
             circle = new Circle();
             Move();
-            circle.radius = gameObject.spriteSet.size.width > gameObject.spriteSet.size.height ? gameObject.spriteSet.size.width : gameObject.spriteSet.size.height;
+            circle.radius = gameObject.spriteSet.size.width > gameObject.spriteSet.size.height ? gameObject.spriteSet.size.width/2 : gameObject.spriteSet.size.height/2;
         }
 
         /// <summary>

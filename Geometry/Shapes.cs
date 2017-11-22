@@ -26,13 +26,13 @@
         /// <param name="point">the point to check</param>
         /// <returns>return true if the point is inside the polygon, false otherwise</returns>
         public bool contains(Point point) {
-            //creo il segmento che passa per i due centri
+            //i get the line segment that goes from the point to the center of the polygon
             Line centersSegment = new Line(point, center);
 
-            //se il segmento colpisce almeno uno dei bordi allora il punto è fuori dal poligono.
-            //quest'approccio rende il metodo più veloce se il punto non è all'interno del poligono.
-            //avrei potuto fare il contrario usando una linea più lunga e contando il numero di intersezioni,
-            //ma considerando che in un gioco non dovrebbero esserci troppe compenetrazioni questo mi pare un approccio adeguato.
+            //if the line segment hits at least one of the edges of the polygon then the point is out of the polygon.
+            //this approach makes so that this method is faster if the point is outside the polygon.
+            //Tipically the usual way to check this is doing a longer line and counting the number of intersections while cycling,
+            //but isn't it faster if you just return false when you know there is an intersection ;) ?
             foreach(Line edge in lines) {
                 if(Utility.linesIntersect(centersSegment, edge)) {
                     return false;
@@ -133,7 +133,7 @@
             C0.x = -halfWidth;
             D0.x = halfWidth;
 
-            //queste coordinate funzionano su un sistema cartesiano regolare, non su un sistema con Y inversa come lo schermo
+            //thoose coordinates are based on a normal XY cartesian system, not a system with the Y reversed like the screen
             A0.y = halfHeight;
             B0.y = halfHeight;
             C0.y = -halfHeight;

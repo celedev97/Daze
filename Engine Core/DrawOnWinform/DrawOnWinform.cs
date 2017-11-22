@@ -46,6 +46,7 @@ namespace Daze {
             using(Graphics g = Graphics.FromImage(_window.buffer)) {
                 g.DrawRectangle(new Pen(Color.Blue), 0, 0, Engine.bufferWidth, Engine.bufferHeight);
             }
+            _window.setOffsets();
         }
 
         public void Start() {

@@ -38,9 +38,10 @@ namespace Daze {
         /// This function check if a collider is colliding with this one
         /// </summary>
         /// <param name="collider2">The other collider to check</param>
+        /// <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
         /// <returns>Return true when they collide, false otherwise</returns>
-        public override bool Collide(Collider collider2) {
-            return base.Collide(collider2);
+        public override bool Collide(Collider collider2, bool firstTry = true) {
+            return base.Collide(collider2, firstTry);
         }
 
     }

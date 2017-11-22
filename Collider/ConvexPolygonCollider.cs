@@ -21,9 +21,9 @@ namespace Daze {
         /// This check if this collider is colliding with another one
         /// </summary>
         /// <param name="collider2">The second collider to check</param>
+        /// <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
         /// <returns>True if the two collider collide, false otherwise</returns>
-        public override bool Collide(Collider collider2) {
-            
+        public override bool Collide(Collider collider2, bool firstTry = true) {
             Type collider2Type = collider2.GetType();
             if(collider2Type.IsSubclassOf(typeof(ConvexPolygonCollider))) {
                 ConvexPolygon poly1 = polygon;
@@ -32,62 +32,62 @@ namespace Daze {
                 float centerDistance = Utility.distance(poly1.center, poly2.center);
                 float raySum = (poly1.ray + poly2.ray);
 
-                //se la distanza dei centri è maggiore della somma dei raggi delle circonferenze circoscritte ai poligoni allora non possono collidere e non ho bisogno di ricorrere a nessun controllo
+                //if the distance of the centers is > then they sum of the rays of the circonferences that contains the polygons then they can't collide, and it's only a loss of time to check if they do
                 if(centerDistance > raySum) {
                     return false;
                 } else {
-                    //se la distanza è più piccola invece è possibile che siano uno dentro l'altro,
-                    //quindi invece di iniziare a provare le collisioni con tutti gli edge, sprecare risorse e poi avere come risultato che non si toccano
-                    //mi tolgo subito il dubbio di se uno è dentro l'altro
+                    //else if the distance is smaller then the raysum they may intersect or one of them may be inside the other one
+                    //so i'm checking if one is inside the other one right now to avoid losing time by checking all the edges
                     if(poly1.contains(poly2.center) || poly2.contains(poly1.center)) {
                         return true;
                     }
                 }
 
-                //arrivato a questo punto so che i collider non sono troppo lontani, ma neanche troppo vicini,
-                //sono costretto a controllare le intersezioni tra ogni singolo edge dei collider
+                //if I'm at this point then the colliders are not too far, but not even too near, there is no other way but to check every edge intersection
 
-                //faccio uno swap in modo tale da fare il ciclo sul poligono che ha più lati, il risultato è indifferente
-                //ma ho la sensazione che così io abbia più probabilità di trovare collisione in meno cicli.
-                //in ogni caso non perdo praticamente niente in performance a fare un semplice swap tra variabili,
-                //quindi se anche la mia impressione fosse sbagliata non ci perderei più di tanto.
+                //I do a swap so that i cycle on the polygon with more edges before.
+                //This is almost surely useless, but... I kinda had the feeling that it was faster this way.
+                //I know this actually doesn't make sense, but anyway this doesn't slow down the code, so why not do it?
                 if(poly1.lines.Length < poly2.lines.Length) {
                     ConvexPolygon temp = poly1;
                     poly1 = poly2;
                     poly2 = temp;
                 }
-
-                //in caso in cui l'algoritmo per lati sia troppo lento considera di passare al SAT
-                //questo algoritmo è più veloce se collidono, il SAT funziona al contrario, è più veloce se non collidono
-                //considerando che se sono lontani questo pezzo non viene eseguito comunque direi che questo dovrebbe essere meglio del SAT
-                // (è più lento solo se uno è completamente dentro l'altro)
-                //TODO: hai controllato la correttezza delle linee, sembrerebbe sensata, quindi è il linesIntersect a non funzionare
+                
+                //controlling the edge collision one by one is tecnically slower than using ONLY SAT, but this part of the code is executed only if the polygons
+                //are very near but not too much, so if this part of code is executed a collision is very likely to be happening,
+                //and while SAT is faster if they DON'T collide, this is faster if they DO collide, this is why i think this is a better solution than SAT.
                 foreach(Line line in poly1.lines) {
                     foreach(Line line2 in poly2.lines) {
                         if(Utility.linesIntersect(line, line2))
                             return true;
                     }
                 }
+                //if I've arrived till there then the colliders are really near, but there is no collision
                 return false;
             } else if(collider2Type == typeof(CircleCollider)){
                 Circle circle = ((CircleCollider)collider2).circle;
-
-                //controllo se il rettangolo è nel cerchio o il contrario
-                if(circle.contains(polygon.center)) {
-                    return true;
+                float centerDistance = Utility.distance(polygon.center, circle.center);
+                float raySum = (polygon.ray + circle.radius);
+                //if the distance of the centers is > then they sum of the rays of the circonferences that contains the polygons then they can't collide, and it's only a loss of time to check if they do
+                if(centerDistance > raySum) {
+                    return false;
+                } else {
+                    //else if the distance is smaller then the raysum they may intersect or one of them may be inside the other one
+                    //so i'm checking if one is inside the other one right now to avoid losing time by checking all the edges
+                    if(circle.contains(polygon.center) || polygon.contains(circle.center)) {
+                        return true;
+                    }
                 }
-                if(polygon.contains(circle.center)) {
-                    return true;
-                }
 
-                //non sono uno nell'altro, quindi mi tocca controllare se ci sono intersezioni
+                //is no one is inside the other one then i have to check collision for every line
                 foreach(Line line in polygon.lines) {
-                    if(Utility.linesIntersect(line, circle)) return true;
+                    if(Utility.lineIntersect(line, circle)) return true;
                 }
+                return false;
             } else {
-                throw new NotImplementedException();
+                return handleNotImplementedCollision(collider2, firstTry);
             }
-            return false;
         }
 
         /// <summary>

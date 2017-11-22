@@ -1,20 +1,10 @@
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.dll.config
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.dll
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.pdb
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.GameForm.resources
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.csproj.GenerateResource.Cache
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.csproj.CoreCompileInputs.cache
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.dll
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.pdb
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\Daze.xml
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\obj\Debug\Daze.csprojResolveAssemblyReference.cache
-<<<<<<< HEAD
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\bin\Debug\Daze.dll.config
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\bin\Debug\Daze.xml
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\bin\Debug\Daze.dll
+C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\bin\Debug\Daze.pdb
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.csprojResolveAssemblyReference.cache
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.GameForm.resources
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.csproj.GenerateResource.Cache
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.csproj.CoreCompileInputs.cache
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.dll
 C:\Users\Utente\Documents\Visual Studio 2017\Project\Daze\Daze\obj\Debug\Daze.pdb
-=======
->>>>>>> bf0ab45659c062efaa83e573e908d8ed2b8b54db
-F:\Windows\Utente\Documenti\Visual Studio 2017\Projects\DAZE\Daze\bin\Debug\AivDraw.dll

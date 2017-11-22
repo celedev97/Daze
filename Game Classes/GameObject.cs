@@ -51,16 +51,7 @@ namespace Daze {
 
         #endregion
 
-        #region Variable for position
-        /// <summary>
-        /// The position of the gameObject on the screen in the last Cycle
-        /// </summary>
-        internal protected IntVector lastPixelPosition;
-        /// <summary>
-        /// The position of the gameObject on the screen
-        /// </summary>
-        internal protected IntVector pixelPosition;
-
+        #region variables for position
         /// <summary>
         /// The position of the gameObject
         /// </summary>
@@ -80,13 +71,24 @@ namespace Daze {
         }
         #endregion
 
+        #region variables for drawing
+        /// <summary>
+        /// The position of the gameObject on the screen in the last Cycle
+        /// </summary>
+        internal protected IntVector lastPixelPosition;
+        /// <summary>
+        /// The position of the gameObject on the screen
+        /// </summary>
+        internal protected IntVector pixelPosition;
         /// <summary>
         /// The position of the GameObject on the Z axis
         /// (note: the Z axis is Only used for drawing's priority)
         /// </summary>
         public int drawLayer;
 
-        internal bool executeStart = true;
+        internal bool invalidated = false;
+        #endregion
+
 
         private Collider _collider;
         /// <summary>
@@ -152,10 +154,10 @@ namespace Daze {
             newTimers = new List<Timer>();
             toDeleteTimers = new List<Timer>();
 
-            //aggiungo il gameObject appena creato alla lista dei gameObject
+            //i add this GameObject to the gameObjects list
             Engine.AddGameObject(this);
 
-            //imposto la sua posizione
+            //setting the position
             position.x = x;
             position.y = y;
 
@@ -195,17 +197,18 @@ namespace Daze {
         /// <returns>The created timer</returns>
         public Timer createTimer(int timerID, int msPerTick, Action tickAction, bool restartFlag = true, int currentMS = 0) {
             if(msPerTick < 1) throw new Exception("You cannot create a timer that tick every less than one second");
-            //cerco il timer
+            //i search the timer
             Timer timerFound = null;
             foreach(Timer timer in timers) {
                 if(timer.ID == timerID) {
                     timerFound = timer;
                 }
             }
-            //se esiste devo controllare che non sia già stato cancellato
+            //if it exists
             if(timerFound != null) {
                 if(toDeleteTimers.Contains(timerFound)) {
-                    //è stata richiesta la ricreazione di un timer cancellato
+                    //there request is to create a timer that has been deleted in this cycle.
+                    //I need to remove it from the deleted list (or it will be deleted at the end of the cycle) and then set it again
                     toDeleteTimers.Remove(timerFound);
                     timerFound.msPerTick = msPerTick;
                     timerFound.tickAction = tickAction;
@@ -214,10 +217,12 @@ namespace Daze {
                     timerFound.Restart();
                     return timerFound;
                 } else {
-                    //è stata richiesta la creazione di un timer che esiste già
+                    //the request is to create a timer that already exists, i cannot allow that.
+                    //if someone need to set the timer he can just do it, no need to recreate it.
                     throw new Exception("A timer with the ID:" + timerID + " already exists");
                 }
             } else {
+                //the timer doesn't exist, so i just have to create it
                 Timer timer = new Timer(timerID, msPerTick, tickAction, restartFlag, currentMS);
                 newTimers.Add(timer);
                 return timer;
@@ -301,12 +306,12 @@ namespace Daze {
         }
 
         private bool moveX(float xOffset) {
-            //muovo il GameObject
+            //moving the gameObject
             position.x += xOffset;
-            //controllo subito se il gameObject è limitato a muoversi nei bordi della camera
+            //checking if the gameObject is limited to move within the camera
             if(Engine.camera.isFixed) {
                 if((position.x + spriteSet?.size.width / 2) > Engine.camera.limits.maxX ||(position.x - spriteSet?.size.width / 2) < Engine.camera.limits.minX) {
-                    //il gameObject è limitato ed è uscito dallo schermo, annullo il suo movimento
+                    //the gameObject is going out of the screen, i cancel his movement
                     position.x -= xOffset;
                     _lastCollision = null;
                     return false;
@@ -319,11 +324,11 @@ namespace Daze {
                 if((_lastCollision = checkCollisions()) != null) {
                     extrapolate(xOffset, 0);
 
-                    //eseguo la collisione di questo oggetto
+                    //executing this object collision
                     OnCollisionEnter();
-                    //se l'altro oggetto non è stato cancellato dalla collisone con quest'oggetto allora avvio anche la sua collisione
+                    //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
                     if(Engine.gameObjectExists(_lastCollision)) {
-                        _lastCollision._lastCollision = this;
+                    _lastCollision._lastCollision = this;
                         _lastCollision.OnCollisionEnter();
                     }
                     return false;
@@ -332,12 +337,12 @@ namespace Daze {
             }
         }
         private bool moveY(float yOffset) {
-            //muovo il GameObject
+            //moving the gameObject
             position.y += yOffset;
-            //controllo subito se il gameObject è limitato a muoversi nei bordi della camera
+            //checking if the gameObject is limited to move within the camera
             if(Engine.camera.isFixed) {
                 if((position.y + spriteSet?.size.height/2) > Engine.camera.limits.maxY || (position.y - spriteSet?.size.height / 2) < Engine.camera.limits.minY) {
-                    //il gameObject è limitato ed è uscito dallo schermo, annullo il suo movimento
+                    //the gameObject is going out of the screen, i cancel his movement
                     position.y -= yOffset;
                     _lastCollision = null;
                     return false;
@@ -352,11 +357,13 @@ namespace Daze {
                     _lastCollision = collision2;
                     extrapolate(0, yOffset);
 
-                    //eseguo la collisione di questo oggetto
+                    //executing this object collision
                     OnCollisionEnter();
-                    //se l'altro oggetto non è stato cancellato dalla collisone con quest'oggetto allora avvio anche la sua collisione
+                    invalidated = true;
+                    //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
                     if(Engine.gameObjectExists(_lastCollision)) {
                         _lastCollision._lastCollision = this;
+                        _lastCollision.invalidated = true;
                         _lastCollision.OnCollisionEnter();
                     }
                     return false;
@@ -385,9 +392,9 @@ namespace Daze {
         }
 
         private bool Collide(GameObject gameObject2) {
-            //non controllo la collisione con oggetti senza collider o con se stesso
+            //i don't need to check if this object collide with itself or with a gameObject that doesn't have a collider
             if(gameObject2.collider == null || gameObject2 == this) return false;
-            //se sono qui significa che è un altro oggetto, quindi devo controllare se è da ignorare, e se non lo è devo controllare la collisione;
+            //if i'm here then the other object is different from this one, and it have a collider, so i have to check if it's one of those to be ignored
             foreach(IgnoreLayer ignoreLayer in ignoreLayers) {
                 foreach(GameObject gameObjectToIgnore in ignoreLayer.gameObjects) {
                     if(gameObjectToIgnore == gameObject2) {
@@ -400,7 +407,7 @@ namespace Daze {
                     }
                 }
             }
-            //se sono qui significa che è un altro oggetto e non è da ignorare, quindi controllo la collisione regolarment
+            //If i'm here then it mean the object is not one of the ignored ones, so i need to check the collision
             return collider.Collide(gameObject2.collider);
         }
 

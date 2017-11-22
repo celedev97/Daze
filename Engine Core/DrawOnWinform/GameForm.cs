@@ -10,6 +10,8 @@ namespace Daze {
     /// </summary>
     public class GameForm:Form {
         #region Variables
+        private int offsetX, offsetY;
+
         internal bool loaded = false;
         private PictureBox gameFrame;
         internal Bitmap buffer;
@@ -27,7 +29,8 @@ namespace Daze {
             //gameFrame
             gameFrame = new PictureBox {
                 Dock = DockStyle.Fill,
-                SizeMode = PictureBoxSizeMode.StretchImage
+                SizeMode = PictureBoxSizeMode.CenterImage,
+                BackColor = Color.Black,
             };
             this.Controls.Add(this.gameFrame);
 
@@ -48,16 +51,27 @@ namespace Daze {
         }
 
         #region Events passed to Engine
-        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
-        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseClick(object sender, MouseEventArgs e) { Engine.mouseClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X + offsetX, e.Y  + offsetY, e.Delta)); }
+        private void GameFrame_MouseDoubleClick(object sender, MouseEventArgs e) { Engine.mouseDoubleClick?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X  + offsetX , e.Y  + offsetY, e.Delta)); }
 
-        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseMove(object sender, MouseEventArgs e) { Engine.mouseMove?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X  + offsetX , e.Y  + offsetY, e.Delta)); }
 
-        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
-        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X * Engine.bufferWidth / Size.Width, e.Y * Engine.bufferHeight / Size.Height, e.Delta)); }
+        private void GameFrame_MouseDown(object sender, MouseEventArgs e) { Engine.mouseDown?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X  + offsetX , e.Y  + offsetY, e.Delta)); }
+        private void GameFrame_MouseUp(object sender, MouseEventArgs e) { Engine.mouseUp?.Invoke(sender, new MouseEventArgs(e.Button, e.Clicks, e.X  + offsetX , e.Y  + offsetY, e.Delta)); }
         #endregion
 
-        #region Event handlers
+        internal void setOffsets() {
+            if(this.WindowState == FormWindowState.Maximized) {
+                Screen screen = Screen.FromControl(this);
+                offsetX = (Engine.bufferWidth - screen.WorkingArea.Width) / 2;
+                offsetY = (Engine.bufferHeight - screen.WorkingArea.Height) / 2;
+            } else {
+                offsetX = (Engine.bufferWidth - Size.Width) / 2;
+                offsetY = (Engine.bufferHeight - Size.Height) / 2;
+            }
+        }
+
+        #region window events
         private void GameForm_FormClosed(object sender, FormClosedEventArgs e) {
             Engine.stopCycle = true;
         }

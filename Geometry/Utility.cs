@@ -48,55 +48,34 @@ namespace Daze.Geometry {
             float C1 = line1.point1.x * line1.point2.y - line1.point1.y * line1.point2.x;
             float C2 = line2.point1.x * line2.point2.y - line2.point1.y * line2.point2.x;
 
-            float delta = A1*B2 - A2*B1; //determinante del sistema di equazioni
+            float delta = A1*B2 - A2*B1; //delta of the equation system (Cramer method)
             if(delta == 0) {
-                //le linee sono parallele o sono la stessa linea
-                float Q1 = -C1/B1;
-                float Q2 = -C2/B2;
+                //the lines are parallel or are the same line
+                float sameLineCheck1, sameLineCheck2;
+                if(B1 == 0) {
+                    //i can't calculate -Q since -Q = C/B, so i will use -E from the equation x = dy + e
+                    sameLineCheck1 = C1 / A1;
+                    sameLineCheck2 = C2 / A2;
+                } else {
+                    //i can calculate -Q so i will use that to check if they are the same line
+                    sameLineCheck1 = C1 / B1;
+                    sameLineCheck2 = C2 / B2;
+                }
 
-                if(Q1 != Q2) {
-                    //sono su rette parallele
+                if(sameLineCheck1 != sameLineCheck2) {
+                    //the lines are parallel
                     return false;
                 } else {
-                    //sono sulla stessa retta
-                    if(B1 == 0) {
-                        //se B = 0 allora M = -C/B = infinito, quindi la retta è parallela all'asse Y e devo fare i controlli su X
+                    //the lines are the same lines
+                    if(B1 == 0) { 
+                        //if B = 0 the line is parallel to Y and i have to do checks only on the Y
                         Point point1 = line1.point1;
                         Point point2 = line1.point2;
 
                         Point point3 = line2.point1;
                         Point point4 = line2.point2;
 
-                        //riordino i punti
-                        Point temp;
-                        if(point1.x > point2.x) {
-                            temp = point1;
-                            point1 = point2;
-                            point2 = temp;
-                        }
-                        if(point3.x > point4.x) {
-                            temp = point3;
-                            point3 = point4;
-                            point4 = temp;
-                        }
-
-
-                        //CASI DI INTERSEZIONE: 1----3---2----4; 3-----1----4---2;
-                        if(between(point3.x, point1.x, point2.x) || between(point1.x, point3.x, point4.x)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        //la retta è una normale retta non parallela a Y, c'è anche la possibilità che al contrario sia parallela a C, perciò per sicurezza faccio i controlli su Y
-                        //se B = 0 allora M = -C/B = infinito, quindi la retta è parallela all'asse Y e devo fare i controlli su X
-                        Point point1 = line1.point1;
-                        Point point2 = line1.point2;
-
-                        Point point3 = line2.point1;
-                        Point point4 = line2.point2;
-
-                        //riordino i punti
+                        //sorting the points
                         Point temp;
                         if(point1.y > point2.y) {
                             temp = point1;
@@ -110,8 +89,36 @@ namespace Daze.Geometry {
                         }
 
 
-                        //CASI DI INTERSEZIONE: 1----3---2----4; 3-----1----4---2;
+                        //intersection cases: 1--3--2--4; 3--1--4--2;
                         if(between(point3.y, point1.y, point2.y) || between(point1.y, point3.y, point4.y)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        //if the line is not parallel to Y there is a possibility that it could be parallel to X, so to Y might me constant, to be sure i don't mess up i do my checks on the X
+                        Point point1 = line1.point1;
+                        Point point2 = line1.point2;
+
+                        Point point3 = line2.point1;
+                        Point point4 = line2.point2;
+
+                        //sorting the points
+                        Point temp;
+                        if(point1.x > point2.x) {
+                            temp = point1;
+                            point1 = point2;
+                            point2 = temp;
+                        }
+                        if(point3.x > point4.x) {
+                            temp = point3;
+                            point3 = point4;
+                            point4 = temp;
+                        }
+
+
+                        //intersection cases: 1--3--2--4; 3--1--4--2;
+                        if(between(point3.x, point1.x, point2.x) || between(point1.x, point3.x, point4.x)) {
                             return true;
                         } else {
                             return false;
@@ -119,23 +126,23 @@ namespace Daze.Geometry {
                     }
                 }
             } else {
-                //le rette non sono parallele, trovo l'intersezione normalmente
+                //the lines are not parallel
                 float x = (B1*C2 - C1*B2)/delta;
                 float y = (A2*C1 - A1*C2)/delta;
 
                 if(B1 == 0) {
-                    //linea parallela a Y, devo fare i controlli sulla Y
+                    //The line is parallel to Y (so its X is constant), i have to do my checks on the Y
                     if(!between(y, line1.point1.y, line1.point2.y)) return false;
                 } else {
-                    //linea non parallela a Y, potenzialmente parallela a X
+                    //The line is not parallel to Y, it could be parallel to X, so to be sure i do the checks on the X
                     if(!between(x, line1.point1.x, line1.point2.x)) return false;
                 }
 
                 if(B2 == 0) {
-                    //linea parallela a Y, devo fare i controlli sulla X
+                    //The line is parallel to Y (so its X is constant), i have to do my checks on the Y
                     if(!between(y, line2.point1.y, line2.point2.y)) return false;
                 } else {
-                    //linea non parallela a Y, potenzialmente parallela a X
+                    //The line is not parallel to Y, it could be parallel to X, so to be sure i do the checks on the X
                     if(!between(x, line2.point1.x, line2.point2.x)) return false;
                 }
                 return true;
@@ -162,18 +169,18 @@ namespace Daze.Geometry {
             //c = x1y2 -y1x2
             float c = line.point1.x * line.point2.y - line.point1.y * line.point2.x;
 
-            //creo degli alias per i componenti del cerchio altrimenti mi sparo quando scrivo le formule
+            //i create some alias for the variables otherwise i would shoot myself when i'm writing formulas
             float cx = circle.center.x;
             float cy = circle.center.y;
             float r = circle.radius;
 
             if(b != 0) {
-                //la linea non è parallela a Y, quindi posso svolgere il sistema sostituendo Y nell'equazione della circonferenza
-                //sistema: (x-cx)^2 + (y/cy)^2 = r^2   |  y = mx+q
+                //the line is not parallel to Y axis, so i can subsitute the Y in the circle equation
+                //system: (x-cx)^2 + (y/cy)^2 = r^2   |  y = mx+q
                 float m = -a/b;
                 float q = -c/b;
 
-                //componenti dell'equazione: ax^2 + bx +c = 0
+                //components of the circle equation after substitution: ax^2 + bx +c = 0
                 float eqA = 1+m*m;
                 float eqB = 2*cx + 2*m*q + 2*m*cy;
                 float eqC = cy*cy + cx*cx - 2*q*cy - r*r;
@@ -182,7 +189,7 @@ namespace Daze.Geometry {
                 if(delta < 0) {
                     return false;
                 } else {
-                    //trovo la x e la y della/delle intersezione/i e uso la funzione between per capire se è nel segmento
+                    //i find the X and the Y of the intersection points, then i check if they are inside the line segment
                     float x2 = (float)((-eqB - Math.Sqrt(delta))/2*eqA);
                     float x1 = (float)((-eqB + Math.Sqrt(delta))/2*eqA);
                     float y2 = m*x2 + q;
@@ -194,9 +201,9 @@ namespace Daze.Geometry {
                     return false;
                 }
             } else {
-                //la linea è parallela a Y
-                //retta = x = -c/a => x = altQ
-                //sistema: (x-cx)^2 + (y/cy)^2 = r^2   |  x = -c/a 
+                //the line is parallel to the Y axis, so i substitute the X inside the circle equation
+                //line: x = -c/a => x = altQ
+                //substitution: (x-cx)^2 + (y/cy)^2 = r^2   |  x = -c/a 
                 float altQ = -c/a;
 
                 float eqB = 2*cy;
@@ -206,7 +213,7 @@ namespace Daze.Geometry {
                 if(delta < 0) {
                     return false;
                 } else {
-                    //trovo la x e la y dell'intersezione e uso la funzione between per capire se è nel segmento
+                    //i find the X and the Y of the intersection points, then i check if they are inside the line segment
                     float x = altQ;
                     float y2 = (float)((-eqB - Math.Sqrt(delta))/2);
                     float y1 = (float)((-eqB + Math.Sqrt(delta))/2);
@@ -243,8 +250,7 @@ namespace Daze.Geometry {
         public static float getAngularCoefficient(Line line) {
             return getAngularCoefficient(line.point1, line.point2);
         }
-
-        //funziona con bounding box con rotazione 0
+        
         /// <summary>
         /// Check if a point is in the bounding box of a line (to be use only to do fast checks)
         /// </summary>
@@ -282,17 +288,6 @@ namespace Daze.Geometry {
         public static float calculateLineOffsetYFromO(Line line) {
             return (line.point1.y * line.point2.x - line.point1.x * line.point2.y) / (line.point2.x - line.point1.x);
         }
-
-        /// <summary>
-        /// Check if a line intersect with a circle
-        /// </summary>
-        /// <param name="line1">The line</param>
-        /// <param name="circle">The circle</param>
-        /// <returns></returns>
-        public static bool linesIntersect(Line line1, Circle circle) {
-            throw new NotImplementedException();
-        }
-
     }
 }
 

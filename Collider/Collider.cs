@@ -33,8 +33,24 @@ namespace Daze {
         /// A method to check if a collider is colliding with this one
         /// </summary>
         /// <param name="otherCollider">The second collider to check</param>
+        /// <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
         /// <returns>True if they collide, false otherwise</returns>
-        public abstract bool Collide(Collider otherCollider);
+        public abstract bool Collide(Collider otherCollider, bool firstTry = true);
+
+        /// <summary>
+        /// Try to let the other collider handle the collision in case this one didn't implement it, this can throw a NotImplementedException if the other collider can't handle the collision
+        /// </summary>
+        /// <param name="collider2"></param>
+        /// <param name="firstTry"></param>
+        /// <returns></returns>
+        public virtual bool handleNotImplementedCollision(Collider collider2,bool firstTry) {
+            if(firstTry) {
+                return collider2.Collide(this,false);
+            } else {
+                //this collider can't check collision with the other one, and the other one cannot either
+                throw new NotImplementedException("There is no way to check collision between " + this.GetType() + " and " + collider2.GetType());
+            }
+        }
 
         /// <summary>
         /// It forces the collider's coordinates recalculation

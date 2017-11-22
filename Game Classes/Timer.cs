@@ -88,7 +88,7 @@ namespace Daze {
         }
 
         /// <summary>
-        /// This method can be used to set the timer again in one line
+        /// This method can be used to set the timer again in one line (it's nothing more than a way to not do two assignations)
         /// </summary>
         /// <param name="msPerTick"></param>
         /// <param name="currentMS"></param>

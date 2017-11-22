@@ -64,12 +64,21 @@
             The maximum distance from the center and a vertex of this collider
             </summary>
         </member>
-        <member name="M:Daze.Collider.Collide(Daze.Collider)">
+        <member name="M:Daze.Collider.Collide(Daze.Collider,System.Boolean)">
             <summary>
             A method to check if a collider is colliding with this one
             </summary>
             <param name="otherCollider">The second collider to check</param>
+            <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
             <returns>True if they collide, false otherwise</returns>
+        </member>
+        <member name="M:Daze.Collider.handleNotImplementedCollision(Daze.Collider,System.Boolean)">
+            <summary>
+            Try to let the other collider handle the collision in case this one didn't implement it, this can throw a NotImplementedException if the other collider can't handle the collision
+            </summary>
+            <param name="collider2"></param>
+            <param name="firstTry"></param>
+            <returns></returns>
         </member>
         <member name="M:Daze.Collider.RecreateCollider">
             <summary>
@@ -132,11 +141,12 @@
             The radius of the circle
             </summary>
         </member>
-        <member name="M:Daze.CircleCollider.Collide(Daze.Collider)">
+        <member name="M:Daze.CircleCollider.Collide(Daze.Collider,System.Boolean)">
             <summary>
             Check if this collider collides with another one
             </summary>
-            <param name="otherCollider">The second collider to check</param>
+            <param name="collider2">The second collider to check</param>
+            <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
             <returns>True if they collide, false otherwise</returns>
         </member>
         <member name="M:Daze.CircleCollider.RecreateCollider">
@@ -191,11 +201,12 @@
             This recalculate every coordinate of the collider
             </summary>
         </member>
-        <member name="M:Daze.RectangleCollider.Collide(Daze.Collider)">
+        <member name="M:Daze.RectangleCollider.Collide(Daze.Collider,System.Boolean)">
             <summary>
             This function check if a collider is colliding with this one
             </summary>
             <param name="collider2">The other collider to check</param>
+            <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
             <returns>Return true when they collide, false otherwise</returns>
         </member>
         <member name="T:Daze.ConvexPolygonCollider">
@@ -214,11 +225,12 @@
             </summary>
             <param name="gameObject">The gameObject that will be used to calculate the polygon position</param>
         </member>
-        <member name="M:Daze.ConvexPolygonCollider.Collide(Daze.Collider)">
+        <member name="M:Daze.ConvexPolygonCollider.Collide(Daze.Collider,System.Boolean)">
             <summary>
             This check if this collider is colliding with another one
             </summary>
             <param name="collider2">The second collider to check</param>
+            <param name="firstTry">Send false if this method is called after a collider couldn't check the collision</param>
             <returns>True if the two collider collide, false otherwise</returns>
         </member>
         <member name="M:Daze.ConvexPolygonCollider.Rotate(Daze.GameObject)">
@@ -258,6 +270,41 @@
         <member name="T:Daze.IDrawable">
             <summary>
             Extend this class to create a different way to draw on screen
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.loaded">
+            <summary>
+            Set this to true when the window is loaded. The engine will wait till this is true to start the Game.
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.focus">
+            <summary>
+            This should return true when the window got focus, false otherwise. If you can't detect the window status then make it always true.
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.hideCursor">
+            <summary>
+            This should hide the cursor, if you can't hide it then just return always false.
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.IntialSetup">
+            <summary>
+            This method is called from the Engine at the beginning, you should create your window here
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.BufferSetup">
+            <summary>
+            This method is called from the Engine after the buffer is created
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Start">
+            <summary>
+            This is called from the method after all the setups to show the window
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Stop">
+            <summary>
+            This method is called from the Engine when it has to close the window
             </summary>
         </member>
         <member name="M:Daze.IDrawable.Draw">
@@ -533,7 +580,7 @@
         </member>
         <member name="F:Daze.Engine.DrawingMethod.REDRAW_EVERYTHING">
             <summary>
-            This settings redraw everything at every frames, it is the slowest method, and not really advised sice REDRAW_GAMEOBJECTS works better.
+            This settings redraw everything at every frames, it is the slowest method, and not really advised sice REDRAW_GAMEOBJECTS works better anyway.
             </summary>
         </member>
         <member name="F:Daze.Engine.DrawingMethod.REDRAW_MOVED_GAMEOBJECTS">
@@ -582,6 +629,11 @@
             Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
             </summary>
         </member>
+        <member name="P:Daze.Engine.drawBuffer">
+            <summary>
+            The buffer used to draw, use it only if you are creating a new IDrawable
+            </summary>
+        </member>
         <member name="P:Daze.Engine.bufferHeight">
             <summary>
             The height of the screen
@@ -592,6 +644,36 @@
             The width of the screen
             </summary>
         </member>
+        <member name="P:Daze.Engine.drawBufferStride">
+            <summary>
+            The stide of the bitmap used for the buffer
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.mouseClick">
+            <summary>
+            This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.mouseDoubleClick">
+            <summary>
+            This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.mouseMove">
+            <summary>
+            This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.mouseDown">
+            <summary>
+            This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.mouseUp">
+            <summary>
+            This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
+            </summary>
+        </member>
         <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod,Daze.IDrawable)">
             <summary>
             This function start the Engine
@@ -599,6 +681,7 @@
             <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
             <param name="renderingSize">The internal rendering size</param>
             <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
+            <param name="drawDestination">The draw destination, set to null to use Daze default window</param>
         </member>
         <member name="M:Daze.Engine.Stop">
             <summary>
@@ -844,14 +927,6 @@
             </summary>
             <param name="line">The line</param>
             <returns>The offset on the Y axis from O</returns>
-        </member>
-        <member name="M:Daze.Geometry.Utility.linesIntersect(Daze.Geometry.Line,Daze.Geometry.Circle)">
-            <summary>
-            Check if a line intersect with a circle
-            </summary>
-            <param name="line1">The line</param>
-            <param name="circle">The circle</param>
-            <returns></returns>
         </member>
         <member name="T:Daze.Geometry.ConvexPolygon">
             <summary>
@@ -1273,16 +1348,6 @@
             The SpriteSet for this gameObject
             </summary>
         </member>
-        <member name="F:Daze.GameObject.lastPixelPosition">
-            <summary>
-            The position of the gameObject on the screen in the last Cycle
-            </summary>
-        </member>
-        <member name="F:Daze.GameObject.pixelPosition">
-            <summary>
-            The position of the gameObject on the screen
-            </summary>
-        </member>
         <member name="F:Daze.GameObject.position">
             <summary>
             The position of the gameObject
@@ -1291,6 +1356,16 @@
         <member name="P:Daze.GameObject.rotation">
             <summary>
             The rotation of the gameObjects
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.lastPixelPosition">
+            <summary>
+            The position of the gameObject on the screen in the last Cycle
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.pixelPosition">
+            <summary>
+            The position of the gameObject on the screen
             </summary>
         </member>
         <member name="F:Daze.GameObject.drawLayer">
