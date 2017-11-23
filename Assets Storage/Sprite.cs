@@ -66,6 +66,7 @@ namespace Daze {
 
             #region Copying the bitmap into the byte array
             //locking bitmap in memory (it could be unlocked by GC later, so i'll put it in a byte array)
+            
             BitmapData spriteData = bitmap.LockBits(new Rectangle(0, 0, originalWidth, originalHeight), ImageLockMode.ReadOnly, bitmap.PixelFormat);
             originalStride = spriteData.Stride;
             IntPtr ptr_startOfSpriteLock = spriteData.Scan0;
@@ -136,12 +137,12 @@ namespace Daze {
                     _height = originalWidth;
                     _stride = _width * _bytesPerPixel;
                     if(_rotation == 90) {
-                        //oldX = newHeight - y 
+                        //oldX = newHeight - y
                         //oldY = newX
                         for(y = 0; y < _height; y++) {
                             for(x = 0; x < _width; x++) {
-                                pixelStart = y * originalStride + x * _bytesPerPixel;
-                                originalPixelStart = x * originalStride + (_height - (y + 1)) * _bytesPerPixel;
+                                pixelStart = y * _stride + x * _bytesPerPixel;
+                                originalPixelStart = x * originalStride + y * _bytesPerPixel;
                                 for(i = 0; i < _bytesPerPixel; i++) {
                                     _pixelArray[pixelStart++] = originalPixelArray[originalPixelStart++];
                                 }
@@ -153,7 +154,7 @@ namespace Daze {
                         //oldY = newX
                         for(y = 0; y < _height; y++) {
                             for(x = 0; x < _width; x++) {
-                                pixelStart = y * originalStride + x * _bytesPerPixel;
+                                pixelStart = y * _stride + x * _bytesPerPixel;
                                 originalPixelStart = (_width - (x + 1)) * originalStride + y * _bytesPerPixel;
                                 for(i = 0; i < _bytesPerPixel; i++) {
                                     _pixelArray[pixelStart++] = originalPixelArray[originalPixelStart++];
