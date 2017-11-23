@@ -64,7 +64,7 @@ namespace Daze {
         public float rotation {
             get => _Rotation;
             set {
-                _Rotation = value;
+                _Rotation = value - ((int)(value/360) *360);
                 spriteSet?.Rotate();
                 collider?.Rotate();
             }
@@ -85,6 +85,15 @@ namespace Daze {
         /// (note: the Z axis is Only used for drawing's priority)
         /// </summary>
         public int drawLayer;
+
+        /// <summary>
+        /// The size of this gameObject on the screen in the last Cycle
+        /// </summary>
+        internal protected Size lastSize;
+        /// <summary>
+        /// The minX and minY of the spriteSet before the last Cycle
+        /// </summary>
+        internal protected IntVector lastMinSpriteCoordinates;
 
         internal bool invalidated = false;
         #endregion
@@ -272,6 +281,8 @@ namespace Daze {
         #region Methods for to the Draw function
         internal void pushLastPixelPosition() {
             lastPixelPosition.set(pixelPosition);
+            lastSize = spriteSet.size.duplicate();
+            lastMinSpriteCoordinates = new IntVector(spriteSet.minX,spriteSet.minY);
         }
 
         internal virtual void pushPixelPosition() {

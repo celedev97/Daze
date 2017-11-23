@@ -165,34 +165,7 @@ namespace Daze {
             //inizializzazione sprite e dimensioni
             this.sprites = sprites;
 
-            //trovo le coordinate minime e massime dello sprite, sono necessarie per evitare di disegnare parti superflue (così da alleviare i calcoli)
-            int[] spriteBounds = null;
-            foreach(Sprite sprite in sprites) {
-                if(sprite == null) continue;
-                if(spriteBounds != null) {
-                    int[] newBounds = getBounds(sprite);
-                    //xMin 
-                    spriteBounds[0] = spriteBounds[0] > newBounds[0] ? newBounds[0] : spriteBounds[0];
-                    //xMax
-                    spriteBounds[1] = spriteBounds[1] < newBounds[1] ? newBounds[1] : spriteBounds[1];
-                    //yMin
-                    spriteBounds[2] = spriteBounds[2] > newBounds[2] ? newBounds[2] : spriteBounds[2];
-                    //yMax
-                    spriteBounds[3] = spriteBounds[3] < newBounds[3] ? newBounds[3] : spriteBounds[3];
-                } else {
-                    spriteBounds = getBounds(sprite);
-                }
-            }
-
-            //this should only happen if all the sprites are null
-            if(spriteBounds == null) throw new ArgumentException("You can't create a SpriteSet with no Sprites, if you want a gameObject to not have a Sprite just set its spriteSet property to null.");
-
-            //in base alle coordinate trovate calcolo i dati necessari al metodo Draw per fare un disegno parziale
-            _minX = spriteBounds[0];
-            _minY = spriteBounds[2];
-
-            size.width = (spriteBounds[1] - spriteBounds[0]) + 1;
-            size.height = (spriteBounds[3] - spriteBounds[2]) + 1;
+            calculateBounds();
         }
 
         #endregion
@@ -235,7 +208,42 @@ namespace Daze {
         /// This method update the rotation of this SpriteSet
         /// </summary>
         public void Rotate() {
-            throw new NotImplementedException();
+            for(int i = 0; i < sprites.Length; i++) {
+                //i change the sprite with another one rotated
+                sprites[i] = Engine.loadSprite(sprite.baseName, sprite.scale, gameObject.rotation);
+            }
+            calculateBounds();
+        }
+
+        private void calculateBounds() {
+            //trovo le coordinate minime e massime dello sprite, sono necessarie per evitare di disegnare parti superflue (così da alleviare i calcoli)
+            int[] spriteBounds = null;
+            foreach(Sprite sprite in sprites) {
+                if(sprite == null) continue;
+                if(spriteBounds != null) {
+                    int[] newBounds = getBounds(sprite);
+                    //xMin 
+                    spriteBounds[0] = spriteBounds[0] > newBounds[0] ? newBounds[0] : spriteBounds[0];
+                    //xMax
+                    spriteBounds[1] = spriteBounds[1] < newBounds[1] ? newBounds[1] : spriteBounds[1];
+                    //yMin
+                    spriteBounds[2] = spriteBounds[2] > newBounds[2] ? newBounds[2] : spriteBounds[2];
+                    //yMax
+                    spriteBounds[3] = spriteBounds[3] < newBounds[3] ? newBounds[3] : spriteBounds[3];
+                } else {
+                    spriteBounds = getBounds(sprite);
+                }
+            }
+
+            //this should only happen if all the sprites are null
+            if(spriteBounds == null) throw new ArgumentException("You can't create a SpriteSet with no Sprites, if you want a gameObject to not have a Sprite just set its spriteSet property to null.");
+
+            //basing on the coordinates i found i set the data necessary to draw this sprite partially
+            _minX = spriteBounds[0];
+            _minY = spriteBounds[2];
+
+            size.width = (spriteBounds[1] - spriteBounds[0]) + 1;
+            size.height = (spriteBounds[3] - spriteBounds[2]) + 1;
         }
 
         private int[] getBounds(Sprite sprite) {

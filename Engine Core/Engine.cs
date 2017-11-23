@@ -234,7 +234,7 @@ namespace Daze {
         /// </summary>
         public static DrawingMethod drawingMethod;
 
-        private static Camera _camera = new Camera();
+        private static Camera _camera;
         /// <summary>
         /// This is the camera that is showing on the screen (Daze currently support only one camera)
         /// </summary>
@@ -418,7 +418,7 @@ namespace Daze {
             if(_drawDestination == null) {
                 _drawDestination = new DrawOnWinform();
             }
-            #region Finestra e buffer
+            #region Window and buffer
             //creating draw window
             _drawDestination.IntialSetup();
 
@@ -435,7 +435,9 @@ namespace Daze {
             _drawDestination.BufferSetup();
             #endregion
 
-            #region Eventi
+            _camera = new Camera();
+
+            #region Events
             mouseClicksList = new List<MouseEvent>();
             mouseDoubleClicksList = new List<MouseEvent>();
             mouseMovesList = new List<MouseEvent>();
@@ -451,7 +453,7 @@ namespace Daze {
             mouseUp += mouseButtonUpAdd;
             #endregion
 
-            #region Inizializzazione liste
+            #region Lists initialization
             //initializing preloading lists
             sprites = new Dictionary<string, Sprite>();
             wavPaths = new Dictionary<string, string>();
@@ -727,16 +729,22 @@ namespace Daze {
             //it is possible that this gameObject is completely (or partially) out of the screen, i need to calculate how much of the sprite should i draw, in wich position and with wich offset in the sprite.
             if(spriteSet == null) spriteSet = gameObject.spriteSet;
 
-            drawWidth = spriteSet.size.width;
-            spriteXPosition = spriteSet.minX;
-
-            drawHeight = spriteSet.size.height;
-            spriteYPosition = spriteSet.minY;
-
             if(lastPosition) {
+                drawWidth = gameObject.lastSize.width;
+                spriteXPosition = gameObject.lastMinSpriteCoordinates.x;
+
+                drawHeight = gameObject.lastSize.height;
+                spriteYPosition = gameObject.lastMinSpriteCoordinates.y;
+
                 drawXPosition = gameObject.lastPixelPosition.x;
                 drawYPosition = gameObject.lastPixelPosition.y;
             } else {
+                drawWidth = spriteSet.size.width;
+                spriteXPosition = spriteSet.minX;
+
+                drawHeight = spriteSet.size.height;
+                spriteYPosition = spriteSet.minY;
+
                 drawXPosition = gameObject.pixelPosition.x;
                 drawYPosition = gameObject.pixelPosition.y;
             }
@@ -895,16 +903,36 @@ namespace Daze {
         /// This method load a Sprite from a resource.
         /// After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
         /// </summary>
-        /// <param name="resource_Name"></param>
-        /// <param name="scale"></param>
+        /// <param name="resource_Name">The name of the resource</param>
+        /// <param name="scale">the scale of the sprite</param>
+        /// <param name="rotation">the rotation of this sprite</param>
         /// <returns></returns>
-        public static Sprite loadSprite(string resource_Name, float scale = 1) {
-            string spriteName = resource_Name+"x"+scale;
-            //searchig if the sprite was already loaded
+        public static Sprite loadSprite(string resource_Name, float scale = 1, float rotation = 0) {
+            string spriteNameWithoutRotation = resource_Name + "_dazeX" + scale;
+            //searching if the sprite was already loaded
+            Sprite sameSprite = null;
+            int steppedRotation = -1;
             foreach(KeyValuePair<string, Sprite> keyVal in sprites) {
-                if(keyVal.Key == spriteName) {
-                    return keyVal.Value;
+                if(keyVal.Key.Contains(spriteNameWithoutRotation)) {
+                    //This sprite is the same that i need, but i don't know if it has the same rotation or not
+                    sameSprite = keyVal.Value;
+                    if(steppedRotation == -1) {
+                        //i save the value of the stepped rotation
+                        //every sprite with the same base will return the same step rotation, so why calculate it more than once?
+                        steppedRotation = keyVal.Value.stepRotation(rotation);
+                    }
+
+                    if(steppedRotation == keyVal.Value.rotation) {
+                        //questo era esattamente lo sprite che cercavo
+                        return keyVal.Value;
+                    }
                 }
+            }
+            //i check if i found the same sprite with another rotation
+            if(sameSprite != null) {
+                Sprite rotatedSprite = sameSprite.cloneBase(steppedRotation);
+                sprites.Add(spriteNameWithoutRotation + "_dazeR" + steppedRotation, rotatedSprite);
+                return rotatedSprite;
             }
             //if i'm here then it was never loaded, so i have to load it
             //getting namespace from caller method
@@ -913,14 +941,14 @@ namespace Daze {
             //getting all the resource files in the namespace
             foreach(string rsxName in callerAssembly.GetManifestResourceNames()) {
                 try {
-                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources",".Resources"),callerAssembly);
+                    ResourceManager rm = new ResourceManager(rsxName.Replace(".Resources.resources", ".Resources"), callerAssembly);
                     bitmap = (Bitmap)rm.GetObject(resource_Name);
                     break;
                 } catch { }
             }
             if(bitmap == null) throw new Exception("Can't find the sprite " + resource_Name + ": the name must be the same as the Resource's name");
-            Sprite newSprite = new Sprite(Utility.scaleImage(bitmap,scale));
-            sprites.Add(spriteName, newSprite);
+            Sprite newSprite = new Sprite(bitmap, resource_Name, scale, rotation);
+            sprites.Add(spriteNameWithoutRotation + "_dazeR" + newSprite.rotation, newSprite);
             return newSprite;
         }
 

@@ -7,7 +7,12 @@ namespace Daze {
     /// </summary>
     public class Camera : GameObject {
         internal Camera() : base(0, 0) {
-            
+            Bitmap bitmap = new Bitmap(Engine._drawBufferWidth, Engine._drawBufferHeight);
+            using(Graphics gfx = Graphics.FromImage(bitmap))
+            using(SolidBrush brush = new SolidBrush(Color.Aquamarine)) {
+                gfx.FillRectangle(brush, 0, 0, Engine._drawBufferWidth, Engine._drawBufferHeight);
+            }
+            this.background = new Sprite(bitmap, "BG");
         }
         #region Variables
         internal Sprite background;
@@ -46,7 +51,7 @@ namespace Daze {
         /// </summary>
         /// <param name="background"></param>
         public void setBackGround(Bitmap background) {
-            this.background = new Sprite(Engine.Utility.scaleImage(background, Engine._drawBufferWidth, Engine._drawBufferHeight));
+            this.background = new Sprite(Engine.Utility.scaleImage(background, Engine._drawBufferWidth, Engine._drawBufferHeight), "BG");
         }
 
         /// <summary>

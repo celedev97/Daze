@@ -726,13 +726,14 @@
             </summary>
             <param name="gameObject">The gameObject to remove</param>
         </member>
-        <member name="M:Daze.Engine.loadSprite(System.String,System.Single)">
+        <member name="M:Daze.Engine.loadSprite(System.String,System.Single,System.Single)">
             <summary>
             This method load a Sprite from a resource.
             After that you loaded a sprite in this way the next load for the same sprite will not happen and you will just get a reference to the Sprite, so feel free to call it for every GameObject you need, you won't slow down the game due to I/O operations.
             </summary>
-            <param name="resource_Name"></param>
-            <param name="scale"></param>
+            <param name="resource_Name">The name of the resource</param>
+            <param name="scale">the scale of the sprite</param>
+            <param name="rotation">the rotation of this sprite</param>
             <returns></returns>
         </member>
         <member name="M:Daze.Engine.loadWavFromResources(System.String,System.Int32,System.Boolean,System.Reflection.Assembly)">
@@ -1228,9 +1229,9 @@
             A Sprite in daze is a array of bytes representing a Bitmap.
             </summary>
         </member>
-        <member name="P:Daze.Sprite.pixelArray">
+        <member name="P:Daze.Sprite.rotation">
             <summary>
-            The array of pixels that represent this sprite
+            The current real rotation of the sprite (the sprite rotation goes by step, to see the theoretical rotation of this object see gameObject.rotation)
             </summary>
         </member>
         <member name="P:Daze.Sprite.width">
@@ -1242,23 +1243,6 @@
             <summary>
             The height of the sprite
             </summary>
-        </member>
-        <member name="P:Daze.Sprite.stride">
-            <summary>
-            The length of a line of pixel of this sprite measured in bytes
-            </summary>
-        </member>
-        <member name="P:Daze.Sprite.bytesPerPixel">
-            <summary>
-            How many bytes a pixel takes
-            </summary>
-        </member>
-        <member name="M:Daze.Sprite.#ctor(System.Drawing.Bitmap)">
-            <summary>
-            This create a sprite from a Bitmap.
-            In Daze a sprite is nothing more than an array of bytes representing the bitmap so it can be accessed more fastly.
-            </summary>
-            <param name="bitmap">The original Bitmap</param>
         </member>
         <member name="T:Daze.Timer">
             <summary>
@@ -1315,7 +1299,7 @@
         </member>
         <member name="M:Daze.Timer.Set(System.Int32,System.Int32)">
             <summary>
-            This method can be used to set the timer again in one line
+            This method can be used to set the timer again in one line (it's nothing more than a way to not do two assignations)
             </summary>
             <param name="msPerTick"></param>
             <param name="currentMS"></param>
@@ -1372,6 +1356,16 @@
             <summary>
             The position of the GameObject on the Z axis
             (note: the Z axis is Only used for drawing's priority)
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.lastSize">
+            <summary>
+            The size of this gameObject on the screen in the last Cycle
+            </summary>
+        </member>
+        <member name="F:Daze.GameObject.lastMinSpriteCoordinates">
+            <summary>
+            The minX and minY of the spriteSet before the last Cycle
             </summary>
         </member>
         <member name="P:Daze.GameObject.collider">
