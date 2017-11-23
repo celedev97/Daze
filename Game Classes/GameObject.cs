@@ -96,6 +96,14 @@ namespace Daze {
         internal protected IntVector lastMinSpriteCoordinates;
 
         internal bool invalidated = false;
+
+        /// <summary>
+        /// This invalidate the gameObject forcing it to be redrawn, it's used only in some drawing modes
+        /// </summary>
+        public void invalidate() {
+            invalidated = true;
+        }
+
         #endregion
 
 
@@ -114,12 +122,12 @@ namespace Daze {
         /// <summary>
         /// Returns the object that collided with this Object in the last movement, can be NULL
         /// </summary>
-        public GameObject lastCollision { get { return _lastCollision; } }
+        public List<GameObject> lastCollision { get { return _lastCollision; } }
 
         /// <summary>
         /// This contain the GameObject that collided with this one in the last movement (NULL if there was no collision)
         /// </summary>
-        protected GameObject _lastCollision;
+        protected List<GameObject> _lastCollision;
         /// <summary>
         /// The layers of colliders that this GameObjects should ignore while checking collisions
         /// </summary>
@@ -310,13 +318,13 @@ namespace Daze {
         /// <param name="yOffset">The offset of the movement of the GameObject on the Y axis</param>
         /// <returns>This return true if the gameObject moved without collisions, false otherwise</returns>
         public virtual bool Move(float xOffset, float yOffset) {
-            _lastCollision = null;
+            _lastCollision = new List<GameObject>();
             bool moved = moveX(xOffset);
             moved = moveY(yOffset) && moved;
             return moved;
         }
 
-        private bool moveX(float xOffset) {
+        private bool moveX(float xOffset, bool cancelIfCollide = true) {
             //moving the gameObject
             position.x += xOffset;
             //checking if the gameObject is limited to move within the camera
@@ -324,7 +332,7 @@ namespace Daze {
                 if((position.x + spriteSet?.size.width / 2) > Engine.camera.limits.maxX ||(position.x - spriteSet?.size.width / 2) < Engine.camera.limits.minX) {
                     //the gameObject is going out of the screen, i cancel his movement
                     position.x -= xOffset;
-                    _lastCollision = null;
+                    _lastCollision = new List<GameObject> { Engine.camera };
                     return false;
                 }
             }
@@ -332,22 +340,32 @@ namespace Daze {
                 return true;
             } else {
                 collider.Move();
-                if((_lastCollision = checkCollisions()) != null) {
-                    extrapolate(xOffset, 0);
+                if((_lastCollision = checkCollisions()).Count != 0) {
+                    if(cancelIfCollide) extrapolate(xOffset, 0);
 
                     //executing this object collision
                     OnCollisionEnter();
-                    //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
-                    if(Engine.gameObjectExists(_lastCollision)) {
-                    _lastCollision._lastCollision = this;
-                        _lastCollision.OnCollisionEnter();
+                    invalidate();
+                    
+                    List<GameObject> thisList = new List<GameObject>();
+                    thisList.Add(this);
+
+                    //cycling for all the collided gameObjects to fire their collision
+                    foreach(GameObject gameObject in _lastCollision) {
+                        //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
+                        if(Engine.gameObjectExists(gameObject)) {
+                            gameObject._lastCollision = thisList;
+                            invalidate();
+                            gameObject.OnCollisionEnter();
+                        }
                     }
+
                     return false;
                 }
                 return true;
             }
         }
-        private bool moveY(float yOffset) {
+        private bool moveY(float yOffset, bool cancelIfCollide = true) {
             //moving the gameObject
             position.y += yOffset;
             //checking if the gameObject is limited to move within the camera
@@ -355,7 +373,7 @@ namespace Daze {
                 if((position.y + spriteSet?.size.height/2) > Engine.camera.limits.maxY || (position.y - spriteSet?.size.height / 2) < Engine.camera.limits.minY) {
                     //the gameObject is going out of the screen, i cancel his movement
                     position.y -= yOffset;
-                    _lastCollision = null;
+                    _lastCollision = new List<GameObject> { Engine.camera };
                     return false;
                 }
             }
@@ -363,19 +381,30 @@ namespace Daze {
                 return true;
             } else {
                 collider.Move();
-                GameObject collision2;
-                if((collision2 = checkCollisions()) != null) {
-                    _lastCollision = collision2;
-                    extrapolate(0, yOffset);
+                List<GameObject> collision2;
+                if((collision2 = checkCollisions()).Count != 0) {
+                    if(_lastCollision == null) {
+                        _lastCollision = collision2;
+                    } else {
+                        _lastCollision.AddRange(collision2);
+                    }
+                    if(cancelIfCollide) extrapolate(0, yOffset);
 
                     //executing this object collision
                     OnCollisionEnter();
-                    invalidated = true;
-                    //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
-                    if(Engine.gameObjectExists(_lastCollision)) {
-                        _lastCollision._lastCollision = this;
-                        _lastCollision.invalidated = true;
-                        _lastCollision.OnCollisionEnter();
+                    invalidate();
+
+                    List<GameObject> thisList = new List<GameObject>();
+                    thisList.Add(this);
+
+                    //cycling for all the collided gameObjects to fire their collision
+                    foreach(GameObject gameObject in _lastCollision) {
+                        //if the other gameObject didn't get deleted by this gameObject collision then i fire his collision too
+                        if(Engine.gameObjectExists(gameObject)) {
+                            gameObject._lastCollision = thisList;
+                            invalidate();
+                            gameObject.OnCollisionEnter();
+                        }
                     }
                     return false;
                 }
@@ -392,14 +421,15 @@ namespace Daze {
         /// <summary>
         /// Check if this object collides with some other objects.
         /// </summary>
-        /// <returns>This method return ONLY the first gameObject found that collides, NOT ALL OF THEM.</returns>
-        protected GameObject checkCollisions() {
+        /// <returns>A list of the object colliding with this one.</returns>
+        protected List<GameObject> checkCollisions() {
+            List<GameObject> collisions = new List<GameObject>();
             foreach(GameObject gameObject2 in Engine.findGameObjects()) {
                 if(this.Collide(gameObject2)) {
-                    return gameObject2;
+                    collisions.Add(gameObject2);
                 }
             }
-            return null;
+            return collisions;
         }
 
         private bool Collide(GameObject gameObject2) {

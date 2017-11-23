@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Daze {
     class DrawOnWinform:IDrawable {
@@ -60,6 +61,7 @@ namespace Daze {
 
         public void Draw() {
             _window.updateImage();
+            Application.DoEvents();
         }
 
     }

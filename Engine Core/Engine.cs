@@ -266,7 +266,11 @@ namespace Daze {
         /// </summary>
         public static float deltaTime { get { return _deltaTime; } }
 
-        private static float lastCycleMS = 0; private static float lastCycleDrawMS = 0;
+        #region Debug variables
+        private static float beforeBlit = 0, blitMS = 0, beforeCompositing = 0, compositingMS = 0, beforeUpdate, updateMS = 0;
+        #endregion
+
+        private static float lastCycleMS = 0;
 
         private static int targetCycleMS;
         #endregion
@@ -520,6 +524,7 @@ namespace Daze {
                 //starting the stopwatch for managing the game cycle
                 stopwatch.Restart();
 
+                if(printFpsFlag) beforeUpdate = (float)stopwatch.Elapsed.TotalMilliseconds;
                 #region Update
                 #region Saving last draw status before all the scripts
                 foreach(GameObject gameObject in gameObjects) {
@@ -624,12 +629,13 @@ namespace Daze {
                 }
                 #endregion
                 #endregion
-                
+                if(printFpsFlag) updateMS = (float)stopwatch.Elapsed.TotalMilliseconds - beforeUpdate;
+
+                if(printFpsFlag) beforeCompositing = (float)stopwatch.Elapsed.TotalMilliseconds;
                 #region Draw to buffer
                 //sorting game objects by draw priority
                 sortGameObjectByZ();
-
-                #region Draw
+                
                 //updating the buffer
                 switch(drawingMethod) {
                     case DrawingMethod.REDRAW_EVERYTHING:
@@ -643,15 +649,20 @@ namespace Daze {
                     case DrawingMethod.REDRAW_MOVED_GAMEOBJECTS:
                         cleanGameObjects(true);
                         drawGameObjects(true);
+                        foreach(GameObject gameObject in gameObjects) {
+                            gameObject.invalidated = false;
+                        }
                         break;
                 }
+                
                 #endregion
+                if(printFpsFlag) compositingMS = (float)stopwatch.Elapsed.TotalMilliseconds - beforeCompositing;
 
-                float beforeDraw = (float)stopwatch.Elapsed.TotalMilliseconds;
+                #region Bit blit
+                if(printFpsFlag) beforeBlit = (float)stopwatch.Elapsed.TotalMilliseconds;
                 //updating the screen
                 _drawDestination.Draw();
-                if(printFpsFlag) lastCycleDrawMS = (float)stopwatch.Elapsed.TotalMilliseconds - beforeDraw;
-                Application.DoEvents();
+                if(printFpsFlag) blitMS = (float)stopwatch.Elapsed.TotalMilliseconds - beforeBlit;
                 #endregion
 
                 #region Time check
@@ -1038,7 +1049,7 @@ namespace Daze {
 
         #region Diagnostic Methods
         private static void printFPS() {
-            if(_drawDestination.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " DRAW:" + lastCycleDrawMS);
+            if(_drawDestination.focus) Console.WriteLine("FPS:" + (int)(1000f / lastCycleMS) + " MS:" + lastCycleMS + " U:" + updateMS + " C:" + compositingMS + " B:" + blitMS);
         }
         #endregion
         #endregion

@@ -1368,6 +1368,11 @@
             The minX and minY of the spriteSet before the last Cycle
             </summary>
         </member>
+        <member name="M:Daze.GameObject.invalidate">
+            <summary>
+            This invalidate the gameObject forcing it to be redrawn, it's used only in some drawing modes
+            </summary>
+        </member>
         <member name="P:Daze.GameObject.collider">
             <summary>
             The collider of this GameObject, colliders can have various shapes and they do adapt to the SpriteSet size
@@ -1481,7 +1486,7 @@
             <summary>
             Check if this object collides with some other objects.
             </summary>
-            <returns>This method return ONLY the first gameObject found that collides, NOT ALL OF THEM.</returns>
+            <returns>A list of the object colliding with this one.</returns>
         </member>
         <member name="M:Daze.GameObject.Update">
             <summary>
