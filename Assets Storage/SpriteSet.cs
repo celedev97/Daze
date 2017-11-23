@@ -235,10 +235,6 @@ namespace Daze {
         /// This method update the rotation of this SpriteSet
         /// </summary>
         public void Rotate() {
-            for(int i = 0; i< sprites.Length; i++) {
-                //i change the sprite with 
-                sprites[i] = Engine.loadSprite(sprite.baseName, sprite.scale, gameObject.rotation);
-            }
             throw new NotImplementedException();
         }
 

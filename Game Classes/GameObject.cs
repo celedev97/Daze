@@ -65,7 +65,6 @@ namespace Daze {
             get => _Rotation;
             set {
                 _Rotation = value;
-                invalidated = true;
                 spriteSet?.Rotate();
                 collider?.Rotate();
             }
