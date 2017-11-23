@@ -281,7 +281,7 @@ namespace Daze {
         #region Methods for to the Draw function
         internal void pushLastPixelPosition() {
             lastPixelPosition.set(pixelPosition);
-            lastSize = spriteSet.size.duplicate();
+            if(spriteSet != null) lastSize = spriteSet.size.duplicate();
             lastMinSpriteCoordinates = new IntVector(spriteSet.minX,spriteSet.minY);
         }
 
