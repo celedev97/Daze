@@ -267,76 +267,10 @@
             The form used by the Engine to show the game, you have no need to use this.
             </summary>
         </member>
-        <member name="T:Daze.IDrawable">
-            <summary>
-            Extend this class to create a different way to draw on screen
-            </summary>
-        </member>
-        <member name="P:Daze.IDrawable.loaded">
-            <summary>
-            Set this to true when the window is loaded. The engine will wait till this is true to start the Game.
-            </summary>
-        </member>
-        <member name="P:Daze.IDrawable.focus">
-            <summary>
-            This should return true when the window got focus, false otherwise. If you can't detect the window status then make it always true.
-            </summary>
-        </member>
-        <member name="P:Daze.IDrawable.hideCursor">
-            <summary>
-            This should hide the cursor, if you can't hide it then just return always false.
-            </summary>
-        </member>
-        <member name="M:Daze.IDrawable.IntialSetup">
-            <summary>
-            This method is called from the Engine at the beginning, you should create your window here
-            </summary>
-        </member>
-        <member name="M:Daze.IDrawable.BufferSetup">
-            <summary>
-            This method is called from the Engine after the buffer is created
-            </summary>
-        </member>
-        <member name="M:Daze.IDrawable.Start">
-            <summary>
-            This is called from the method after all the setups to show the window
-            </summary>
-        </member>
-        <member name="M:Daze.IDrawable.Stop">
-            <summary>
-            This method is called from the Engine when it has to close the window
-            </summary>
-        </member>
-        <member name="M:Daze.IDrawable.Draw">
-            <summary>
-            Implement this method to draw on the screen
-            </summary>
-        </member>
         <member name="T:Daze.Engine">
             <summary>
             This is the core class of Daze, call Engine.Start() to start your game
             </summary>
-        </member>
-        <member name="T:Daze.Engine.Utility">
-            <summary>
-            This is a static class that contains some method that can be used to do various things
-            </summary>
-        </member>
-        <member name="M:Daze.Engine.Utility.randomInt(System.Int32)">
-            <summary>
-            This method generate a random int number
-            </summary>
-            <param name="max">The maximum number generated</param>
-            <returns>A number from 0 to max (both included in the range)</returns>
-        </member>
-        <member name="M:Daze.Engine.Utility.countStringOccurrences(System.String,System.String)">
-            <summary>
-            (Wait... you really need me to explain this... ?)
-            A simple function that count the occurrence of a string in another string
-            </summary>
-            <param name="haystack">The large string</param>
-            <param name="needle">The small string that must be searched in the larger one</param>
-            <returns></returns>
         </member>
         <member name="T:Daze.Engine.RenderingSize">
             <summary>
@@ -598,37 +532,6 @@
             This changes the way the Engine clean and redraw on the screen, read the Engine.DrawingMethod enum informations for info about the various options.
             </summary>
         </member>
-        <member name="P:Daze.Engine.camera">
-            <summary>
-            This is the camera that is showing on the screen (Daze currently support only one camera)
-            </summary>
-        </member>
-        <member name="F:Daze.Engine.lostFocus">
-            <summary>
-            You can hook up an action to the engine to know when the game is not active and make it stop
-            </summary>
-        </member>
-        <member name="F:Daze.Engine.gotFocus">
-            <summary>
-            You can hook up an action to the engine to know when the game is active again and make it resume
-            </summary>
-        </member>
-        <member name="F:Daze.Engine.printFpsFlag">
-            <summary>
-            Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
-            </summary>
-        </member>
-        <member name="F:Daze.Engine._deltaTime">
-            <summary>
-            The milliseconds that the last game cycle took
-            This can be used to do physics calculation regardless of FPS.
-            </summary>
-        </member>
-        <member name="P:Daze.Engine.deltaTime">
-            <summary>
-            Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
-            </summary>
-        </member>
         <member name="P:Daze.Engine.drawBuffer">
             <summary>
             The buffer used to draw, use it only if you are creating a new IDrawable
@@ -672,21 +575,6 @@
         <member name="F:Daze.Engine.mouseUp">
             <summary>
             This is an event called from the IDrawable used to draw, use GameObject events if you need to detect a mouse event.
-            </summary>
-        </member>
-        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod,Daze.IDrawable)">
-            <summary>
-            This function start the Engine
-            </summary>
-            <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
-            <param name="renderingSize">The internal rendering size</param>
-            <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
-            <param name="drawDestination">The draw destination, set to null to use Daze default window</param>
-        </member>
-        <member name="M:Daze.Engine.Stop">
-            <summary>
-            This stop the Engine,
-            Use this to close the game
             </summary>
         </member>
         <member name="M:Daze.Engine.findGameObjects">
@@ -769,6 +657,118 @@
             Using this method you don't need to manage the Wav initialization and disposition when the sound ends
             </summary>
             <param name="filePath">The path of the Wav file</param>
+        </member>
+        <member name="T:Daze.Engine.Utility">
+            <summary>
+            This is a static class that contains some method that can be used to do various things
+            </summary>
+        </member>
+        <member name="M:Daze.Engine.Utility.randomInt(System.Int32)">
+            <summary>
+            This method generate a random int number
+            </summary>
+            <param name="max">The maximum number generated</param>
+            <returns>A number from 0 to max (both included in the range)</returns>
+        </member>
+        <member name="M:Daze.Engine.Utility.countStringOccurrences(System.String,System.String)">
+            <summary>
+            (Wait... you really need me to explain this... ?)
+            A simple function that count the occurrence of a string in another string
+            </summary>
+            <param name="haystack">The large string</param>
+            <param name="needle">The small string that must be searched in the larger one</param>
+            <returns></returns>
+        </member>
+        <member name="P:Daze.Engine.camera">
+            <summary>
+            This is the camera that is showing on the screen (Daze currently support only one camera)
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.lostFocus">
+            <summary>
+            You can hook up an action to the engine to know when the game is not active and make it stop
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.gotFocus">
+            <summary>
+            You can hook up an action to the engine to know when the game is active again and make it resume
+            </summary>
+        </member>
+        <member name="F:Daze.Engine.printFpsFlag">
+            <summary>
+            Setting this flag to true will show the FPS count in the console and the difference between the game cycle and the draw time, you should use it only if you are experiencing heavy FPS drop and you have no idea what's going on
+            </summary>
+        </member>
+        <member name="F:Daze.Engine._deltaTime">
+            <summary>
+            The milliseconds that the last game cycle took
+            This can be used to do physics calculation regardless of FPS.
+            </summary>
+        </member>
+        <member name="P:Daze.Engine.deltaTime">
+            <summary>
+            Use this function to make your game frame rate independent, an example: by multiplying 2 in the Update for this you are basically saying 2 per second
+            </summary>
+        </member>
+        <member name="M:Daze.Engine.Start(System.Int32,Daze.Engine.RenderingSize,Daze.Engine.DrawingMethod,Daze.IDrawable)">
+            <summary>
+            This function start the Engine
+            </summary>
+            <param name="FPSLimit">The maximum FPS that the Engine should reach, don't specify it if you don't need it</param>
+            <param name="renderingSize">The internal rendering size</param>
+            <param name="drawingMethod">The Engine drawing method, see Engine.DrawingMethod to get more info</param>
+            <param name="drawDestination">The draw destination, set to null to use Daze default window</param>
+        </member>
+        <member name="M:Daze.Engine.Stop">
+            <summary>
+            This stop the Engine,
+            Use this to close the game
+            </summary>
+        </member>
+        <member name="T:Daze.IDrawable">
+            <summary>
+            Extend this class to create a different way to draw on screen
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.loaded">
+            <summary>
+            Set this to true when the window is loaded. The engine will wait till this is true to start the Game.
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.focus">
+            <summary>
+            This should return true when the window got focus, false otherwise. If you can't detect the window status then make it always true.
+            </summary>
+        </member>
+        <member name="P:Daze.IDrawable.hideCursor">
+            <summary>
+            This should hide the cursor, if you can't hide it then just return always false.
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.IntialSetup">
+            <summary>
+            This method is called from the Engine at the beginning, you should create your window here
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.BufferSetup">
+            <summary>
+            This method is called from the Engine after the buffer is created
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Start">
+            <summary>
+            This is called from the method after all the setups to show the window
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Stop">
+            <summary>
+            This method is called from the Engine when it has to close the window
+            </summary>
+        </member>
+        <member name="M:Daze.IDrawable.Draw">
+            <summary>
+            Implement this method to draw on the screen
+            </summary>
         </member>
         <member name="T:Daze.Camera">
             <summary>
